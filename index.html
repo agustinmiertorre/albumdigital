@@ -557,10 +557,13 @@ const DN={arayan:'Arrayán',jacaranda:'Jacarandá',ceibo:'Ceibo'};
 // 3) Agregá una app web → copiá los datos aquí abajo
 // 4) En Firebase: Build → Realtime Database → Crear → modo prueba
 const FB={
-  apiKey:"TU_API_KEY",
-  authDomain:"TU_PROYECTO.firebaseapp.com",
-  databaseURL:"https://TU_PROYECTO-default-rtdb.firebaseio.com",
-  projectId:"TU_PROYECTO"
+  apiKey:"AIzaSyB7Zm96XR1-2dPwAAaeEsAEk5RkSADNqns",
+  authDomain:"album-digital-f25da.firebaseapp.com",
+  databaseURL:"https://album-digital-f25da-default-rtdb.firebaseio.com",
+  projectId:"album-digital-f25da",
+  storageBucket:"album-digital-f25da.firebasestorage.app",
+  messagingSenderId:"855571652611",
+  appId:"1:855571652611:web:ee1a3172118032a58c6e36"
 };
 let fbDB=null;
 try{firebase.initializeApp(FB);fbDB=firebase.database();}catch(e){console.warn('Firebase no configurado, modo local');}
