@@ -113,18 +113,18 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 
 /* FIGURITAS GRID */
 .fgrid{display:grid;gap:.65rem;}
-.fig{background:linear-gradient(135deg,#1a1a2e,#16213e);border:2px solid rgba(255,255,255,.1);border-radius:10px;padding:.4rem .4rem .55rem;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;}
+.fig{background:linear-gradient(135deg,#1a1a2e,#16213e);border:2px solid rgba(255,255,255,.1);border-radius:8px;padding:.3rem .3rem .4rem;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;}
 .fig.peg{border-color:var(--dorado);background:linear-gradient(135deg,rgba(240,192,64,.15),rgba(228,5,31,.08));}
-.fig.peg::after{content:'✓';position:absolute;top:5px;right:7px;color:var(--dorado);font-size:.8rem;font-weight:900;}
+.fig.peg::after{content:'✓';position:absolute;top:3px;right:5px;color:var(--dorado);font-size:.7rem;font-weight:900;}
 .fig.avail{border-color:var(--rojo);animation:pa 2s infinite;}
 @keyframes pa{0%,100%{box-shadow:0 0 8px rgba(228,5,31,.3)}50%{box-shadow:0 0 18px rgba(228,5,31,.7)}}
 .fig.holo{background:linear-gradient(135deg,rgba(240,192,64,.2),rgba(0,200,255,.15));border-color:var(--dorado);}
-.fav{width:100%;aspect-ratio:3/4;border-radius:7px;background:linear-gradient(135deg,#2a2a4a,#1a3a5a);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:3.2rem;overflow:hidden;}
-.ftxt{width:100%;text-align:center;margin-top:.35rem;}
-.fnum{font-size:.58rem;color:var(--dorado);background:var(--azul);padding:1px 5px;border-radius:3px;display:inline-block;margin-bottom:.15rem;}
-.fnm{font-size:.68rem;font-weight:700;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.fgr{font-size:.54rem;color:rgba(255,255,255,.45);margin-top:.1rem;}
-.fvac{font-size:2.8rem;opacity:.2;}
+.fav{width:100%;aspect-ratio:3/4;border-radius:5px;background:linear-gradient(135deg,#2a2a4a,#1a3a5a);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:2.2rem;overflow:hidden;}
+.ftxt{width:100%;text-align:center;margin-top:.25rem;}
+.fnum{font-size:.52rem;color:var(--dorado);background:var(--azul);padding:1px 4px;border-radius:3px;display:inline-block;margin-bottom:.1rem;}
+.fnm{font-size:.6rem;font-weight:700;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.fgr{font-size:.5rem;color:rgba(255,255,255,.45);margin-top:.08rem;}
+.fvac{font-size:2rem;opacity:.2;}
 
 /* ESPECIALES - figuritas acostadas */
 .espg{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;}
@@ -694,7 +694,7 @@ function renderPg(id){
       </div>
     </div>
     <div class="abar" style="border-radius:8px;margin-bottom:.6rem;font-size:.72rem">🏅 FIGURITAS DE ${p.n.toUpperCase()} · SAN CARLOS MUNDIAL 2026</div>
-    <div class="fgrid" style="grid-template-columns:repeat(3,1fr)">${norm.map(f=>rfig(f)).join('')}</div>
+    <div class="fgrid" style="grid-template-columns:repeat(4,1fr)">${norm.map(f=>rfig(f)).join('')}</div>
     ${holo?`<div style="margin-top:.7rem"><div class="abar" style="border-radius:8px;margin-bottom:.5rem;font-size:.68rem">✨ ESCUDO HOLOGRÁFICO · ${p.n.toUpperCase()}</div><div style="display:flex;justify-content:center">${rfig(holo)}</div></div>`:''}
   `;
 }
