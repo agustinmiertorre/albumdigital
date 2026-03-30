@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Álbum San Carlos – Mundial 2026</title>
+<style>
+@import url('data:text/css,');
+:root{--rojo:#e4051f;--azul:#00476c;--dorado:#f0c040;--negro:#111;--blanco:#fff;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;min-height:100vh;overflow-x:hidden;}
+.bb{font-family:Impact,'Arial Black',Arial,sans-serif;letter-spacing:2px;}
+.screen{display:none;min-height:100vh;flex-direction:column;}
+.screen.active{display:flex;}
+
+/* PORTADA */
+#sp{background:linear-gradient(135deg,var(--azul) 0%,#001f33 40%,#0a0a1a 70%,var(--rojo) 100%);align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;}
+#sp::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50%,rgba(240,192,64,.15),transparent 70%);}
+.star{position:absolute;border-radius:50%;animation:tw 3s infinite;}
+@keyframes tw{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:1;transform:scale(1.4)}}
+.pc{position:relative;z-index:2;padding:2rem;}
+.logo-cole{width:100px;height:100px;border-radius:50%;background:transparent;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:2.5rem;box-shadow:0 0 40px rgba(240,192,64,.5);border:3px solid rgba(240,192,64,.4);overflow:hidden;}
+.pbadge{display:inline-block;background:var(--rojo);color:#fff;padding:.4rem 1.5rem;border-radius:20px;font-weight:900;font-size:.95rem;margin:.5rem 0;letter-spacing:2px;}
+.ptit{font-size:clamp(2.5rem,8vw,5rem);line-height:1;color:var(--dorado);text-shadow:3px 3px 0 var(--rojo),-1px -1px 0 var(--azul);letter-spacing:3px;}
+.psub{font-size:clamp(1.2rem,4vw,2.2rem);color:#fff;letter-spacing:5px;margin:.5rem 0;}
+.ball{font-size:5rem;display:block;margin:.5rem auto;width:5rem;height:5rem;animation:spin 6s linear infinite;transform-origin:center center;}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.pbtn{background:linear-gradient(135deg,var(--dorado),#c8922a);color:var(--negro);border:none;padding:1rem 2.5rem;border-radius:30px;font-size:1.2rem;font-weight:900;cursor:pointer;margin:.4rem;transition:all .2s;box-shadow:0 5px 20px rgba(240,192,64,.5);}
+.pbtn:hover{transform:translateY(-3px);}
+.pbtn.sec{background:transparent;border:2px solid #fff;color:#fff;}
+
+/* LOGIN */
+#sl{background:linear-gradient(135deg,var(--azul),#001f33);align-items:center;justify-content:center;}
+.lcard{background:rgba(255,255,255,.06);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:2.5rem;width:min(380px,90vw);text-align:center;}
+.lcard h2{font-size:1.8rem;color:var(--dorado);margin-bottom:.3rem;}
+.lcard p{color:rgba(255,255,255,.6);font-size:.9rem;margin-bottom:1.5rem;}
+.lcard select,.lcard input{width:100%;padding:.9rem 1rem;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font-family:inherit;font-size:1rem;margin-bottom:1rem;outline:none;}
+.lcard select option{background:#001f33;}
+.lerr{color:var(--rojo);font-size:.85rem;margin-bottom:.8rem;display:none;}
+.bvolver{background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;font-size:.85rem;margin-top:.8rem;text-decoration:underline;}
+
+/* HAMBURGER */
+.hov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:150;}
+.hov.open{display:block;}
+.hmenu{position:fixed;left:-290px;top:0;bottom:0;width:280px;background:linear-gradient(180deg,#001f33,#0a0a1a 50%,#1a0008);z-index:160;transition:left .3s;overflow-y:auto;box-shadow:5px 0 30px rgba(0,0,0,.5);}
+.hmenu.open{left:0;}
+.hmh{background:linear-gradient(90deg,var(--rojo),var(--azul));padding:1.4rem 1rem;text-align:center;}
+.hmh .hlogo{width:55px;height:55px;border-radius:50%;background:transparent;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto .5rem;overflow:hidden;}
+.hmh h3{font-size:1.1rem;color:var(--dorado);}
+.hmh p{font-size:.75rem;color:rgba(255,255,255,.6);}
+.hnav{padding:.8rem 0;}
+.hni{display:flex;align-items:center;gap:.8rem;padding:.9rem 1.2rem;cursor:pointer;transition:all .2s;border-left:3px solid transparent;color:rgba(255,255,255,.7);font-weight:700;font-size:.9rem;}
+.hni:hover{background:rgba(255,255,255,.08);color:#fff;border-left-color:var(--dorado);}
+.hni.active{background:linear-gradient(90deg,rgba(228,5,31,.3),rgba(0,71,108,.2));color:var(--dorado);border-left-color:var(--dorado);}
+.hni .ico{font-size:1.3rem;width:28px;text-align:center;}
+.hdiv{height:1px;background:rgba(255,255,255,.1);margin:.4rem 1rem;}
+.hprog{padding:.3rem 1.2rem;}
+.hprogbar{background:rgba(255,255,255,.08);border-radius:20px;height:8px;overflow:hidden;margin:.3rem 0;}
+.hprogfill{height:100%;background:linear-gradient(90deg,var(--dorado),var(--rojo));border-radius:20px;transition:width 1s;}
+.hbsalir{display:flex;align-items:center;justify-content:center;gap:.5rem;margin:1rem;padding:.8rem;border-radius:12px;border:1px solid var(--rojo);background:rgba(228,5,31,.2);color:var(--rojo);cursor:pointer;font-weight:700;font-family:inherit;}
+.hbsalir:hover{background:var(--rojo);color:#fff;}
+
+/* APP */
+#sa{background:#0a0a1a;}
+.abar{background:linear-gradient(90deg,var(--rojo),var(--azul));padding:.35rem 1rem;text-align:center;font-size:.78rem;letter-spacing:2px;color:rgba(255,255,255,.8);}
+.aheader{background:linear-gradient(90deg,var(--azul),#001f33);padding:.7rem 1rem;display:flex;align-items:center;gap:.8rem;position:sticky;top:0;z-index:100;box-shadow:0 2px 15px rgba(0,0,0,.5);}
+.hamtog{background:none;border:none;cursor:pointer;padding:.3rem;display:flex;flex-direction:column;gap:5px;}
+.hamtog span{display:block;width:24px;height:2px;background:var(--dorado);border-radius:2px;}
+.ahinfo{flex:1;}
+.ahinfo h3{font-size:.95rem;color:var(--dorado);}
+.ahinfo p{font-size:.68rem;color:rgba(255,255,255,.5);}
+.progbar-wrap{background:linear-gradient(90deg,#001828,#0a0a1a);padding:.6rem 1rem;display:flex;align-items:center;gap:.8rem;}
+.pbl{font-size:.72rem;color:rgba(255,255,255,.55);}
+.pbw{flex:1;background:rgba(255,255,255,.1);border-radius:20px;height:10px;overflow:hidden;}
+.pbf{height:100%;background:linear-gradient(90deg,var(--dorado),var(--rojo));border-radius:20px;transition:width 1s;position:relative;overflow:hidden;}
+.pbf::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);animation:sh 2s infinite;}
+@keyframes sh{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.ppc{font-family:Impact,Arial,sans-serif;font-size:1rem;color:var(--dorado);}
+
+/* TAB CONTENT */
+.tc{display:none;padding:1rem 1rem 70px;flex:1;}
+.tc.active{display:block;}
+
+/* COUNTRIES */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.8rem;}
+.ccard{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:.8rem;text-align:center;cursor:pointer;transition:all .25s;position:relative;}
+.ccard:hover{transform:translateY(-3px);border-color:var(--dorado);}
+.ccard.completo{border-color:var(--dorado);background:rgba(240,192,64,.1);}
+/* FLAG SVG inline */
+.flag-box{width:60px;height:40px;border-radius:5px;margin:0 auto .4rem;display:flex;align-items:center;justify-content:center;font-size:1.8rem;border:1px solid rgba(255,255,255,.2);overflow:hidden;}
+.cname{font-size:.9rem;font-weight:900;}
+.cprog{font-size:.7rem;color:rgba(255,255,255,.5);margin-top:.2rem;}
+.hbadge{position:absolute;top:5px;right:5px;width:14px;height:14px;border-radius:50%;background:conic-gradient(#f0c040,#e4051f,#00476c,#a0f060,#f0c040);animation:hp 2s infinite;}
+@keyframes hp{0%,100%{box-shadow:0 0 8px rgba(240,192,64,.8)}50%{box-shadow:0 0 20px rgba(240,192,64,1)}}
+
+/* PAGE */
+.pnav{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem;}
+.pnavbtn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:1.3rem;display:flex;align-items:center;justify-content:center;transition:.2s;}
+.pnavbtn:hover{background:var(--dorado);color:var(--negro);}
+.pnavbtn:disabled{opacity:.3;cursor:not-allowed;}
+.pnavmid{text-align:center;}
+.pnavmid h3{font-size:1.1rem;color:var(--dorado);}
+.progbadge{display:inline-block;background:rgba(240,192,64,.15);border:1px solid var(--dorado);border-radius:12px;padding:.2rem .7rem;font-size:.73rem;color:var(--dorado);margin-top:.25rem;}
+.cph{border-radius:12px;padding:1rem;margin-bottom:.8rem;position:relative;overflow:hidden;}
+.cphc{display:flex;gap:.8rem;align-items:flex-start;position:relative;z-index:1;}
+.cphe{width:60px;height:60px;flex-shrink:0;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(240,192,64,.5);border:2px solid var(--dorado);font-size:2rem;overflow:hidden;}
+.cphi h2{font-size:1.3rem;color:var(--dorado);}
+.pills{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.4rem;}
+.pill{background:rgba(255,255,255,.1);border-radius:12px;padding:.22rem .55rem;font-size:.68rem;color:rgba(255,255,255,.8);}
+.pill.g{background:rgba(240,192,64,.2);color:var(--dorado);}
+.pill.r{background:rgba(228,5,31,.2);color:#ff8888;}
+.golea{margin-top:.4rem;font-size:.7rem;color:rgba(255,255,255,.6);}
+
+/* FIGURITAS GRID */
+.fgrid{display:grid;gap:.55rem;}
+.fig{background:linear-gradient(135deg,#1a1a2e,#16213e);border:2px solid rgba(255,255,255,.1);border-radius:10px;padding:.4rem;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;display:flex;align-items:center;gap:.45rem;}
+.fig.peg{border-color:var(--dorado);background:linear-gradient(135deg,rgba(240,192,64,.15),rgba(228,5,31,.08));}
+.fig.peg::after{content:'✓';position:absolute;top:3px;right:5px;color:var(--dorado);font-size:.6rem;font-weight:900;}
+.fig.avail{border-color:var(--rojo);animation:pa 2s infinite;}
+@keyframes pa{0%,100%{box-shadow:0 0 8px rgba(228,5,31,.3)}50%{box-shadow:0 0 18px rgba(228,5,31,.7)}}
+.fig.holo{background:linear-gradient(135deg,rgba(240,192,64,.2),rgba(0,200,255,.15));border-color:var(--dorado);}
+.fav{width:38px;height:52px;border-radius:5px;background:linear-gradient(135deg,#2a2a4a,#1a3a5a);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.5rem;}
+.ftxt{flex:1;min-width:0;}
+.fnum{font-size:.55rem;color:var(--dorado);background:var(--azul);padding:1px 4px;border-radius:3px;display:inline-block;margin-bottom:.2rem;}
+.fnm{font-size:.6rem;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.fgr{font-size:.52rem;color:rgba(255,255,255,.45);}
+.fvac{font-size:1.2rem;opacity:.25;}
+
+/* ESPECIALES - figuritas acostadas */
+.espg{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;}
+.figl{background:linear-gradient(135deg,#1a1a2e,#16213e);border:2px solid rgba(255,255,255,.1);border-radius:10px;padding:.45rem;display:flex;align-items:center;gap:.4rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.figl:hover{border-color:var(--dorado);}
+.figl.peg{border-color:var(--dorado);background:linear-gradient(135deg,rgba(240,192,64,.12),rgba(228,5,31,.06));}
+.figl.peg::after{content:'✓';position:absolute;top:3px;right:5px;color:var(--dorado);font-size:.6rem;font-weight:900;}
+.figl.holo{border-color:var(--dorado);background:linear-gradient(135deg,rgba(240,192,64,.18),rgba(0,200,255,.12));}
+.figl-icon{width:36px;height:48px;border-radius:5px;background:linear-gradient(135deg,#2a4a7a,#1a2a4a);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.figl-info{flex:1;min-width:0;}
+.figl-info h4{font-size:.65rem;font-weight:900;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.figl-info p{font-size:.55rem;color:rgba(255,255,255,.45);margin-top:.1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* BARRA NAV INFERIOR */
+.bnav{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(to top,#001828,#0a0a1a);border-top:1px solid rgba(255,255,255,.12);display:none;z-index:120;}
+.bnav.vis{display:flex;}
+.bnb{flex:1;background:none;border:none;color:rgba(255,255,255,.45);padding:.5rem .2rem .6rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:.15rem;font-family:inherit;font-weight:700;transition:.2s;border-top:2px solid transparent;}
+.bnb.active{color:var(--dorado);border-top-color:var(--dorado);}
+.bnb .bi{font-size:1.2rem;line-height:1;}
+.bnb span{font-size:.52rem;}
+
+/* SOBRES */
+.sbox{max-width:580px;margin:0 auto;text-align:center;}
+.daystatus{background:rgba(255,255,255,.05);border-radius:12px;padding:.8rem;margin-bottom:1.2rem;border:1px solid rgba(255,255,255,.1);}
+.pdots{display:flex;gap:.4rem;justify-content:center;margin:.4rem 0;}
+.pdot{width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);transition:.3s;}
+.pdot.used{background:var(--dorado);border-color:var(--dorado);box-shadow:0 0 8px rgba(240,192,64,.5);}
+.spanel{background:linear-gradient(135deg,rgba(228,5,31,.12),rgba(0,71,108,.12));border:1px solid rgba(228,5,31,.3);border-radius:15px;padding:1.2rem;margin-bottom:1.5rem;}
+.spanel h3{font-size:1.1rem;color:var(--rojo);margin-bottom:.6rem;}
+.sopts{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;}
+.sopt{cursor:pointer;transition:all .3s;text-align:center;}
+.sopt:hover:not(.dis){transform:scale(1.06);}
+.sopt.dis{opacity:.35;cursor:not-allowed;}
+.sicon{width:72px;height:96px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px solid var(--dorado);position:relative;overflow:hidden;margin-bottom:.3rem;}
+.s1bg{background:linear-gradient(135deg,#8b0000,var(--rojo));}
+.s3bg{background:linear-gradient(135deg,#004080,var(--azul));}
+.s5bg{background:linear-gradient(135deg,#806000,var(--dorado));}
+.sicon::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.18),transparent 50%);border-radius:8px;}
+.sicon .sball{font-size:1.8rem;}
+.sicon .scnt{font-size:.9rem;font-weight:900;color:rgba(255,255,255,.9);}
+.slbl{font-size:.78rem;color:rgba(255,255,255,.6);font-weight:700;}
+@keyframes shk{0%,100%{transform:rotate(0) scale(1)}20%{transform:rotate(-6deg) scale(1.08)}40%{transform:rotate(6deg) scale(1.08)}60%{transform:rotate(-3deg)}80%{transform:rotate(3deg)}}
+.shake{animation:shk .55s;}
+
+/* SOBRE OVERLAY */
+.sovl{display:none;position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:200;flex-direction:column;align-items:center;justify-content:center;padding:1rem;}
+.sovl.active{display:flex;}
+.sovtit{font-size:1.4rem;color:var(--dorado);margin-bottom:1rem;letter-spacing:2px;font-weight:900;}
+.sobig{width:110px;height:150px;border-radius:12px;cursor:pointer;position:relative;transform-style:preserve-3d;transition:transform .65s;margin-bottom:1.5rem;}
+.sobig.flip{transform:rotateY(180deg);}
+.sbf,.sbb{position:absolute;inset:0;border-radius:12px;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;flex-direction:column;}
+.sbf{background:linear-gradient(135deg,var(--rojo),#8b0000);border:3px solid var(--dorado);box-shadow:0 0 30px rgba(228,5,31,.5);}
+.sbf::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.2),transparent 40%);border-radius:12px;}
+.sbf .sbl{font-size:2.8rem;}
+.sbf .sbsc{font-size:.85rem;color:rgba(255,255,255,.8);letter-spacing:2px;font-weight:700;}
+.sbb{background:linear-gradient(135deg,var(--azul),#001f33);border:3px solid var(--dorado);transform:rotateY(180deg);}
+.frev{display:grid;grid-template-columns:repeat(5,1fr);gap:.45rem;max-width:400px;width:90vw;}
+.frc{background:linear-gradient(135deg,var(--azul),#001f33);border:2px solid var(--dorado);border-radius:10px;padding:.45rem;text-align:center;opacity:0;transform:translateY(30px) scale(.8);transition:all .4s cubic-bezier(.34,1.56,.64,1);}
+.frc.show{opacity:1;transform:translateY(0) scale(1);}
+.frc.rep{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.05);}
+.repbdg{background:rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:.52rem;padding:1px 4px;border-radius:4px;display:inline-block;margin-top:.15rem;}
+.revbtns{display:flex;gap:.8rem;margin-top:1rem;flex-wrap:wrap;justify-content:center;}
+.rbtn{background:linear-gradient(135deg,var(--dorado),#c8922a);color:var(--negro);border:none;padding:.7rem 1.4rem;border-radius:12px;font-size:1rem;font-weight:900;cursor:pointer;}
+.rbtn.sec{background:rgba(255,255,255,.1);color:#fff;}
+
+/* PEGAR */
+.pegbox{max-width:700px;margin:0 auto;}
+.apgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:.55rem;margin-bottom:1rem;}
+.pfig{background:linear-gradient(135deg,var(--azul),#001f33);border:2px dashed var(--dorado);border-radius:10px;padding:.45rem;text-align:center;cursor:pointer;transition:all .2s;user-select:none;}
+.pfig:hover{transform:scale(1.05);box-shadow:0 0 12px rgba(240,192,64,.4);}
+.pfig.sel{border-color:var(--rojo);background:rgba(228,5,31,.2);border-style:solid;box-shadow:0 0 15px rgba(228,5,31,.5);}
+.pempty{text-align:center;color:rgba(255,255,255,.35);padding:2.5rem;display:none;}
+.phint{background:rgba(240,192,64,.08);border:1px solid rgba(240,192,64,.3);border-radius:10px;padding:.7rem;text-align:center;color:var(--dorado);font-size:.8rem;margin-bottom:.8rem;display:none;}
+
+/* INTERCAMBIO */
+.ibox{max-width:580px;margin:0 auto;text-align:center;}
+.icard{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:15px;padding:1.2rem;margin-bottom:1rem;}
+.icard h4{color:var(--dorado);font-size:1rem;font-weight:900;margin-bottom:.7rem;}
+.isel{width:100%;padding:.8rem;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font-family:inherit;margin-bottom:.7rem;}
+.isel option{background:#001f33;}
+.ifboxes{display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;}
+.ifb{width:46px;height:62px;border-radius:7px;border:1px solid var(--dorado);background:linear-gradient(135deg,var(--azul),#001f33);display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
+.ifb.oculta{background:linear-gradient(135deg,var(--rojo),#8b0000);border-color:var(--rojo);}
+.ifb.oculta::after{content:'?';color:#fff;font-size:1.3rem;font-weight:900;}
+.ibtn{background:linear-gradient(135deg,var(--azul),#001f33);border:1px solid var(--dorado);color:var(--dorado);padding:.8rem 1.8rem;border-radius:12px;font-size:1rem;font-weight:900;cursor:pointer;transition:all .2s;margin-top:.5rem;}
+.ibtn:hover:not(:disabled){background:var(--dorado);color:var(--negro);}
+.ibtn:disabled{opacity:.4;cursor:not-allowed;}
+.istatus{background:rgba(240,192,64,.1);border:1px solid var(--dorado);border-radius:10px;padding:.7rem;font-size:.85rem;color:var(--dorado);margin-bottom:1rem;}
+
+/* MODAL */
+.movl{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:250;align-items:center;justify-content:center;padding:1rem;}
+.movl.active{display:flex;}
+.modal{background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid rgba(255,255,255,.15);border-radius:20px;max-width:340px;width:100%;padding:1.5rem;position:relative;max-height:90vh;overflow-y:auto;}
+.mcl{position:absolute;top:.7rem;right:.7rem;background:rgba(255,255,255,.1);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:1rem;}
+.mfc{background:linear-gradient(135deg,var(--azul),#001f33);border:3px solid var(--dorado);border-radius:15px;padding:1rem;text-align:center;margin-bottom:1rem;}
+.mav{width:80px;height:80px;border-radius:10px;background:linear-gradient(135deg,#2a4a7a,#1a2a4a);margin:0 auto .6rem;display:flex;align-items:center;justify-content:center;font-size:2.5rem;}
+.mstats{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;}
+.msi{background:rgba(255,255,255,.06);border-radius:8px;padding:.4rem;text-align:center;}
+.msl{font-size:.6rem;color:rgba(255,255,255,.45);text-transform:uppercase;}
+.msv{font-size:1rem;color:var(--dorado);font-weight:900;}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);background:linear-gradient(135deg,var(--azul),#001f33);border:1px solid var(--dorado);color:#fff;padding:.7rem 1.4rem;border-radius:20px;font-weight:700;z-index:300;transition:transform .3s;white-space:nowrap;font-size:.85rem;pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.bbtn{background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.7);padding:.45rem .9rem;border-radius:8px;cursor:pointer;font-size:.78rem;margin-bottom:.8rem;display:inline-flex;align-items:center;gap:.3rem;font-family:inherit;}
+.bbtn:hover{background:rgba(255,255,255,.14);}
+@keyframes pego{0%{transform:scale(1.3) rotate(-5deg)}60%{transform:scale(.95) rotate(2deg)}100%{transform:scale(1)}}
+.peging{animation:pego .5s cubic-bezier(.34,1.56,.64,1);}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-thumb{background:var(--dorado);border-radius:3px;}
+
+/* FLAG COLORS inline */
+.flag-ar{background:linear-gradient(to bottom,#74acdf 33%,#fff 33% 67%,#74acdf 67%);position:relative;}
+.flag-br{background:#009c3b;}
+.flag-uy{background:linear-gradient(to bottom,#fff 11%,#001489 11% 22%,#fff 22% 33%,#001489 33% 44%,#fff 44% 55%,#001489 55% 66%,#fff 66% 77%,#001489 77% 88%,#fff 88%);}
+.flag-us{background:linear-gradient(to bottom,#b22234 7%,#fff 7% 14%,#b22234 14% 21%,#fff 21% 28%,#b22234 28% 35%,#fff 35% 42%,#b22234 42% 49%,#fff 49% 56%,#b22234 56% 63%,#fff 63% 70%,#b22234 70% 77%,#fff 77% 84%,#b22234 84%);}
+.flag-mx{background:linear-gradient(to right,#006847 33%,#fff 33% 67%,#ce1126 67%);}
+.flag-es{background:linear-gradient(to bottom,#c60b1e 25%,#f1bf00 25% 75%,#c60b1e 75%);}
+.flag-pt{background:linear-gradient(to right,#006600 38%,#ff0000 38%);}
+.flag-fr{background:linear-gradient(to right,#002395 33%,#fff 33% 67%,#ed2939 67%);}
+.flag-en{background:linear-gradient(135deg,#012169 0%,#012169 40%,#c8102e 40% 60%,#012169 60%);}
+.flag-de{background:linear-gradient(to bottom,#000 33%,#d00 33% 67%,#ffce00 67%);}
+.flag-jp{background:#fff;position:relative;}
+.flag-kr{background:#fff;}
+.flag-sn{background:linear-gradient(to right,#00853f 33%,#fdef42 33% 67%,#e31b23 67%);}
+.flag-ma{background:#c1272d;}
+.flag-au{background:#00008b;}
+</style>
+</head>
+<body>
+
+<!-- PORTADA -->
+<div id="sp" class="screen active">
+  <div id="stc"></div>
+  <div class="pc">
+    <div class="logo-cole"><img src="Logo San Carlos.png" style="width:100%;height:100%;object-fit:cover;border-radius:50%"></div>
+    <div class="pbadge">COLEGIO SAN CARLOS</div>
+    <div class="ptit bb">ÁLBUM<br>MUNDIAL</div>
+    <div class="psub bb">⚡ 2026 ⚡</div>
+    <span class="ball"><img src="Trionda.png" style="width:5rem;height:5rem;display:block;object-fit:contain"></span>
+    <p style="color:rgba(255,255,255,.6);font-size:.85rem;margin-bottom:1.5rem">El álbum de figuritas oficial del cole<br>¡Coleccioná a tus compañeros y recorré el mundo!</p>
+    <button class="pbtn" onclick="go('l')">📚 INGRESAR AL ÁLBUM</button>
+    <br><br>
+    <p style="color:rgba(255,255,255,.3);font-size:.68rem">🏅 ~350 figuritas · 18 cursos · 16 países + especiales</p>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="sl" class="screen">
+  <div class="lcard">
+    <div style="font-size:3rem;margin-bottom:.5rem">🎴</div>
+    <h2 class="bb">INGRESÁ AL ÁLBUM</h2>
+    <p>Seleccioná tu curso e ingresá la contraseña</p>
+    <select id="lcurso">
+      <option value="">-- Seleccioná tu curso --</option>
+      <optgroup label="1° Grado"><option value="1-arayan">1° Arrayán</option><option value="1-jacaranda">1° Jacarandá</option><option value="1-ceibo">1° Ceibo</option></optgroup>
+      <optgroup label="2° Grado"><option value="2-arayan">2° Arrayán</option><option value="2-jacaranda">2° Jacarandá</option><option value="2-ceibo">2° Ceibo</option></optgroup>
+      <optgroup label="3° Grado"><option value="3-arayan">3° Arrayán</option><option value="3-jacaranda">3° Jacarandá</option><option value="3-ceibo">3° Ceibo</option></optgroup>
+      <optgroup label="4° Grado"><option value="4-arayan">4° Arrayán</option><option value="4-jacaranda">4° Jacarandá</option><option value="4-ceibo">4° Ceibo</option></optgroup>
+      <optgroup label="5° Grado"><option value="5-arayan">5° Arrayán</option><option value="5-jacaranda">5° Jacarandá</option><option value="5-ceibo">5° Ceibo</option></optgroup>
+      <optgroup label="6° Grado"><option value="6-arayan">6° Arrayán</option><option value="6-jacaranda">6° Jacarandá</option><option value="6-ceibo">6° Ceibo</option></optgroup>
+    </select>
+    <input type="password" id="lpass" placeholder="Contraseña del curso" onkeydown="if(event.key==='Enter')login()">
+    <div class="lerr" id="lerr">❌ Contraseña incorrecta</div>
+    <button class="pbtn" style="width:100%;margin:0" onclick="login()">ENTRAR ⚽</button>
+    <br><button class="bvolver" onclick="go('sp')">← Volver al inicio</button>
+    <p style="color:rgba(255,255,255,.22);font-size:.66rem;margin-top:.8rem">DEMO · contraseña = división + grado<br>Ej: 3° Arrayán → <b>arrayan3</b> (doble r)</p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="sa" class="screen">
+  <div class="abar">🏫 COLEGIO SAN CARLOS · ÁLBUM MUNDIAL 2026 ⚽</div>
+  <div class="aheader">
+    <button class="hamtog" onclick="toggleHam()"><span></span><span></span><span></span></button>
+    <div style="width:36px;height:36px;border-radius:50%;overflow:hidden;flex-shrink:0"><img src="Logo San Carlos.png" style="width:100%;height:100%;object-fit:cover"></div>
+    <div class="ahinfo"><h3 id="cdisplay">-</h3><p>Álbum Mundial 2026 · San Carlos</p></div>
+  </div>
+  <div class="progbar-wrap">
+    <span class="pbl">📊</span>
+    <div class="pbw"><div class="pbf" id="pbf" style="width:0%"></div></div>
+    <span class="ppc" id="ppc">0%</span>
+    <span style="font-size:.7rem;color:rgba(255,255,255,.4);margin-left:.3rem" id="pnums">(0/350)</span>
+  </div>
+
+  <!-- ALBUM -->
+  <div id="tab-album" class="tc active">
+    <div id="vc">
+      <p style="color:rgba(255,255,255,.4);font-size:.76rem;margin-bottom:.8rem;text-align:center">Tocá un país para ver sus figuritas ⚽</p>
+      <div class="cgrid" id="cgrid"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:.8rem">
+        <div class="ccard" onclick="showPage('cole')" style="border-color:rgba(228,5,31,.4)">
+          <div class="flag-box" style="background:linear-gradient(135deg,var(--rojo),var(--azul));overflow:hidden"><img src="Logo San Carlos.png" style="width:100%;height:100%;object-fit:cover"></div>
+          <div class="cname">San Carlos</div><div class="cprog" id="pgcole">Especial</div>
+        </div>
+        <div class="ccard" onclick="showPage('mundial')" style="border-color:rgba(240,192,64,.4)">
+          <div class="flag-box" style="background:linear-gradient(135deg,var(--dorado),var(--rojo));overflow:hidden"><img src="Copa del Mundo.png" style="width:100%;height:100%;object-fit:contain;padding:4px"></div>
+          <div class="cname">Mundial</div><div class="cprog" id="pgmundial">Especial</div>
+        </div>
+      </div>
+    </div>
+    <div id="vp" style="display:none"></div>
+  </div>
+
+  <!-- SOBRES -->
+  <div id="tab-sobres" class="tc">
+    <div class="sbox">
+      <div class="abar" style="border-radius:10px;margin-bottom:1rem">📦 APERTURA DE SOBRES</div>
+      <div class="daystatus">
+        <p style="font-size:.8rem;color:var(--dorado);font-weight:700;margin-bottom:.3rem">📅 SOBRES ABIERTOS HOY</p>
+        <div class="pdots" id="pdots"></div>
+        <p style="font-size:.73rem;color:rgba(255,255,255,.5)" id="ptxt">Máximo 5 por día</p>
+      </div>
+      <div class="spanel">
+        <h3>👩‍🏫 LA SEÑO ELIGE CUÁNTOS ABRIR</h3>
+        <p style="font-size:.76rem;color:rgba(255,255,255,.6);margin-bottom:.9rem">Según el comportamiento y desempeño del curso</p>
+        <div class="sopts">
+          <div class="sopt" id="o1" onclick="elegir(1)"><div class="sicon s1bg"><div class="sball"><img src="Trionda.png" style="width:1.8rem;height:1.8rem;border-radius:50%;object-fit:cover;display:block"></div><div class="scnt">×1</div></div><div class="slbl">1 SOBRE</div></div>
+          <div class="sopt" id="o3" onclick="elegir(3)"><div class="sicon s3bg"><div class="sball"><img src="Trionda.png" style="width:1.8rem;height:1.8rem;border-radius:50%;object-fit:cover;display:block"></div><div class="scnt">×3</div></div><div class="slbl">3 SOBRES</div></div>
+          <div class="sopt" id="o5" onclick="elegir(5)"><div class="sicon s5bg"><div class="sball"><img src="Trionda.png" style="width:1.8rem;height:1.8rem;border-radius:50%;object-fit:cover;display:block"></div><div class="scnt">×5</div></div><div class="slbl">5 SOBRES</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PEGAR -->
+  <div id="tab-pegar" class="tc">
+    <div class="pegbox">
+      <div class="abar" style="border-radius:10px;margin-bottom:1rem">🖼️ FIGURITAS A PEGAR</div>
+      <div class="phint" id="phint">✅ <b id="fsnm">-</b> seleccionada · Andá al Álbum, o <b>doble click</b> para ir directo</div>
+      <div class="apgrid" id="apgrid"></div>
+      <div class="pempty" id="pempty"><div style="font-size:3rem">🎴</div><p>¡No hay figuritas para pegar!<br>Abrí sobres primero.</p></div>
+    </div>
+  </div>
+
+  <!-- INTERCAMBIO -->
+  <div id="tab-intercambio" class="tc">
+    <div class="ibox">
+      <div class="abar" style="border-radius:10px;margin-bottom:1rem">🔄 INTERCAMBIO A CIEGAS</div>
+      <p style="font-weight:900;font-size:1.2rem;color:var(--dorado);margin-bottom:.3rem">INTERCAMBIO</p>
+      <p style="color:rgba(255,255,255,.5);font-size:.8rem;margin-bottom:1rem">Mandás 5 repetidas, recibís 5 al azar. Nadie ve las del otro. 1 intercambio por día.</p>
+      <div id="idiv"></div>
+      <div class="icard">
+        <h4>📤 ELEGIR CURSO DESTINO</h4>
+        <select class="isel" id="idest" onchange="renderI()"><option value="">-- Seleccioná --</option></select>
+        <h4>📦 VOS MANDÁS (5 repetidas)</h4>
+        <div class="ifboxes" id="imis" style="margin:.5rem 0"></div>
+        <h4 style="margin-top:.5rem">📬 VOS RECIBÍS (a ciegas)</h4>
+        <div class="ifboxes" id="isu" style="margin:.5rem 0"></div>
+        <button class="ibtn" id="binter" onclick="doInter()" disabled>🔄 CONFIRMAR</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ESPECIALES -->
+  <div id="tab-especiales" class="tc">
+    <div class="abar" style="border-radius:10px;margin-bottom:1rem">⭐ PÁGINAS ESPECIALES</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:15px;padding:1rem">
+        <p style="font-size:1rem;font-weight:900;color:var(--dorado);margin-bottom:.8rem">🏫 Nuestro Cole</p>
+        <div class="espg" id="espcole"></div>
+      </div>
+      <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:15px;padding:1rem">
+        <p style="font-size:1rem;font-weight:900;color:var(--dorado);margin-bottom:.8rem">🏆 Mundial 2026</p>
+        <div class="espg" id="espmundial"></div>
+      </div>
+    </div>
+    <div style="margin-top:1rem;background:rgba(240,192,64,.06);border:1px solid rgba(240,192,64,.25);border-radius:12px;padding:.8rem;text-align:center">
+      <p style="color:var(--dorado);font-weight:900">✨ FIGURITAS HOLOGRÁFICAS</p>
+      <p style="color:rgba(255,255,255,.5);font-size:.76rem;margin-top:.3rem">Los escudos de cada selección son holográficos. ¡Las más difíciles de conseguir!</p>
+    </div>
+  </div>
+</div>
+
+<!-- SOBRE OVERLAY -->
+<div class="sovl" id="sovl">
+  <div class="sovtit bb" id="sovtit">¡TOCÁ EL SOBRE!</div>
+  <div class="sobig" id="sobig" onclick="flipSobre()">
+    <div class="sbf"><div class="sbl"><img src="Trionda.png" style="width:2.8rem;height:2.8rem;border-radius:50%;object-fit:cover;display:block"></div><div class="sbsc">SAN CARLOS</div></div>
+    <div class="sbb"><div style="font-size:3rem">✨</div></div>
+  </div>
+  <div class="frev" id="frev" style="display:none"></div>
+  <div class="revbtns" id="revbtns" style="display:none">
+    <button class="rbtn" onclick="irPegar()">🖼️ IR A PEGAR</button>
+    <button class="rbtn sec" onclick="closeSov()">✕ CERRAR</button>
+  </div>
+  <p style="color:rgba(255,255,255,.4);font-size:.73rem;margin-top:.8rem" id="sovctr"></p>
+</div>
+
+<!-- HAM -->
+<div class="hov" id="hov" onclick="toggleHam()"></div>
+<div class="hmenu" id="hmenu">
+  <div class="hmh">
+    <div class="hlogo" style="overflow:hidden"><img src="Logo San Carlos.png" style="width:100%;height:100%;object-fit:cover;border-radius:50%"></div>
+    <h3>SAN CARLOS</h3>
+    <p id="hcl">MUNDIAL 2026</p>
+  </div>
+  <div class="hnav">
+    <div class="hni active" id="hn-album" onclick="nav('album')"><span class="ico">🌍</span>Álbum</div>
+    <div class="hni" id="hn-sobres" onclick="nav('sobres')"><span class="ico">📦</span>Sobres</div>
+    <div class="hni" id="hn-pegar" onclick="nav('pegar')"><span class="ico">🖼️</span>Pegar Figuritas</div>
+    <div class="hni" id="hn-intercambio" onclick="nav('intercambio')"><span class="ico">🔄</span>Intercambio</div>
+    <div class="hni" id="hn-especiales" onclick="nav('especiales')"><span class="ico">⭐</span>Especiales</div>
+    <div class="hdiv"></div>
+    <div class="hprog">
+      <p style="font-size:.72rem;color:rgba(255,255,255,.4)">MI PROGRESO</p>
+      <div class="hprogbar"><div id="hpf" class="hprogfill" style="width:0%"></div></div>
+      <p style="font-size:.7rem;color:rgba(255,255,255,.4)" id="hpt">0/350</p>
+    </div>
+    <div class="hdiv"></div>
+  </div>
+  <button class="hbsalir" onclick="salir()">🚪 Cerrar sesión</button>
+</div>
+
+<!-- MODAL -->
+<div class="movl" id="movl" onclick="if(event.target===this)closeMod()">
+  <div class="modal">
+    <button class="mcl" onclick="closeMod()">✕</button>
+    <h3 style="color:var(--dorado);margin-bottom:1rem" class="bb">FIGURITA</h3>
+    <div id="mcont"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- NAV INFERIOR -->
+<nav class="bnav" id="bnav">
+  <button class="bnb active" id="bn-album" onclick="nav('album')"><span class="bi">🌍</span><span>Álbum</span></button>
+  <button class="bnb" id="bn-sobres" onclick="nav('sobres')"><span class="bi">📦</span><span>Sobres</span></button>
+  <button class="bnb" id="bn-pegar" onclick="nav('pegar')"><span class="bi">🖼️</span><span>Pegar</span></button>
+  <button class="bnb" id="bn-intercambio" onclick="nav('intercambio')"><span class="bi">🔄</span><span>Cambio</span></button>
+  <button class="bnb" id="bn-especiales" onclick="nav('especiales')"><span class="bi">⭐</span><span>Especiales</span></button>
+</nav>
+
+<script>
+// AUDIO
+let AC=null;
+function gAC(){if(!AC)try{AC=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}return AC;}
+function snd(t){
+  const c=gAC();if(!c)return;
+  const tm=c.currentTime;
+  const mk=(f1,f2,type,start,dur,vol)=>{
+    const o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);
+    o.type=type||'sine';
+    o.frequency.setValueAtTime(f1,tm+start);
+    if(f2)o.frequency.exponentialRampToValueAtTime(f2,tm+start+dur*.6);
+    g.gain.setValueAtTime(vol||.25,tm+start);
+    g.gain.exponentialRampToValueAtTime(.001,tm+start+dur);
+    o.start(tm+start);o.stop(tm+start+dur+.05);
+  };
+  if(t==='pegar'){mk(440,880,'sine',0,.3,.3);}
+  else if(t==='sobre'){mk(200,600,'sawtooth',0,.4,.2);mk(600,1200,'sine',.1,.4,.15);}
+  else if(t==='completo'){[523,659,784,1047,1319].forEach((f,i)=>mk(f,0,'sine',i*.1,.5,.22));}
+  else if(t==='click'){mk(300,0,'triangle',0,.1,.1);}
+  else if(t==='inter'){[330,440,550].forEach((f,i)=>mk(f,0,'sine',i*.15,.3,.2));}
+}
+
+// DATA
+const PAISES=[
+  {id:'ar',n:'Argentina',bg:'#5588bb',fcd:'ar',info:{c:'América del Sur',i:'Español',p:'46 millones',g:['Messi 🐐','Batistuta','Crespo'],cp:'3 Mundiales 🏆',co:'15 Copas América'}},
+  {id:'br',n:'Brasil',bg:'#009c3b',fcd:'br',info:{c:'América del Sur',i:'Portugués',p:'215 millones',g:['Ronaldo','Pelé','Romário'],cp:'5 Mundiales 🏆',co:'9 Copas América'}},
+  {id:'uy',n:'Uruguay',bg:'#4477aa',fcd:'uy',info:{c:'América del Sur',i:'Español',p:'3.5 millones',g:['Suárez','Forlán','Schiaffino'],cp:'2 Mundiales 🏆',co:'15 Copas América'}},
+  {id:'us',n:'EE.UU.',bg:'#b22234',fcd:'us',info:{c:'América del Norte',i:'Inglés',p:'335 millones',g:['Donovan','McBride','Pulisic'],cp:'0 Mundiales',co:'1 Copa Oro'}},
+  {id:'mx',n:'México',bg:'#006847',fcd:'mx',info:{c:'América del Norte',i:'Español',p:'128 millones',g:['Blanco','J.Hernández','Borgetti'],cp:'0 Mundiales',co:'11 Copas Oro'}},
+  {id:'es',n:'España',bg:'#c60b1e',fcd:'es',info:{c:'Europa',i:'Español',p:'47 millones',g:['Villa','Hierro','Morientes'],cp:'1 Mundial 🏆',co:'3 Eurocopas'}},
+  {id:'pt',n:'Portugal',bg:'#006600',fcd:'pt',info:{c:'Europa',i:'Portugués',p:'10 millones',g:['C.Ronaldo','Eusébio','Pauleta'],cp:'0 Mundiales',co:'2 Eurocopas'}},
+  {id:'fr',n:'Francia',bg:'#002395',fcd:'fr',info:{c:'Europa',i:'Francés',p:'68 millones',g:['Platini','Fontaine','Zidane'],cp:'2 Mundiales 🏆',co:'2 Eurocopas'}},
+  {id:'en',n:'Inglaterra',bg:'#012169',fcd:'gb-eng',info:{c:'Europa',i:'Inglés',p:'57 millones',g:['Rooney','Charlton','Lineker'],cp:'1 Mundial 🏆',co:'0 Eurocopas'}},
+  {id:'de',n:'Alemania',bg:'#333',fcd:'de',info:{c:'Europa',i:'Alemán',p:'84 millones',g:['T.Müller','Klose','Rahn'],cp:'4 Mundiales 🏆',co:'3 Eurocopas'}},
+  {id:'jp',n:'Japón',bg:'#bc002d',fcd:'jp',info:{c:'Asia',i:'Japonés',p:'125 millones',g:['Nakamura','Ono','Miura'],cp:'0 Mundiales',co:'4 Copas Asia'}},
+  {id:'kr',n:'Corea del Sur',bg:'#c60c30',fcd:'kr',info:{c:'Asia',i:'Coreano',p:'52 millones',g:['Cha','Park','Son'],cp:'0 Mundiales',co:'2 Copas Asia'}},
+  {id:'sn',n:'Senegal',bg:'#00853f',fcd:'sn',info:{c:'África',i:'Francés',p:'17 millones',g:['Mané','Diouf','Ba'],cp:'0 Mundiales',co:'1 Copa África'}},
+  {id:'ma',n:'Marruecos',bg:'#c1272d',fcd:'ma',info:{c:'África',i:'Árabe',p:'37 millones',g:['Hakimi','Ziyech','Hadda'],cp:'0 Mundiales',co:'1 Copa África'}},
+  {id:'au',n:'Australia',bg:'#00008b',fcd:'au',info:{c:'Oceanía',i:'Inglés',p:'26 millones',g:['Cahill','Kewell','Viduka'],cp:'0 Mundiales',co:'5 Copas Asia'}}
+];
+function flagImg(p,w,h){return`<img src="https://flagcdn.com/w${w||80}/${p.fcd}.png" style="width:100%;height:100%;object-fit:cover" alt="${p.n}" onerror="this.style.display='none'">`;}
+const ECOLE=[
+  {id:'sc01',nombre:'Equipo de Dirección',desc:'Nuestros directivos',e:'👨‍💼',holo:false},
+  {id:'sc02',nombre:'Seños Juntas',desc:'Todo el plantel docente',e:'👩‍🏫',holo:false},
+  {id:'sc03',nombre:'Aula Tech',desc:'Tecnología en el cole',e:'💻',holo:false},
+  {id:'sc04',nombre:'Rincón Literario',desc:'Nuestra biblioteca',e:'📚',holo:false},
+  {id:'sc05',nombre:'La Canchita',desc:'Patio deportivo',e:'⚽',holo:false},
+  {id:'sc06',nombre:'Logo San Carlos',desc:'FIGURITA HOLOGRÁFICA ✨',e:'⭐',holo:true,img:'Logo San Carlos.png'},
+];
+const EMUNDIAL=[
+  {id:'mw01',nombre:'La Copa del Mundo',desc:'El trofeo más codiciado',e:'🏆',holo:false,img:'Copa del Mundo.png'},
+  {id:'mw02',nombre:'Logo FIFA 2026',desc:'Organismo mundial del fútbol',e:'⚽',holo:false,img:'Logo Fifa.jpg'},
+  {id:'mw03',nombre:'La Trionda',desc:'Pelota oficial Adidas 2026',e:'🔴',holo:false,img:'Trionda.png'},
+  {id:'mw04',nombre:'Francia 2018',desc:'Campeón del Mundo',e:'🇫🇷',holo:false},
+  {id:'mw05',nombre:'Argentina 2022',desc:'Campeón del Mundo',e:'🇦🇷',holo:false},
+  {id:'mw06',nombre:'Estadios 2026',desc:'USA · México · Canadá',e:'🏟️',holo:false},
+];
+const NMS=['Sofía','Valentina','Lucía','Emma','Camila','Florencia','Martina','Isabella','Santiago','Mateo','Tomás','Benjamín','Lucas','Facundo','Nicolás','Agustín','Joaquín','Thiago','Mia','Bruno'];
+const GRS=['1°A','1°J','1°C','2°A','2°J','2°C','3°A','3°J','3°C','4°A','4°J','4°C','5°A','5°J','5°C','6°A','6°J','6°C'];
+const EMJS=['😊','😄','😎','🤩','🥳','😏','😜','🤓','😇','🤑','😋','🥸','😤','🦁','🐯'];
+const POS=['Delantero','Mediocampista','Defensor','Arquero','Volante','Lateral'];
+const HAB=['⚡ Velocidad','💪 Fuerza','🎯 Precisión','🧠 Inteligencia','🦅 Salto','🔥 Goleador','🛡️ Defensa','🎭 Regate'];
+
+// Generar figuritas: 4×4 = 16 normales + 1 holo
+const FPP={};
+PAISES.forEach(p=>{
+  const a=[];
+  for(let i=0;i<16;i++) a.push({
+    id:`${p.id}-${i+1}`,num:String(Math.floor(Math.random()*340+1)).padStart(3,'0'),
+    nm:NMS[Math.floor(Math.random()*NMS.length)],gr:GRS[Math.floor(Math.random()*GRS.length)],
+    em:EMJS[Math.floor(Math.random()*EMJS.length)],pos:POS[Math.floor(Math.random()*POS.length)],
+    hab:HAB[Math.floor(Math.random()*HAB.length)],pais:p.id,holo:false
+  });
+  a.push({id:`${p.id}-holo`,num:'★',nm:'Escudo Holográfico',gr:'ESPECIAL',em:'🛡️',pos:'Especial',hab:'✨ Holográfica',pais:p.id,holo:true});
+  FPP[p.id]=a;
+});
+function allFigs(){
+  const a=[];
+  PAISES.forEach(p=>FPP[p.id].forEach(f=>a.push(f)));
+  ECOLE.forEach(f=>a.push({...f,num:f.id,pais:'cole',pos:'Especial',hab:'🏫 San Carlos'}));
+  EMUNDIAL.forEach(f=>a.push({...f,num:f.id,pais:'mundial',pos:'Especial',hab:'⚽ Mundial'}));
+  return a;
+}
+const TOTAL=350;
+const PAGE_ORDER=PAISES.map(p=>p.id).concat(['cole','mundial']);
+const DN={arayan:'Arrayán',jacaranda:'Jacarandá',ceibo:'Ceibo'};
+
+// STATE
+let CC=''; // curso code
+function SK(k){return`sc_${CC}_${k}`;}
+function ldS(){
+  return{
+    peg:new Set(JSON.parse(localStorage.getItem(SK('peg'))||'[]')),
+    ap:JSON.parse(localStorage.getItem(SK('ap'))||'[]'),
+    rep:JSON.parse(localStorage.getItem(SK('rep'))||'[]'),
+    shoy:parseInt(localStorage.getItem(SK('sh'))||'0'),
+    fhoy:localStorage.getItem(SK('fh'))||'',
+    ihoy:localStorage.getItem(SK('ih'))||''
+  };
+}
+function svS(){
+  localStorage.setItem(SK('peg'),JSON.stringify([...S.peg]));
+  localStorage.setItem(SK('ap'),JSON.stringify(S.ap));
+  localStorage.setItem(SK('rep'),JSON.stringify(S.rep));
+  localStorage.setItem(SK('sh'),S.shoy);
+  localStorage.setItem(SK('fh'),S.fhoy);
+  localStorage.setItem(SK('ih'),S.ihoy||'');
+}
+let S={};
+
+// SCREENS
+function go(id){document.querySelectorAll('.screen').forEach(e=>e.classList.remove('active'));document.getElementById(id==='sp'?'sp':id==='l'?'sl':'sa').classList.add('active');}
+
+// STARS
+(()=>{const c=document.getElementById('stc');for(let i=0;i<55;i++){const s=document.createElement('div');s.className='star';const z=Math.random()*3+1;s.style.cssText=`position:absolute;width:${z}px;height:${z}px;background:rgba(255,255,255,${Math.random()*.7+.2});top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${Math.random()*3+2}s`;c.appendChild(s);}})();
+
+// LOGIN
+function login(){
+  const curso=document.getElementById('lcurso').value;
+  const pass=document.getElementById('lpass').value.trim().toLowerCase();
+  if(!curso){toast('⚠️ Seleccioná tu curso');return;}
+  const[g,d]=curso.split('-');
+  const exp=d==='arayan'?`arrayan${g}`:`${d}${g}`;
+  if(pass!==exp&&pass!=='demo'){document.getElementById('lerr').style.display='block';return;}
+  document.getElementById('lerr').style.display='none';
+  CC=curso; S=ldS();
+  const hoy=new Date().toDateString();
+  if(S.fhoy!==hoy){S.shoy=0;S.fhoy=hoy;S.ihoy='';svS();}
+  const lbl=`${g}° ${DN[d]||d}`;
+  document.getElementById('cdisplay').textContent=lbl.toUpperCase();
+  document.getElementById('hcl').textContent=lbl.toUpperCase();
+  initApp(); go('sa'); snd('click');
+}
+function salir(){toggleHam();go('sp');document.getElementById('lpass').value='';document.getElementById('bnav').classList.remove('vis');}
+
+// INIT
+function initApp(){buildCG();buildIS();buildEsp();updProg();updPaqUI();renderAP();nav('album',true);document.getElementById('bnav').classList.add('vis');}
+
+// NAV
+let CT='album';
+function nav(t,silent){
+  if(!silent)snd('click');
+  CT=t;
+  document.querySelectorAll('.tc').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.hni').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.bnb').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  const hn=document.getElementById('hn-'+t);if(hn)hn.classList.add('active');
+  const bn=document.getElementById('bn-'+t);if(bn)bn.classList.add('active');
+  if(t==='pegar')renderAP();
+  if(t==='intercambio')renderI();
+  if(t==='especiales')buildEsp();
+  toggleHam(true);
+}
+let mopen=false;
+function toggleHam(fc){mopen=fc===true?false:!mopen;document.getElementById('hmenu').classList.toggle('open',mopen);document.getElementById('hov').classList.toggle('open',mopen);}
+
+// PROGRESS
+function updProg(){
+  const pct=Math.round((S.peg.size/TOTAL)*100);
+  document.getElementById('pbf').style.width=pct+'%';
+  document.getElementById('ppc').textContent=pct+'%';
+  document.getElementById('pnums').textContent=`(${S.peg.size}/${TOTAL})`;
+  document.getElementById('hpf').style.width=pct+'%';
+  document.getElementById('hpt').textContent=`${S.peg.size}/${TOTAL}`;
+}
+
+// COUNTRIES
+function buildCG(){
+  document.getElementById('cgrid').innerHTML=PAISES.map(p=>{
+    const fs=FPP[p.id];const pg=fs.filter(f=>S.peg.has(f.id)).length;
+    return`<div class="ccard ${pg===fs.length?'completo':''}" onclick="showPage('${p.id}')">
+      <div class="hbadge"></div>
+      <div class="flag-box" style="overflow:hidden;background:#111">${flagImg(p,80)}</div>
+      <div class="cname">${p.n}</div>
+      <div class="cprog">${pg}/${fs.length}</div>
+    </div>`;
+  }).join('');
+  const cp=ECOLE.filter(f=>S.peg.has(f.id)).length;
+  const mp=EMUNDIAL.filter(f=>S.peg.has(f.id)).length;
+  const ce=document.getElementById('pgcole');if(ce)ce.textContent=`${cp}/${ECOLE.length}`;
+  const me=document.getElementById('pgmundial');if(me)me.textContent=`${mp}/${EMUNDIAL.length}`;
+}
+
+// PAGE NAV
+let CPG='';
+function showPage(id){
+  CPG=id;
+  document.getElementById('vc').style.display='none';
+  document.getElementById('vp').style.display='block';
+  renderPg(id);
+}
+function backC(){document.getElementById('vc').style.display='';document.getElementById('vp').style.display='none';buildCG();}
+
+function renderPg(id){
+  const idx=PAGE_ORDER.indexOf(id);
+  const prev=idx>0?PAGE_ORDER[idx-1]:null;
+  const next=idx<PAGE_ORDER.length-1?PAGE_ORDER[idx+1]:null;
+  if(id==='cole'||id==='mundial'){renderSPg(id,prev,next);return;}
+  const p=PAISES.find(x=>x.id===id);
+  const fs=FPP[id]||[];
+  const norm=fs.filter(f=>!f.holo);
+  const holo=fs.find(f=>f.holo);
+  const peg=fs.filter(f=>S.peg.has(f.id)).length;
+  const falt=fs.length-peg;
+  document.getElementById('vp').innerHTML=`
+    <button class="bbtn" onclick="backC()">← Países</button>
+    <div class="pnav">
+      <button class="pnavbtn" onclick="showPage('${prev}')" ${!prev?'disabled':''}>←</button>
+      <div class="pnavmid">
+        <div style="width:48px;height:32px;border-radius:4px;overflow:hidden;margin:0 auto .3rem;border:1px solid rgba(255,255,255,.2)">${flagImg(p,80)}</div>
+        <h3>${p.n}</h3>
+        <span class="progbadge">📌 Faltan ${falt} figuritas</span>
+      </div>
+      <button class="pnavbtn" onclick="showPage('${next}')" ${!next?'disabled':''}>→</button>
+    </div>
+    <div class="cph" style="background:linear-gradient(135deg,${p.bg}44,rgba(0,0,0,.75))">
+      <div class="cphc">
+        <div class="cphe" style="background:${p.bg};overflow:hidden">${flagImg(p,80)}</div>
+        <div class="cphi">
+          <h2>${p.n}</h2>
+          <div class="pills">
+            <span class="pill">🌎 ${p.info.c}</span>
+            <span class="pill">🗣️ ${p.info.i}</span>
+            <span class="pill">👥 ${p.info.p}</span>
+            <span class="pill g">🏆 ${p.info.cp}</span>
+            <span class="pill">🌟 ${p.info.co}</span>
+          </div>
+          <div class="golea">⚽ Máximos goleadores: <b>${p.info.g.join(' · ')}</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="abar" style="border-radius:8px;margin-bottom:.6rem;font-size:.72rem">🏅 FIGURITAS DE ${p.n.toUpperCase()} · SAN CARLOS MUNDIAL 2026</div>
+    <div class="fgrid" style="grid-template-columns:repeat(2,1fr)">${norm.map(f=>rfig(f)).join('')}</div>
+    ${holo?`<div style="margin-top:.7rem"><div class="abar" style="border-radius:8px;margin-bottom:.5rem;font-size:.68rem">✨ ESCUDO HOLOGRÁFICO · ${p.n.toUpperCase()}</div><div style="display:flex;justify-content:center">${rfig(holo)}</div></div>`:''}
+  `;
+}
+
+function renderSPg(id,prev,next){
+  const figs=id==='cole'?ECOLE:EMUNDIAL;
+  const peg=figs.filter(f=>S.peg.has(f.id)).length;
+  const falt=figs.length-peg;
+  const tit=id==='cole'?'🏫 Colegio San Carlos':'🏆 Mundial 2026';
+  document.getElementById('vp').innerHTML=`
+    <button class="bbtn" onclick="backC()">← Países</button>
+    <div class="pnav">
+      <button class="pnavbtn" onclick="showPage('${prev}')" ${!prev?'disabled':''}>←</button>
+      <div class="pnavmid"><h3>${tit}</h3><span class="progbadge">📌 Faltan ${falt} figuritas</span></div>
+      <button class="pnavbtn" onclick="showPage('${next}')" ${!next?'disabled':''}>→</button>
+    </div>
+    <div class="abar" style="border-radius:8px;margin-bottom:.7rem;font-size:.72rem">⭐ PÁGINA ESPECIAL · SAN CARLOS MUNDIAL 2026</div>
+    <div class="espg">${figs.map(f=>rfigv(f)).join('')}</div>
+  `;
+}
+
+// Render figurita grid
+function rfig(f){
+  const pg=S.peg.has(f.id);const av=S.ap.some(x=>x.id===f.id);
+  const cls=`fig ${pg?'peg':''} ${av&&!pg?'avail':''} ${f.holo?'holo':''}`;
+  const ck=pg?`openMod('${f.id}')`:av?`pegFig('${f.id}')`:';';
+  return`<div class="${cls}" onclick="${ck}" id="fig-${f.id}">
+    <div class="fav">${!pg&&!av?`<div class="fvac">❓</div>`:f.em}</div>
+    <div class="ftxt">
+      <div class="fnum">#${f.num}</div>
+      <div class="fnm">${f.nm}</div>
+      <div class="fgr">${f.gr}</div>
+      ${av&&!pg?`<div style="font-size:.5rem;color:var(--rojo);font-weight:900">TAP PEGAR</div>`:''}
+    </div>
+  </div>`;
+}
+
+// Render figurita especial (landscape)
+function rfigv(f){
+  const pg=S.peg.has(f.id);const av=S.ap.some(x=>x.id===f.id);
+  const cls=`figl ${pg?'peg':''} ${f.holo?'holo':''}`;
+  const ck=pg?`openMod('${f.id}')`:av?`pegFig('${f.id}')`:';';
+  const icon=f.img?`<img src="${f.img}" style="width:100%;height:100%;object-fit:contain;border-radius:4px;padding:2px">`:(f.e||f.em);
+  return`<div class="${cls}" onclick="${ck}" id="fig-${f.id}">
+    <div class="figl-icon">${icon}</div>
+    <div class="figl-info">
+      <h4>${f.nombre||f.nm}</h4>
+      <p>${f.desc||f.gr}${f.holo?' ✨':''}</p>
+      ${av&&!pg?'<span style="color:var(--rojo);font-size:.55rem;font-weight:900">PEGAR</span>':''}
+    </div>
+  </div>`;
+}
+
+function pegFig(id){
+  const i=S.ap.findIndex(f=>f.id===id);if(i<0)return;
+  S.peg.add(id);S.ap.splice(i,1);svS();
+  snd('pegar');updProg();buildCG();toast('✅ ¡Figurita pegada!');
+  if(CPG)renderPg(CPG);
+  renderAP();
+  // check complete
+  const fig=allFigs().find(f=>f.id===id);
+  if(fig){
+    const arr=fig.pais==='cole'?ECOLE:fig.pais==='mundial'?EMUNDIAL:FPP[fig.pais];
+    if(arr&&arr.every(f=>S.peg.has(f.id))){snd('completo');toast('🎉 ¡PÁGINA COMPLETA!');}
+  }
+}
+
+// SOBRES
+function updPaqUI(){
+  document.getElementById('pdots').innerHTML=Array(5).fill(0).map((_,i)=>`<div class="pdot ${i<S.shoy?'used':''}"></div>`).join('');
+  const r=5-S.shoy;
+  document.getElementById('ptxt').textContent=r>0?`Quedan ${r} sobres para hoy`:'🚫 Límite diario alcanzado';
+  ['o1','o3','o5'].forEach((id,i)=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.classList.toggle('dis',S.shoy+[1,3,5][i]>5);
+  });
+  setTimeout(()=>{
+    ['o1','o3','o5'].forEach((id,i)=>{
+      const el=document.getElementById(id);
+      if(!el||el.classList.contains('dis'))return;
+      setTimeout(()=>{el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),600);},i*220);
+    });
+  },600);
+}
+
+let pend=[];let cidx=0;
+function elegir(n){
+  if(S.shoy+n>5){toast(`⚠️ Solo podés abrir ${5-S.shoy} más hoy`);return;}
+  pend=[];for(let i=0;i<n;i++)pend.push(genSobre());
+  cidx=0;S.shoy+=n;svS();updPaqUI();openSov();
+}
+function openSov(){
+  document.getElementById('sovl').classList.add('active');
+  document.getElementById('frev').style.display='none';
+  document.getElementById('revbtns').style.display='none';
+  document.getElementById('sobig').classList.remove('flip');
+  document.getElementById('sovtit').textContent='¡TOCÁ EL SOBRE PARA ABRIRLO!';
+  updSovCtr();
+}
+function updSovCtr(){document.getElementById('sovctr').textContent=`Sobre ${cidx+1} de ${pend.length}`;}
+function flipSobre(){
+  const el=document.getElementById('sobig');if(el.classList.contains('flip'))return;
+  snd('sobre');el.classList.add('flip');
+  setTimeout(()=>mostrarFigs(pend[cidx]),700);
+}
+function mostrarFigs(figs){
+  document.getElementById('sovtit').textContent='🌟 ¡TUS FIGURITAS!';
+  const rev=document.getElementById('frev');rev.style.display='grid';rev.innerHTML='';
+  figs.forEach((f,i)=>{
+    const rep=S.peg.has(f.id)||S.ap.some(x=>x.id===f.id);
+    if(rep)S.rep.push(f);else S.ap.push(f);
+    const d=document.createElement('div');
+    d.className=`frc ${rep?'rep':''}`;
+    d.innerHTML=`<div style="font-size:1.5rem">${f.em}</div><div style="font-size:.58rem;font-weight:700">${f.nm}</div><div style="font-size:.52rem;color:rgba(255,255,255,.5)">#${f.num}</div>${rep?'<span class="repbdg">REP</span>':''}`;
+    rev.appendChild(d);
+    setTimeout(()=>d.classList.add('show'),i*120+100);
+  });
+  svS();updProg();buildCG();
+  setTimeout(()=>{
+    const btns=document.getElementById('revbtns');btns.style.display='flex';
+    if(cidx<pend.length-1){
+      btns.innerHTML=`<button class="rbtn" onclick="nextS()">▶ SIGUIENTE SOBRE (${cidx+2}/${pend.length})</button><button class="rbtn sec" onclick="closeSov()">✕</button>`;
+    } else {
+      btns.innerHTML=`<button class="rbtn" onclick="irPegar()">🖼️ IR A PEGAR</button><button class="rbtn sec" onclick="closeSov()">✕ CERRAR</button>`;
+    }
+  },figs.length*120+400);
+}
+function nextS(){cidx++;document.getElementById('frev').style.display='none';document.getElementById('revbtns').style.display='none';document.getElementById('sobig').classList.remove('flip');document.getElementById('sovtit').textContent='¡TOCÁ EL SOBRE!';updSovCtr();}
+function closeSov(){document.getElementById('sovl').classList.remove('active');renderAP();}
+function irPegar(){closeSov();nav('pegar');}
+function genSobre(){
+  const pool=[];PAISES.forEach(p=>FPP[p.id].filter(f=>!f.holo).forEach(f=>pool.push(f)));
+  return Array(5).fill(0).map(()=>pool[Math.floor(Math.random()*pool.length)]);
+}
+
+// PEGAR
+let FSel=null;
+function renderAP(){
+  const grid=document.getElementById('apgrid');
+  const emp=document.getElementById('pempty');
+  const hint=document.getElementById('phint');
+  if(!S.ap.length){grid.innerHTML='';emp.style.display='block';hint.style.display='none';return;}
+  emp.style.display='none';
+  hint.style.display=FSel?'block':'none';
+  grid.innerHTML=S.ap.map(f=>{
+    const p=PAISES.find(x=>x.id===f.pais);
+    return`<div class="pfig ${FSel===f.id?'sel':''}" onclick="selF('${f.id}')" ondblclick="irAF('${f.id}')" id="pf-${f.id}" title="Doble click: ir a la página">
+      <div style="font-size:1.6rem">${f.em}</div>
+      <div style="font-size:.6rem;font-weight:700">${f.nm}</div>
+      <div style="font-size:.52rem;color:rgba(255,255,255,.45)">${p?p.e:''} #${f.num}</div>
+    </div>`;
+  }).join('');
+}
+function selF(id){snd('click');FSel=id;const f=S.ap.find(x=>x.id===id);document.getElementById('fsnm').textContent=f?f.nm:'';document.getElementById('phint').style.display='block';renderAP();}
+function irAF(id){const f=S.ap.find(x=>x.id===id);if(!f)return;FSel=id;nav('album');setTimeout(()=>showPage(f.pais||'cole'),100);}
+
+// INTERCAMBIO
+function buildIS(){
+  const sel=document.getElementById('idest');
+  sel.innerHTML='<option value="">-- Seleccioná --</option>';
+  for(let g=1;g<=6;g++) Object.keys(DN).forEach(d=>{
+    if(`${g}-${d}`===CC)return;
+    const o=document.createElement('option');o.value=`${g}-${d}`;o.textContent=`${g}° ${DN[d]}`;sel.appendChild(o);
+  });
+}
+function renderI(){
+  const div=document.getElementById('idiv');
+  const hoy=new Date().toDateString();
+  if(S.ihoy===hoy){div.innerHTML=`<div class="istatus">✅ Ya intercambiaste hoy. ¡Volvé mañana!</div>`;document.getElementById('binter').disabled=true;return;}
+  div.innerHTML='';
+  const reps=S.rep.slice(0,5);
+  const mis=document.getElementById('imis');const su=document.getElementById('isu');
+  if(reps.length<5){
+    mis.innerHTML=`<p style="color:rgba(255,255,255,.4);font-size:.76rem">Necesitás al menos 5 repetidas (tenés ${S.rep.length})</p>`;
+    document.getElementById('binter').disabled=true;
+  } else {
+    mis.innerHTML=reps.map(f=>`<div class="ifb" title="${f.nm}">${f.em}</div>`).join('');
+    const dest=document.getElementById('idest').value;
+    if(dest){su.innerHTML=Array(5).fill(0).map(()=>`<div class="ifb oculta"></div>`).join('');document.getElementById('binter').disabled=false;}
+    else{su.innerHTML=`<p style="color:rgba(255,255,255,.4);font-size:.76rem">Seleccioná un curso</p>`;document.getElementById('binter').disabled=true;}
+  }
+}
+function doInter(){
+  const dest=document.getElementById('idest').value;
+  if(!dest||S.rep.length<5){toast('⚠️ Seleccioná curso y tener 5 repetidas');return;}
+  S.rep.splice(0,5);
+  genSobre().forEach(f=>{
+    if(!S.peg.has(f.id)&&!S.ap.some(x=>x.id===f.id))S.ap.push(f);else S.rep.push(f);
+  });
+  S.ihoy=new Date().toDateString();svS();
+  const[g,d]=dest.split('-');snd('inter');toast(`🔄 ¡Intercambio con ${g}° ${DN[d]||d}!`);
+  renderI();renderAP();
+}
+
+// ESPECIALES
+function buildEsp(){
+  document.getElementById('espcole').innerHTML=ECOLE.map(f=>rfigv(f)).join('');
+  document.getElementById('espmundial').innerHTML=EMUNDIAL.map(f=>rfigv(f)).join('');
+}
+
+// MODAL
+function openMod(id){
+  const f=allFigs().find(x=>x.id===id);if(!f)return;
+  const p=PAISES.find(x=>x.id===f.pais);
+  document.getElementById('mcont').innerHTML=`
+    <div class="mfc ${f.holo?'holo':''}">
+      <div class="mav">${f.img?`<img src="${f.img}" style="width:70px;height:70px;object-fit:contain;border-radius:8px">`:(f.em||f.e)}</div>
+      <h4 style="color:var(--dorado);font-size:1.2rem">${f.nm||f.nombre}</h4>
+      <p style="font-size:.72rem;color:rgba(255,255,255,.5)">#${f.num||f.id} · ${p?p.n:(f.pais==='cole'?'San Carlos':'Mundial')} ${p?p.e:''}</p>
+    </div>
+    <div class="mstats">
+      <div class="msi"><div class="msl">Grado</div><div class="msv" style="font-size:.82rem">${f.gr||'-'}</div></div>
+      <div class="msi"><div class="msl">Posición</div><div class="msv" style="font-size:.78rem">${f.pos||'-'}</div></div>
+      <div class="msi"><div class="msl">Habilidad</div><div class="msv" style="font-size:.68rem">${f.hab||'-'}</div></div>
+      <div class="msi"><div class="msl">País</div><div class="msv">${p?p.e:'⭐'}</div></div>
+    </div>
+    ${f.holo?'<p style="text-align:center;color:var(--dorado);font-size:.78rem;margin-top:.5rem">✨ HOLOGRÁFICA ESPECIAL ✨</p>':''}
+  `;
+  document.getElementById('movl').classList.add('active');
+}
+function closeMod(){document.getElementById('movl').classList.remove('active');}
+
+// TOAST
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2600);
+}
+</script>
+</body>
+</html>
