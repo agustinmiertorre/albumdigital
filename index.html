@@ -253,6 +253,9 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 .flag-ma{background:#c1272d;}
 .flag-au{background:#00008b;}
 </style>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -548,9 +551,36 @@ const TOTAL=350;
 const PAGE_ORDER=PAISES.map(p=>p.id).concat(['cole','mundial']);
 const DN={arayan:'Arrayán',jacaranda:'Jacarandá',ceibo:'Ceibo'};
 
+// ── FIREBASE CONFIG ──────────────────────────────────────────────
+// 1) Entrá a https://console.firebase.google.com
+// 2) Creá un proyecto (ej: "album-san-carlos")
+// 3) Agregá una app web → copiá los datos aquí abajo
+// 4) En Firebase: Build → Realtime Database → Crear → modo prueba
+const FB={
+  apiKey:"TU_API_KEY",
+  authDomain:"TU_PROYECTO.firebaseapp.com",
+  databaseURL:"https://TU_PROYECTO-default-rtdb.firebaseio.com",
+  projectId:"TU_PROYECTO"
+};
+let fbDB=null;
+try{firebase.initializeApp(FB);fbDB=firebase.database();}catch(e){console.warn('Firebase no configurado, modo local');}
+// ─────────────────────────────────────────────────────────────────
+
 // STATE
 let CC=''; // curso code
+let _syncOff=null;
 function SK(k){return`sc_${CC}_${k}`;}
+
+function _parseS(d){
+  return{
+    peg:new Set(d.peg||[]),
+    ap:d.ap||[],
+    rep:d.rep||[],
+    shoy:parseInt(d.shoy||0),
+    fhoy:d.fhoy||'',
+    ihoy:d.ihoy||''
+  };
+}
 function ldS(){
   return{
     peg:new Set(JSON.parse(localStorage.getItem(SK('peg'))||'[]')),
@@ -561,13 +591,35 @@ function ldS(){
     ihoy:localStorage.getItem(SK('ih'))||''
   };
 }
-function svS(){
+function _cacheS(){
   localStorage.setItem(SK('peg'),JSON.stringify([...S.peg]));
   localStorage.setItem(SK('ap'),JSON.stringify(S.ap));
   localStorage.setItem(SK('rep'),JSON.stringify(S.rep));
   localStorage.setItem(SK('sh'),S.shoy);
   localStorage.setItem(SK('fh'),S.fhoy);
   localStorage.setItem(SK('ih'),S.ihoy||'');
+}
+function svS(){
+  _cacheS();
+  if(!fbDB)return;
+  fbDB.ref(`albums/${CC}`).set({
+    peg:[...S.peg],ap:S.ap,rep:S.rep,
+    shoy:S.shoy,fhoy:S.fhoy,ihoy:S.ihoy||''
+  });
+}
+function startSync(){
+  if(_syncOff)_syncOff();
+  if(!fbDB)return;
+  _syncOff=fbDB.ref(`albums/${CC}`).on('value',snap=>{
+    if(!snap.exists())return;
+    const d=snap.val();
+    S.peg=new Set(d.peg||[]);
+    S.ap=d.ap||[];S.rep=d.rep||[];
+    S.shoy=parseInt(d.shoy||0);
+    S.fhoy=d.fhoy||'';S.ihoy=d.ihoy||'';
+    _cacheS();
+    updProg();buildCG();updPaqUI();renderAP();
+  });
 }
 let S={};
 
@@ -578,7 +630,7 @@ function go(id){document.querySelectorAll('.screen').forEach(e=>e.classList.remo
 (()=>{const c=document.getElementById('stc');for(let i=0;i<55;i++){const s=document.createElement('div');s.className='star';const z=Math.random()*3+1;s.style.cssText=`position:absolute;width:${z}px;height:${z}px;background:rgba(255,255,255,${Math.random()*.7+.2});top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${Math.random()*3+2}s`;c.appendChild(s);}})();
 
 // LOGIN
-function login(){
+async function login(){
   const curso=document.getElementById('lcurso').value;
   const pass=document.getElementById('lpass').value.trim().toLowerCase();
   if(!curso){toast('⚠️ Seleccioná tu curso');return;}
@@ -586,12 +638,21 @@ function login(){
   const exp=d==='arayan'?`arrayan${g}`:`${d}${g}`;
   if(pass!==exp&&pass!=='demo'){document.getElementById('lerr').style.display='block';return;}
   document.getElementById('lerr').style.display='none';
-  CC=curso; S=ldS();
+  CC=curso;
+  // Cargar desde Firebase si está configurado, sino desde localStorage
+  if(fbDB){
+    toast('☁️ Cargando álbum...');
+    try{
+      const snap=await fbDB.ref(`albums/${CC}`).get();
+      S=snap.exists()?_parseS(snap.val()):ldS();
+    }catch(e){S=ldS();}
+  }else{S=ldS();}
   const hoy=new Date().toDateString();
   if(S.fhoy!==hoy){S.shoy=0;S.fhoy=hoy;S.ihoy='';svS();}
   const lbl=`${g}° ${DN[d]||d}`;
   document.getElementById('cdisplay').textContent=lbl.toUpperCase();
   document.getElementById('hcl').textContent=lbl.toUpperCase();
+  startSync();
   initApp(); go('sa'); snd('click');
 }
 function salir(){toggleHam();go('sp');document.getElementById('lpass').value='';document.getElementById('bnav').classList.remove('vis');}
