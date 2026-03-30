@@ -236,6 +236,27 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 ::-webkit-scrollbar{width:5px;height:5px;}
 ::-webkit-scrollbar-thumb{background:var(--dorado);border-radius:3px;}
 
+/* MODO VISTA */
+#sv{background:linear-gradient(135deg,#001f33,#0a0a1a);align-items:flex-start;justify-content:flex-start;}
+.vhdr{background:linear-gradient(90deg,var(--azul),#001f33);padding:.8rem 1rem;display:flex;align-items:center;gap:.8rem;position:sticky;top:0;z-index:10;}
+.vpais-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:.6rem;margin-top:.8rem;}
+.vpais{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:.7rem;text-align:center;cursor:pointer;transition:.2s;}
+.vpais:hover{border-color:var(--dorado);transform:translateY(-2px);}
+
+/* ADMIN */
+#sadmin{background:linear-gradient(135deg,#1a0005,#0a0a1a);align-items:flex-start;justify-content:flex-start;}
+.admin-hdr{background:linear-gradient(90deg,#8b0000,var(--rojo));padding:.8rem 1rem;display:flex;align-items:center;gap:.8rem;position:sticky;top:0;z-index:10;width:100%;}
+.admin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.7rem;margin-top:1rem;}
+.acard{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:.8rem;text-align:center;}
+.acard.comp{border-color:var(--dorado);background:rgba(240,192,64,.08);}
+.acard h4{font-size:.85rem;color:var(--dorado);margin-bottom:.25rem;}
+.acard .apct{font-size:1.1rem;font-weight:900;color:var(--dorado);}
+.acard .aprog{font-size:.65rem;color:rgba(255,255,255,.45);margin:.15rem 0;}
+.acard .abarra{height:5px;background:rgba(255,255,255,.1);border-radius:5px;overflow:hidden;margin:.3rem 0;}
+.acard .afill{height:100%;background:linear-gradient(90deg,var(--dorado),var(--rojo));border-radius:5px;transition:width .8s;}
+.areset{background:rgba(228,5,31,.15);border:1px solid rgba(228,5,31,.5);color:var(--rojo);padding:.3rem .7rem;border-radius:7px;font-size:.68rem;font-weight:900;cursor:pointer;margin-top:.4rem;font-family:inherit;transition:.2s;}
+.areset:hover{background:var(--rojo);color:#fff;}
+
 /* FLAG COLORS inline */
 .flag-ar{background:linear-gradient(to bottom,#74acdf 33%,#fff 33% 67%,#74acdf 67%);position:relative;}
 .flag-br{background:#009c3b;}
@@ -270,6 +291,10 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
     <span class="ball"><img src="Trionda.png" style="width:5rem;height:5rem;display:block;object-fit:contain"></span>
     <p style="color:rgba(255,255,255,.6);font-size:.85rem;margin-bottom:1.5rem">El álbum de figuritas oficial del cole<br>¡Coleccioná a tus compañeros y recorré el mundo!</p>
     <button class="pbtn" onclick="go('l')">📚 INGRESAR AL ÁLBUM</button>
+    <br>
+    <button class="pbtn sec" onclick="go('sv')" style="margin-top:.5rem">👁️ VER ÁLBUMES</button>
+    <br>
+    <button class="pbtn sec" onclick="go('sadmin')" style="margin-top:.3rem;border-color:var(--rojo);color:var(--rojo);font-size:.85rem">🔧 ADMIN</button>
     <br><br>
     <p style="color:rgba(255,255,255,.3);font-size:.68rem">🏅 ~350 figuritas · 18 cursos · 16 países + especiales</p>
   </div>
@@ -627,7 +652,7 @@ function startSync(){
 let S={};
 
 // SCREENS
-function go(id){document.querySelectorAll('.screen').forEach(e=>e.classList.remove('active'));document.getElementById(id==='sp'?'sp':id==='l'?'sl':'sa').classList.add('active');}
+function go(id){document.querySelectorAll('.screen').forEach(e=>e.classList.remove('active'));const m={sp:'sp',l:'sl',sa:'sa',sv:'sv',sadmin:'sadmin'};document.getElementById(m[id]||'sp').classList.add('active');}
 
 // STARS
 (()=>{const c=document.getElementById('stc');for(let i=0;i<55;i++){const s=document.createElement('div');s.className='star';const z=Math.random()*3+1;s.style.cssText=`position:absolute;width:${z}px;height:${z}px;background:rgba(255,255,255,${Math.random()*.7+.2});top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${Math.random()*3+2}s`;c.appendChild(s);}})();
@@ -986,6 +1011,166 @@ function toast(msg){
   const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
   clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2600);
 }
+
+// ── MODO VISTA ────────────────────────────────────────────────────
+let VPEG=new Set();
+async function cargarVista(){
+  const cc=document.getElementById('vsel').value;
+  if(!cc){toast('⚠️ Elegí un curso');return;}
+  const[g,d]=cc.split('-');
+  const lbl=`${g}° ${DN[d]||d}`;
+  document.getElementById('vresult').innerHTML=`<p style="text-align:center;color:rgba(255,255,255,.5);padding:2rem">☁️ Cargando ${lbl}...</p>`;
+  VPEG=new Set();
+  if(fbDB){
+    try{const snap=await fbDB.ref(`albums/${cc}`).get();if(snap.exists())VPEG=new Set(snap.val().peg||[]);}catch(e){}
+  }
+  const total=TOTAL;const pegCount=VPEG.size;const pct=Math.round(pegCount/total*100);
+  let html=`
+    <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:1rem;text-align:center;margin-bottom:1rem">
+      <div style="font-size:1.2rem;font-weight:900;color:var(--dorado)">${lbl.toUpperCase()}</div>
+      <div style="font-size:.8rem;color:rgba(255,255,255,.55);margin:.25rem 0">${pegCount} de ${total} figuritas pegadas</div>
+      <div style="background:rgba(255,255,255,.1);border-radius:20px;height:10px;overflow:hidden;margin:.5rem 0">
+        <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,var(--dorado),var(--rojo));border-radius:20px"></div>
+      </div>
+      <div style="font-size:1.4rem;font-weight:900;color:var(--dorado)">${pct}%</div>
+    </div>
+    <div id="vpaisdetalle"></div>
+    <div class="vpais-grid">`;
+  PAISES.forEach(p=>{
+    const fs=FPP[p.id];const pg=fs.filter(f=>VPEG.has(f.id)).length;const t2=fs.length;const p2=Math.round(pg/t2*100);
+    html+=`<div class="vpais" onclick="verVistaPais('${p.id}')">
+      <div style="font-size:1.8rem">${p.em}</div>
+      <div style="font-size:.75rem;font-weight:900;margin:.15rem 0">${p.n}</div>
+      <div style="font-size:.58rem;color:rgba(255,255,255,.45)">${pg}/${t2} · ${p2}%</div>
+      <div style="height:4px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;margin-top:.3rem">
+        <div style="width:${p2}%;height:100%;background:var(--dorado);border-radius:4px"></div>
+      </div>
+    </div>`;
+  });
+  html+=`</div>`;
+  document.getElementById('vresult').innerHTML=html;
+}
+function rfigRO(f){
+  const pg=VPEG.has(f.id);
+  const cls=`fig ${pg?'peg':''} ${f.holo?'holo':''}`;
+  return`<div class="${cls}" style="cursor:default">
+    <div class="fav">${!pg?`<div class="fvac">❓</div>`:f.em}</div>
+    <div class="ftxt"><div class="fnum">#${f.num}</div><div class="fnm">${f.nm}</div><div class="fgr">${f.gr}</div></div>
+  </div>`;
+}
+function verVistaPais(id){
+  const p=PAISES.find(x=>x.id===id);const fs=FPP[id];
+  const pg=fs.filter(f=>VPEG.has(f.id)).length;
+  document.getElementById('vpaisdetalle').innerHTML=`
+    <div style="margin-bottom:.8rem">
+      <button class="bbtn" onclick="document.getElementById('vpaisdetalle').innerHTML=''">← Países</button>
+      <div style="font-size:1rem;font-weight:900;color:var(--dorado);margin:.4rem 0">${p.em} ${p.n} · ${pg}/${fs.length} pegadas</div>
+      <div class="fgrid" style="grid-template-columns:repeat(4,1fr)">${fs.map(f=>rfigRO(f)).join('')}</div>
+    </div>`;
+  document.getElementById('vpaisdetalle').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── ADMIN ─────────────────────────────────────────────────────────
+const ADMIN_PASS='admin2026';
+function adminLogin(){
+  const p=document.getElementById('apass').value;
+  if(p!==ADMIN_PASS){document.getElementById('aerr').style.display='block';return;}
+  document.getElementById('aerr').style.display='none';
+  document.getElementById('admin-gate').style.display='none';
+  document.getElementById('admin-panel').style.display='flex';
+  loadAdminData();
+}
+function resetAdmin(){
+  document.getElementById('apass').value='';
+  document.getElementById('aerr').style.display='none';
+  document.getElementById('admin-gate').style.display='flex';
+  document.getElementById('admin-panel').style.display='none';
+}
+async function loadAdminData(){
+  const grid=document.getElementById('admin-grid');
+  grid.innerHTML=`<p style="color:rgba(255,255,255,.45);grid-column:1/-1;text-align:center;padding:2rem">☁️ Cargando datos...</p>`;
+  const cursos=[];
+  for(let g=1;g<=6;g++) Object.keys(DN).forEach(d=>cursos.push(`${g}-${d}`));
+  const cards=await Promise.all(cursos.map(async cc=>{
+    const[g,d]=cc.split('-');const lbl=`${g}° ${DN[d]||d}`;
+    let pegCount=0;
+    if(fbDB){try{const snap=await fbDB.ref(`albums/${cc}/peg`).get();if(snap.exists())pegCount=(snap.val()||[]).length;}catch(e){}}
+    const pct=Math.round(pegCount/TOTAL*100);
+    return`<div class="acard ${pct===100?'comp':''}">
+      <h4>${lbl}</h4>
+      <div class="apct">${pct}%</div>
+      <div class="abarra"><div class="afill" style="width:${pct}%"></div></div>
+      <div class="aprog">${pegCount} / ${TOTAL} figuritas</div>
+      <button class="areset" onclick="resetCurso('${cc}','${lbl}')">🗑️ Resetear datos</button>
+    </div>`;
+  }));
+  grid.innerHTML=cards.join('');
+}
+async function resetCurso(cc,lbl){
+  if(!confirm(`¿Borrar TODOS los datos de ${lbl}?\n\nEsta acción no se puede deshacer.`))return;
+  if(!fbDB){toast('⚠️ Firebase no conectado');return;}
+  await fbDB.ref(`albums/${cc}`).remove();
+  ['peg','ap','rep','sh','fh','ih'].forEach(k=>localStorage.removeItem(`sc_${cc}_${k}`));
+  toast(`✅ Datos de ${lbl} borrados`);
+  loadAdminData();
+}
 </script>
+
+<!-- MODO VISTA -->
+<div id="sv" class="screen">
+  <div class="vhdr">
+    <button class="bbtn" onclick="go('sp')" style="margin:0">← Inicio</button>
+    <div>
+      <div style="font-size:1rem;font-weight:900;color:var(--dorado)">👁️ MODO VISTA</div>
+      <div style="font-size:.65rem;color:rgba(255,255,255,.5)">Solo lectura · sin modificar</div>
+    </div>
+  </div>
+  <div style="padding:1rem;width:100%;max-width:620px;margin:0 auto">
+    <div style="display:flex;gap:.6rem;margin-bottom:1rem">
+      <select id="vsel" style="flex:1;padding:.8rem;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font-family:inherit;font-size:.9rem;outline:none">
+        <option value="">-- Elegí un curso --</option>
+        <optgroup label="1° Grado"><option value="1-arayan">1° Arrayán</option><option value="1-jacaranda">1° Jacarandá</option><option value="1-ceibo">1° Ceibo</option></optgroup>
+        <optgroup label="2° Grado"><option value="2-arayan">2° Arrayán</option><option value="2-jacaranda">2° Jacarandá</option><option value="2-ceibo">2° Ceibo</option></optgroup>
+        <optgroup label="3° Grado"><option value="3-arayan">3° Arrayán</option><option value="3-jacaranda">3° Jacarandá</option><option value="3-ceibo">3° Ceibo</option></optgroup>
+        <optgroup label="4° Grado"><option value="4-arayan">4° Arrayán</option><option value="4-jacaranda">4° Jacarandá</option><option value="4-ceibo">4° Ceibo</option></optgroup>
+        <optgroup label="5° Grado"><option value="5-arayan">5° Arrayán</option><option value="5-jacaranda">5° Jacarandá</option><option value="5-ceibo">5° Ceibo</option></optgroup>
+        <optgroup label="6° Grado"><option value="6-arayan">6° Arrayán</option><option value="6-jacaranda">6° Jacarandá</option><option value="6-ceibo">6° Ceibo</option></optgroup>
+      </select>
+      <button class="pbtn" style="margin:0;padding:.8rem 1.2rem;font-size:.9rem" onclick="cargarVista()">👁️ VER</button>
+    </div>
+    <div id="vresult"></div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="sadmin" class="screen">
+  <div id="admin-gate" style="display:flex;flex:1;align-items:center;justify-content:center;width:100%">
+    <div class="lcard">
+      <div style="font-size:2.5rem;margin-bottom:.5rem">🔧</div>
+      <h2 class="bb" style="color:var(--rojo)">PANEL ADMIN</h2>
+      <p style="color:rgba(255,255,255,.5);font-size:.85rem;margin-bottom:1.2rem">Acceso exclusivo para administradores</p>
+      <input type="password" id="apass" placeholder="Contraseña de administrador" style="width:100%;padding:.9rem;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font-family:inherit;font-size:1rem;margin-bottom:1rem;outline:none" onkeydown="if(event.key==='Enter')adminLogin()">
+      <div class="lerr" id="aerr">❌ Contraseña incorrecta</div>
+      <button class="pbtn" style="width:100%;margin:0;background:linear-gradient(135deg,var(--rojo),#8b0000)" onclick="adminLogin()">ENTRAR 🔧</button>
+      <br><button class="bvolver" onclick="go('sp')">← Volver al inicio</button>
+    </div>
+  </div>
+  <div id="admin-panel" style="display:none;flex-direction:column;width:100%">
+    <div class="admin-hdr">
+      <button class="bbtn" onclick="go('sp');resetAdmin()" style="margin:0">← Salir</button>
+      <div style="flex:1">
+        <div style="font-size:1rem;font-weight:900">🔧 PANEL ADMINISTRADOR</div>
+        <div style="font-size:.65rem;color:rgba(255,255,255,.7)">San Carlos · Mundial 2026</div>
+      </div>
+      <button class="bbtn" onclick="loadAdminData()" style="margin:0">🔄</button>
+    </div>
+    <div style="padding:1rem">
+      <div style="font-size:.8rem;color:rgba(255,255,255,.5);margin-bottom:.3rem">Estado de todos los cursos · datos en tiempo real</div>
+      <div class="admin-grid" id="admin-grid">
+        <p style="color:rgba(255,255,255,.4);grid-column:1/-1;text-align:center;padding:2rem">Cargando...</p>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
