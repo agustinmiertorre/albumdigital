@@ -69,29 +69,26 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 .ahinfo{flex:1;}
 .ahinfo h3{font-size:.95rem;color:var(--dorado);}
 .ahinfo p{font-size:.68rem;color:rgba(255,255,255,.5);}
-.progbar-wrap{background:linear-gradient(90deg,#001828,#0a0a1a);padding:.6rem 1rem;display:flex;align-items:center;gap:.8rem;}
-.pbl{font-size:.72rem;color:rgba(255,255,255,.55);}
-.pbw{flex:1;background:rgba(255,255,255,.1);border-radius:20px;height:10px;overflow:hidden;}
-.pbf{height:100%;background:linear-gradient(90deg,var(--dorado),var(--rojo));border-radius:20px;transition:width 1s;position:relative;overflow:hidden;}
-.pbf::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);animation:sh 2s infinite;}
-@keyframes sh{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
-.ppc{font-family:Impact,Arial,sans-serif;font-size:1rem;color:var(--dorado);}
+.progbar-wrap{background:rgba(0,0,0,.2);padding:.4rem 1rem;display:flex;align-items:center;gap:.6rem;}
+.pbl{font-size:.65rem;color:rgba(255,255,255,.4);}
+.pbw{flex:1;background:rgba(255,255,255,.08);border-radius:20px;height:6px;overflow:hidden;}
+.pbf{height:100%;background:linear-gradient(90deg,var(--dorado),var(--rojo));border-radius:20px;transition:width 1s;}
+.ppc{font-family:Impact,Arial,sans-serif;font-size:.9rem;color:var(--dorado);}
 
 /* TAB CONTENT */
 .tc{display:none;padding:1rem 1rem 70px;flex:1;}
 .tc.active{display:block;}
 
 /* COUNTRIES */
-.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.8rem;}
-.ccard{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:.8rem;text-align:center;cursor:pointer;transition:all .25s;position:relative;}
-.ccard:hover{transform:translateY(-3px);border-color:var(--dorado);}
-.ccard.completo{border-color:var(--dorado);background:rgba(240,192,64,.1);}
-/* FLAG SVG inline */
-.flag-box{width:60px;height:40px;border-radius:5px;margin:0 auto .4rem;display:flex;align-items:center;justify-content:center;font-size:1.8rem;border:1px solid rgba(255,255,255,.2);overflow:hidden;}
-.cname{font-size:.9rem;font-weight:900;}
-.cprog{font-size:.7rem;color:rgba(255,255,255,.5);margin-top:.2rem;}
-.hbadge{position:absolute;top:5px;right:5px;width:14px;height:14px;border-radius:50%;background:conic-gradient(#f0c040,#e4051f,#00476c,#a0f060,#f0c040);animation:hp 2s infinite;}
-@keyframes hp{0%,100%{box-shadow:0 0 8px rgba(240,192,64,.8)}50%{box-shadow:0 0 20px rgba(240,192,64,1)}}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:.5rem;}
+.ccard{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:.6rem;text-align:center;cursor:pointer;transition:all .2s;position:relative;}
+.ccard:hover{border-color:var(--dorado);}
+.ccard.completo{border-color:rgba(240,192,64,.5);background:rgba(240,192,64,.06);}
+.flag-box{width:48px;height:32px;border-radius:4px;margin:0 auto .3rem;display:flex;align-items:center;justify-content:center;font-size:1.5rem;overflow:hidden;}
+.cname{font-size:.8rem;font-weight:900;}
+.cprog{font-size:.62rem;color:rgba(255,255,255,.4);margin-top:.15rem;}
+.hbadge{position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:var(--dorado);animation:hp 2s infinite;}
+@keyframes hp{0%,100%{opacity:.6}50%{opacity:1}}
 
 /* PAGE */
 .pnav{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem;}
@@ -101,42 +98,33 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 .pnavmid{text-align:center;}
 .pnavmid h3{font-size:1.1rem;color:var(--dorado);}
 .progbadge{display:inline-block;background:rgba(240,192,64,.15);border:1px solid var(--dorado);border-radius:12px;padding:.2rem .7rem;font-size:.73rem;color:var(--dorado);margin-top:.25rem;}
-.cph{border-radius:12px;padding:1rem;margin-bottom:.8rem;position:relative;overflow:hidden;}
-.cphc{display:flex;gap:.8rem;align-items:flex-start;position:relative;z-index:1;}
-.cphe{width:60px;height:60px;flex-shrink:0;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(240,192,64,.5);border:2px solid var(--dorado);font-size:2rem;overflow:hidden;}
-.cphi h2{font-size:1.3rem;color:var(--dorado);}
-.pills{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.4rem;}
-.pill{background:rgba(255,255,255,.1);border-radius:12px;padding:.22rem .55rem;font-size:.68rem;color:rgba(255,255,255,.8);}
-.pill.g{background:rgba(240,192,64,.2);color:var(--dorado);}
-.pill.r{background:rgba(228,5,31,.2);color:#ff8888;}
-.golea{margin-top:.4rem;font-size:.7rem;color:rgba(255,255,255,.6);}
+.cph{border-radius:8px;padding:.6rem .8rem;margin-bottom:.6rem;position:relative;overflow:hidden;}
+.cphc{display:flex;gap:.6rem;align-items:center;position:relative;z-index:1;}
+.cphe{width:40px;height:40px;flex-shrink:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;overflow:hidden;}
+.cphi h2{font-size:1rem;color:var(--dorado);}
+.pills{display:flex;flex-wrap:wrap;gap:.25rem;margin-top:.25rem;}
+.pill{background:rgba(255,255,255,.07);border-radius:8px;padding:.15rem .45rem;font-size:.6rem;color:rgba(255,255,255,.6);}
+.pill.g{background:rgba(240,192,64,.12);color:var(--dorado);}
+.pill.r{background:rgba(228,5,31,.12);color:#ff8888;}
+.golea{margin-top:.25rem;font-size:.6rem;color:rgba(255,255,255,.45);}
 
 /* FIGURITAS GRID */
-.fgrid{display:grid;gap:.65rem;}
-.fig{background:linear-gradient(135deg,#1a1a2e,#16213e);border:2px solid rgba(255,255,255,.1);border-radius:8px;padding:.3rem .3rem .4rem;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;}
-.fig.peg{border-color:var(--dorado);background:linear-gradient(135deg,rgba(240,192,64,.15),rgba(228,5,31,.08));}
-.fig.peg::after{content:'✓';position:absolute;top:3px;right:5px;color:var(--dorado);font-size:.7rem;font-weight:900;}
+.fgrid{display:grid;gap:.45rem;}
+.fig{background:#13132a;border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:.25rem .25rem .35rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;}
+.fig.peg{border-color:var(--dorado);background:rgba(240,192,64,.08);}
+.fig.peg::after{content:'✓';position:absolute;top:2px;right:4px;color:var(--dorado);font-size:.6rem;font-weight:900;}
 .fig.avail{border-color:var(--rojo);animation:pa 2s infinite;}
-@keyframes pa{0%,100%{box-shadow:0 0 8px rgba(228,5,31,.3)}50%{box-shadow:0 0 18px rgba(228,5,31,.7)}}
-.fig.holo{background:linear-gradient(135deg,rgba(240,192,64,.2),rgba(0,200,255,.15));border-color:var(--dorado);}
-.fav{width:100%;aspect-ratio:3/4;border-radius:5px;background:linear-gradient(135deg,#2a2a4a,#1a3a5a);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:2.2rem;overflow:hidden;}
-.ftxt{width:100%;text-align:center;margin-top:.25rem;}
-.fnum{font-size:.52rem;color:var(--dorado);background:var(--azul);padding:1px 4px;border-radius:3px;display:inline-block;margin-bottom:.1rem;}
-.fnm{font-size:.6rem;font-weight:700;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.fgr{font-size:.5rem;color:rgba(255,255,255,.45);margin-top:.08rem;}
-.fvac{font-size:2rem;opacity:.2;}
+@keyframes pa{0%,100%{box-shadow:0 0 6px rgba(228,5,31,.3)}50%{box-shadow:0 0 14px rgba(228,5,31,.6)}}
+.fig.holo{background:rgba(240,192,64,.08);border-color:var(--dorado);}
+.fav{width:100%;aspect-ratio:3/4;border-radius:4px;background:#1e1e3a;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.7rem;overflow:hidden;}
+.ftxt{width:100%;text-align:center;margin-top:.2rem;}
+.fnum{font-size:.46rem;color:var(--dorado);background:rgba(0,71,108,.8);padding:1px 3px;border-radius:2px;display:inline-block;margin-bottom:.08rem;}
+.fnm{font-size:.55rem;font-weight:700;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.fgr{font-size:.45rem;color:rgba(255,255,255,.35);margin-top:.05rem;}
+.fvac{font-size:1.6rem;opacity:.18;}
 
-/* ESPECIALES - figuritas acostadas */
-.espg{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;}
-.figl{background:linear-gradient(135deg,#1a1a2e,#16213e);border:2px solid rgba(255,255,255,.1);border-radius:10px;padding:.45rem;display:flex;align-items:center;gap:.4rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
-.figl:hover{border-color:var(--dorado);}
-.figl.peg{border-color:var(--dorado);background:linear-gradient(135deg,rgba(240,192,64,.12),rgba(228,5,31,.06));}
-.figl.peg::after{content:'✓';position:absolute;top:3px;right:5px;color:var(--dorado);font-size:.6rem;font-weight:900;}
-.figl.holo{border-color:var(--dorado);background:linear-gradient(135deg,rgba(240,192,64,.18),rgba(0,200,255,.12));}
-.figl-icon{width:36px;height:48px;border-radius:5px;background:linear-gradient(135deg,#2a4a7a,#1a2a4a);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
-.figl-info{flex:1;min-width:0;}
-.figl-info h4{font-size:.65rem;font-weight:900;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.figl-info p{font-size:.55rem;color:rgba(255,255,255,.45);margin-top:.1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* ESPECIALES - mismo formato que países */
+.espg{display:grid;gap:.45rem;}
 
 /* BARRA NAV INFERIOR */
 .bnav{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(to top,#001828,#0a0a1a);border-top:1px solid rgba(255,255,255,.12);display:none;z-index:120;}
@@ -783,7 +771,7 @@ function renderPg(id){
       </div>
     </div>
     <div class="abar" style="border-radius:8px;margin-bottom:.6rem;font-size:.72rem">🏅 FIGURITAS DE ${p.n.toUpperCase()} · SAN CARLOS MUNDIAL 2026</div>
-    <div class="fgrid" style="grid-template-columns:repeat(4,1fr)">${norm.map(f=>rfig(f)).join('')}</div>
+    <div class="fgrid" style="grid-template-columns:repeat(5,1fr)">${norm.map(f=>rfig(f)).join('')}</div>
     ${holo?`<div style="margin-top:.7rem"><div class="abar" style="border-radius:8px;margin-bottom:.5rem;font-size:.68rem">✨ ESCUDO HOLOGRÁFICO · ${p.n.toUpperCase()}</div><div style="display:flex;justify-content:center">${rfig(holo)}</div></div>`:''}
   `;
 }
@@ -800,8 +788,8 @@ function renderSPg(id,prev,next){
       <div class="pnavmid"><h3>${tit}</h3><span class="progbadge">📌 Faltan ${falt} figuritas</span></div>
       <button class="pnavbtn" onclick="showPage('${next}')" ${!next?'disabled':''}>→</button>
     </div>
-    <div class="abar" style="border-radius:8px;margin-bottom:.7rem;font-size:.72rem">⭐ PÁGINA ESPECIAL · SAN CARLOS MUNDIAL 2026</div>
-    <div class="espg">${figs.map(f=>rfigv(f)).join('')}</div>
+    <div class="abar" style="border-radius:8px;margin-bottom:.6rem;font-size:.72rem">⭐ PÁGINA ESPECIAL · SAN CARLOS MUNDIAL 2026</div>
+    <div class="espg" style="grid-template-columns:repeat(5,1fr)">${figs.map(f=>rfig(f)).join('')}</div>
   `;
 }
 
@@ -980,8 +968,10 @@ function doInter(){
 
 // ESPECIALES
 function buildEsp(){
-  document.getElementById('espcole').innerHTML=ECOLE.map(f=>rfigv(f)).join('');
-  document.getElementById('espmundial').innerHTML=EMUNDIAL.map(f=>rfigv(f)).join('');
+  document.getElementById('espcole').style.gridTemplateColumns='repeat(5,1fr)';
+  document.getElementById('espmundial').style.gridTemplateColumns='repeat(5,1fr)';
+  document.getElementById('espcole').innerHTML=ECOLE.map(f=>rfig(f)).join('');
+  document.getElementById('espmundial').innerHTML=EMUNDIAL.map(f=>rfig(f)).join('');
 }
 
 // MODAL
@@ -1065,7 +1055,7 @@ function verVistaPais(id){
     <div style="margin-bottom:.8rem">
       <button class="bbtn" onclick="document.getElementById('vpaisdetalle').innerHTML=''">← Países</button>
       <div style="font-size:1rem;font-weight:900;color:var(--dorado);margin:.4rem 0">${p.em} ${p.n} · ${pg}/${fs.length} pegadas</div>
-      <div class="fgrid" style="grid-template-columns:repeat(4,1fr)">${fs.map(f=>rfigRO(f)).join('')}</div>
+      <div class="fgrid" style="grid-template-columns:repeat(5,1fr)">${fs.map(f=>rfigRO(f)).join('')}</div>
     </div>`;
   document.getElementById('vpaisdetalle').scrollIntoView({behavior:'smooth',block:'start'});
 }
