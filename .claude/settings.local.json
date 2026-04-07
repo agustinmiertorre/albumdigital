@@ -3,7 +3,12 @@
     "allow": [
       "Skill(update-config)",
       "Bash(npx firebase-tools:*)",
-      "Bash(npm list:*)"
+      "Bash(npm list:*)",
+      "Bash(powershell -Command \"Add-Type -AssemblyName ''System.Drawing''; $pdf = ''Diseño sin título \\(1\\).pdf''; Write-Host ''File size:'' \\(Get-Item $pdf\\).Length\")",
+      "Bash(python -c \"import fitz; doc=fitz.open\\(r''C:/Users/Aula Tech/Desktop/Proyecto/Album de figuritas/Errores/Diseño sin título \\(1\\).pdf''\\); print\\(f''Páginas: {len\\(doc\\)}''\\); [print\\(doc[i].get_text\\(\\)\\) for i in range\\(len\\(doc\\)\\)]\")",
+      "Bash(python -c \"import PyPDF2\")",
+      "Bash(pip install:*)",
+      "Bash(python:*)"
     ]
   }
 }
