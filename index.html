@@ -7,7 +7,7 @@
 <style>
 @import url('data:text/css,');
 :root{--rojo:#e4051f;--azul:#00476c;--dorado:#f0c040;--negro:#111;--blanco:#fff;}
-*{margin:0;padding:0;box-sizing:border-box;}
+*{margin:0;padding:0;box-sizing:border-box;cursor:url('Copa del Mundo.png') 12 0, auto;}
 body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;min-height:100vh;overflow-x:hidden;}
 .bb{font-family:Impact,'Arial Black',Arial,sans-serif;letter-spacing:2px;}
 .screen{display:none;min-height:100vh;flex-direction:column;}
@@ -80,12 +80,12 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 .tc.active{display:block;}
 
 /* COUNTRIES */
-.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:.5rem;}
-.ccard{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:.6rem;text-align:center;cursor:pointer;transition:all .2s;position:relative;}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.6rem;}
+.ccard{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:1rem;text-align:center;cursor:pointer;transition:all .2s;position:relative;}
 .ccard:hover{border-color:var(--dorado);}
 .ccard.completo{border-color:rgba(240,192,64,.5);background:rgba(240,192,64,.06);}
-.flag-box{width:48px;height:32px;border-radius:4px;margin:0 auto .3rem;display:flex;align-items:center;justify-content:center;font-size:1.5rem;overflow:hidden;}
-.cname{font-size:.8rem;font-weight:900;}
+.flag-box{width:64px;height:44px;border-radius:4px;margin:0 auto .3rem;display:flex;align-items:center;justify-content:center;font-size:1.5rem;overflow:hidden;}
+.cname{font-size:.9rem;font-weight:900;}
 .cprog{font-size:.62rem;color:rgba(255,255,255,.4);margin-top:.15rem;}
 .hbadge{position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:var(--dorado);animation:hp 2s infinite;}
 @keyframes hp{0%,100%{opacity:.6}50%{opacity:1}}
@@ -102,9 +102,9 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 .cphc{display:flex;gap:.5rem;align-items:center;position:relative;z-index:1;}
 .cphe{width:30px;height:30px;flex-shrink:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;overflow:hidden;}
 .cphi h2{font-size:.85rem;color:var(--dorado);}
-.pills{display:none;}
-.pill{display:none;}
-.golea{display:none;}
+.pills{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.3rem;}
+.pill{display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:.2rem .6rem;font-size:.62rem;color:rgba(255,255,255,.75);}
+.golea{display:block;font-size:.62rem;color:rgba(255,255,255,.5);margin-top:.3rem;}
 
 /* FIGURITAS GRID */
 .fgrid{display:grid;gap:.3rem;}
@@ -133,57 +133,64 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 .bnb span{font-size:.52rem;}
 
 /* SOBRES */
-.sbox{max-width:580px;margin:0 auto;text-align:center;}
-.daystatus{background:rgba(255,255,255,.05);border-radius:12px;padding:.8rem;margin-bottom:1.2rem;border:1px solid rgba(255,255,255,.1);}
-.pdots{display:flex;gap:.4rem;justify-content:center;margin:.4rem 0;}
-.pdot{width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);transition:.3s;}
-.pdot.used{background:var(--dorado);border-color:var(--dorado);box-shadow:0 0 8px rgba(240,192,64,.5);}
-.spanel{background:linear-gradient(135deg,rgba(228,5,31,.12),rgba(0,71,108,.12));border:1px solid rgba(228,5,31,.3);border-radius:15px;padding:1.2rem;margin-bottom:1.5rem;}
-.spanel h3{font-size:1.1rem;color:var(--rojo);margin-bottom:.6rem;}
-.sopts{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;}
+.sbox{max-width:600px;margin:0 auto;text-align:center;}
+.sobre-hero{position:relative;overflow:hidden;padding:2.5rem 1.5rem 2rem;text-align:center;background:linear-gradient(160deg,rgba(228,5,31,.2) 0%,rgba(0,71,108,.25) 100%);}
+.sobre-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(240,192,64,.12),transparent 65%);pointer-events:none;}
+.sobre-hero-tit{font-size:1.9rem;font-weight:900;color:var(--dorado);letter-spacing:3px;text-shadow:0 0 30px rgba(240,192,64,.5);position:relative;z-index:1;font-family:Impact,'Arial Black',Arial,sans-serif;}
+.sobre-hero-sub{font-size:.82rem;color:rgba(255,255,255,.5);margin:.5rem 0 1.2rem;position:relative;z-index:1;}
+.sobre-dots-row{display:flex;align-items:center;justify-content:center;gap:.6rem;position:relative;z-index:1;}
+.pdots{display:flex;gap:.5rem;justify-content:center;}
+.pdot{width:32px;height:32px;border-radius:50%;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);transition:.3s;}
+.pdot.used{background:var(--dorado);border-color:var(--dorado);box-shadow:0 0 10px rgba(240,192,64,.6);}
+.sobre-opts-section{padding:1.5rem 1rem 5rem;}
+.sobre-opts-tit{font-size:.7rem;letter-spacing:3px;color:rgba(255,255,255,.35);text-align:center;margin-bottom:1rem;text-transform:uppercase;}
+.sopts{display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap;}
 .sopt{cursor:pointer;transition:all .3s;text-align:center;}
-.sopt:hover:not(.dis){transform:scale(1.06);}
-.sopt.dis{opacity:.35;cursor:not-allowed;}
-.sicon{width:72px;height:96px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px solid var(--dorado);position:relative;overflow:hidden;margin-bottom:.3rem;}
-.s1bg{background:linear-gradient(135deg,#8b0000,var(--rojo));}
-.s3bg{background:linear-gradient(135deg,#004080,var(--azul));}
-.s5bg{background:linear-gradient(135deg,#806000,var(--dorado));}
-.sicon::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.18),transparent 50%);border-radius:8px;}
-.sicon .sball{font-size:1.8rem;}
-.sicon .scnt{font-size:.9rem;font-weight:900;color:rgba(255,255,255,.9);}
-.slbl{font-size:.78rem;color:rgba(255,255,255,.6);font-weight:700;}
+.sopt:hover:not(.dis){transform:translateY(-8px) scale(1.04);}
+.sopt.dis{opacity:.3;cursor:not-allowed;}
+.sicon{width:108px;height:148px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;margin-bottom:.6rem;box-shadow:0 10px 30px rgba(0,0,0,.6);}
+.s1bg{background:linear-gradient(160deg,#c8000f 0%,#7a0008 100%);border:2px solid rgba(240,192,64,.6);}
+.s3bg{background:linear-gradient(160deg,#005ac8 0%,#002878 100%);border:2px solid rgba(240,192,64,.6);}
+.s5bg{background:linear-gradient(160deg,#c89000 0%,#7a5500 100%);border:2px solid rgba(240,192,64,.9);}
+.sicon::before{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(rgba(255,255,255,.18),transparent);border-radius:14px 14px 0 0;}
+.sicon::after{content:'';position:absolute;inset:6px;border:1px solid rgba(255,255,255,.15);border-radius:9px;pointer-events:none;}
+.sicon .sball{font-size:2rem;position:relative;z-index:1;}
+.sicon .scnt{font-size:1.3rem;font-weight:900;color:#fff;position:relative;z-index:1;text-shadow:0 2px 8px rgba(0,0,0,.5);}
+.slbl{font-size:.8rem;color:rgba(255,255,255,.7);font-weight:900;letter-spacing:1px;}
 @keyframes shk{0%,100%{transform:rotate(0) scale(1)}20%{transform:rotate(-6deg) scale(1.08)}40%{transform:rotate(6deg) scale(1.08)}60%{transform:rotate(-3deg)}80%{transform:rotate(3deg)}}
 .shake{animation:shk .55s;}
 
 /* SOBRE OVERLAY */
-.sovl{display:none;position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:200;flex-direction:column;align-items:center;justify-content:center;padding:1rem;}
+.sovl{display:none;position:fixed;inset:0;background:radial-gradient(ellipse at 50% 20%,#0d1a3a 0%,#050510 70%);z-index:200;flex-direction:column;align-items:center;justify-content:center;padding:1rem;overflow-y:auto;}
 .sovl.active{display:flex;}
-.sovtit{font-size:1.4rem;color:var(--dorado);margin-bottom:1rem;letter-spacing:2px;font-weight:900;}
-.sobig{width:155px;height:212px;border-radius:12px;cursor:pointer;position:relative;transform-style:preserve-3d;transition:transform .65s;margin-bottom:1.5rem;}
+.sovtit{font-size:1.5rem;color:var(--dorado);margin-bottom:1.5rem;letter-spacing:3px;font-weight:900;text-shadow:0 0 25px rgba(240,192,64,.6);text-align:center;font-family:Impact,'Arial Black',Arial,sans-serif;}
+.sobig{width:200px;height:274px;border-radius:18px;cursor:pointer;position:relative;transform-style:preserve-3d;transition:transform .75s cubic-bezier(.4,1.4,.6,1);margin-bottom:2rem;filter:drop-shadow(0 20px 50px rgba(228,5,31,.55));}
 .sobig.flip{transform:rotateY(180deg);}
-.sbf,.sbb{position:absolute;inset:0;border-radius:12px;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;flex-direction:column;}
-.sbf{background:linear-gradient(135deg,var(--rojo),#8b0000);border:3px solid var(--dorado);box-shadow:0 0 30px rgba(228,5,31,.5);}
-.sbf::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.2),transparent 40%);border-radius:12px;}
-.sbf .sbl{font-size:3.2rem;}
-.sbf .sbsc{font-size:.8rem;color:rgba(255,255,255,.9);letter-spacing:1px;font-weight:900;white-space:nowrap;margin-top:.3rem;}
-.sbb{background:linear-gradient(135deg,var(--azul),#001f33);border:3px solid var(--dorado);transform:rotateY(180deg);}
-.frev{display:grid;grid-template-columns:repeat(5,1fr);gap:.45rem;max-width:420px;width:95vw;}
-.frc{background:linear-gradient(135deg,var(--azul),#001f33);border:2px solid var(--dorado);border-radius:10px;padding:.3rem;text-align:center;opacity:0;transform:translateY(30px) scale(.8);transition:all .4s cubic-bezier(.34,1.56,.64,1);display:flex;flex-direction:column;align-items:center;}
+.sbf,.sbb{position:absolute;inset:0;border-radius:18px;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.4rem;}
+.sbf{background:linear-gradient(160deg,#c8000f 0%,#8b0006 45%,#5a0004 100%);border:3px solid var(--dorado);box-shadow:inset 0 0 40px rgba(0,0,0,.4);}
+.sbf::before{content:'';position:absolute;top:0;left:0;right:0;height:45%;background:linear-gradient(rgba(255,255,255,.2),transparent);border-radius:18px 18px 0 0;}
+.sbf::after{content:'';position:absolute;inset:8px;border:1px solid rgba(240,192,64,.3);border-radius:12px;pointer-events:none;}
+.sbf .sbl{font-size:3rem;position:relative;z-index:1;}
+.sbf .sbsc{font-size:.85rem;color:rgba(255,255,255,.95);letter-spacing:2px;font-weight:900;white-space:nowrap;position:relative;z-index:1;}
+.sbb{background:linear-gradient(160deg,var(--azul),#001028);border:3px solid var(--dorado);}
+.frev{display:grid;grid-template-columns:repeat(5,1fr);gap:.55rem;max-width:440px;width:96vw;}
+.frc{background:linear-gradient(160deg,#1a2a6c,#001028);border:2px solid var(--dorado);border-radius:12px;overflow:hidden;text-align:center;opacity:0;transform:translateY(40px) scale(.7);transition:all .45s cubic-bezier(.34,1.56,.64,1);display:flex;flex-direction:column;align-items:center;}
 .frc.show{opacity:1;transform:translateY(0) scale(1);}
-.frc.rep{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.05);}
-.frc-img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:6px;margin-bottom:.2rem;}
-.frc-ico{font-size:1.5rem;line-height:1;padding:.3rem 0;}
-.repbdg{background:rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:.52rem;padding:1px 4px;border-radius:4px;display:inline-block;margin-top:.1rem;}
-.revbtns{display:flex;gap:.8rem;margin-top:1rem;flex-wrap:wrap;justify-content:center;}
-.rbtn{background:linear-gradient(135deg,var(--dorado),#c8922a);color:var(--negro);border:none;padding:.7rem 1.4rem;border-radius:12px;font-size:1rem;font-weight:900;cursor:pointer;}
-.rbtn.sec{background:rgba(255,255,255,.1);color:#fff;}
+.frc.rep{border-color:rgba(255,255,255,.2);background:rgba(30,30,30,.6);}
+.frc-img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;}
+.frc-ico{font-size:1.5rem;line-height:1;padding:.5rem 0;}
+.frc-info{padding:.25rem .3rem .3rem;width:100%;}
+.repbdg{background:rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:.5rem;padding:1px 4px;border-radius:4px;display:inline-block;}
+.revbtns{display:flex;gap:.8rem;margin-top:1.2rem;flex-wrap:wrap;justify-content:center;}
+.rbtn{background:linear-gradient(135deg,var(--dorado),#c8922a);color:var(--negro);border:none;padding:.8rem 1.8rem;border-radius:14px;font-size:1rem;font-weight:900;cursor:pointer;box-shadow:0 4px 15px rgba(240,192,64,.4);}
+.rbtn.sec{background:rgba(255,255,255,.1);color:#fff;box-shadow:none;}
 
 /* PEGAR */
 .pegbox{max-width:700px;margin:0 auto;}
 .apgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:.55rem;margin-bottom:1rem;}
-.pfig{background:linear-gradient(135deg,var(--azul),#001f33);border:2px dashed var(--dorado);border-radius:10px;padding:.45rem;text-align:center;cursor:pointer;transition:all .2s;user-select:none;}
-.pfig:hover{transform:scale(1.05);box-shadow:0 0 12px rgba(240,192,64,.4);}
-.pfig.sel{border-color:var(--rojo);background:rgba(228,5,31,.2);border-style:solid;box-shadow:0 0 15px rgba(228,5,31,.5);}
+.pfig{background:transparent;border:none;border-radius:10px;overflow:hidden;cursor:pointer;transition:all .25s;user-select:none;position:relative;box-shadow:0 4px 14px rgba(0,0,0,.6);}
+.pfig:hover{transform:scale(1.06) translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.8);}
+.pfig.sel{outline:3px solid var(--rojo);outline-offset:2px;box-shadow:0 0 18px rgba(228,5,31,.7);}
 .pempty{text-align:center;color:rgba(255,255,255,.35);padding:2.5rem;display:none;}
 .phint{background:rgba(240,192,64,.08);border:1px solid rgba(240,192,64,.3);border-radius:10px;padding:.7rem;text-align:center;color:var(--dorado);font-size:.8rem;margin-bottom:.8rem;display:none;}
 
@@ -346,21 +353,39 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
   </div>
 
   <!-- SOBRES -->
-  <div id="tab-sobres" class="tc">
-    <div class="sbox">
-      <div class="abar" style="border-radius:10px;margin-bottom:1rem">📦 APERTURA DE SOBRES</div>
-      <div class="daystatus">
-        <p style="font-size:.8rem;color:var(--dorado);font-weight:700;margin-bottom:.3rem">📅 SOBRES ABIERTOS HOY</p>
+  <div id="tab-sobres" class="tc" style="padding:0 0 60px!important;">
+    <div class="sobre-hero">
+      <div class="sobre-hero-tit">🎴 APERTURA DE SOBRES</div>
+      <div class="sobre-hero-sub">La seño elige cuántos abrir según el comportamiento del curso</div>
+      <div class="sobre-dots-row">
+        <span style="font-size:.75rem;color:rgba(255,255,255,.5)">HOY:</span>
         <div class="pdots" id="pdots"></div>
-        <p style="font-size:.73rem;color:rgba(255,255,255,.5)" id="ptxt">Máximo 5 por día</p>
+        <span style="font-size:.75rem;color:rgba(255,255,255,.5)" id="ptxt">Máximo 5</span>
       </div>
-      <div class="spanel">
-        <h3>👩‍🏫 LA SEÑO ELIGE CUÁNTOS ABRIR</h3>
-        <p style="font-size:.76rem;color:rgba(255,255,255,.6);margin-bottom:.9rem">Según el comportamiento y desempeño del curso</p>
-        <div class="sopts">
-          <div class="sopt" id="o1" onclick="elegir(1)"><div class="sicon s1bg"><div class="sball"><img src="Trionda.png" style="width:1.8rem;height:1.8rem;border-radius:50%;object-fit:cover;display:block"></div><div class="scnt">×1</div></div><div class="slbl">1 SOBRE</div></div>
-          <div class="sopt" id="o3" onclick="elegir(3)"><div class="sicon s3bg"><div class="sball"><img src="Trionda.png" style="width:1.8rem;height:1.8rem;border-radius:50%;object-fit:cover;display:block"></div><div class="scnt">×3</div></div><div class="slbl">3 SOBRES</div></div>
-          <div class="sopt" id="o5" onclick="elegir(5)"><div class="sicon s5bg"><div class="sball"><img src="Trionda.png" style="width:1.8rem;height:1.8rem;border-radius:50%;object-fit:cover;display:block"></div><div class="scnt">×5</div></div><div class="slbl">5 SOBRES</div></div>
+    </div>
+    <div class="sobre-opts-section">
+      <div class="sobre-opts-tit">¿Cuántos sobres abrís hoy?</div>
+      <div class="sopts">
+        <div class="sopt" id="o1" onclick="elegir(1)">
+          <div class="sicon s1bg">
+            <div class="sball"><img src="logoFifa.png" style="width:2.2rem;height:2.2rem;object-fit:contain;display:block"></div>
+            <div class="scnt">×1</div>
+          </div>
+          <div class="slbl">1 SOBRE</div>
+        </div>
+        <div class="sopt" id="o3" onclick="elegir(3)">
+          <div class="sicon s3bg">
+            <div class="sball"><img src="logoFifa.png" style="width:2.2rem;height:2.2rem;object-fit:contain;display:block"></div>
+            <div class="scnt">×3</div>
+          </div>
+          <div class="slbl">3 SOBRES</div>
+        </div>
+        <div class="sopt" id="o5" onclick="elegir(5)">
+          <div class="sicon s5bg">
+            <div class="sball"><img src="logoFifa.png" style="width:2.2rem;height:2.2rem;object-fit:contain;display:block"></div>
+            <div class="scnt">×5</div>
+          </div>
+          <div class="slbl">5 SOBRES</div>
         </div>
       </div>
     </div>
@@ -501,22 +526,23 @@ function snd(t){
 
 // DATA
 const PAISES=[
-  {id:'ar',n:'Argentina',bg:'#5588bb',fcd:'ar',info:{c:'América del Sur',i:'Español',p:'46 millones',g:['Messi 🐐','Batistuta','Crespo'],cp:'3 Mundiales 🏆',co:'15 Copas América'}},
-  {id:'br',n:'Brasil',bg:'#009c3b',fcd:'br',info:{c:'América del Sur',i:'Portugués',p:'215 millones',g:['Ronaldo','Pelé','Romário'],cp:'5 Mundiales 🏆',co:'9 Copas América'}},
-  {id:'uy',n:'Uruguay',bg:'#4477aa',fcd:'uy',info:{c:'América del Sur',i:'Español',p:'3.5 millones',g:['Suárez','Forlán','Schiaffino'],cp:'2 Mundiales 🏆',co:'15 Copas América'}},
-  {id:'us',n:'EE.UU.',bg:'#b22234',fcd:'us',info:{c:'América del Norte',i:'Inglés',p:'335 millones',g:['Donovan','McBride','Pulisic'],cp:'0 Mundiales',co:'1 Copa Oro'}},
-  {id:'mx',n:'México',bg:'#006847',fcd:'mx',info:{c:'América del Norte',i:'Español',p:'128 millones',g:['Blanco','J.Hernández','Borgetti'],cp:'0 Mundiales',co:'11 Copas Oro'}},
-  {id:'es',n:'España',bg:'#c60b1e',fcd:'es',info:{c:'Europa',i:'Español',p:'47 millones',g:['Villa','Hierro','Morientes'],cp:'1 Mundial 🏆',co:'3 Eurocopas'}},
-  {id:'pt',n:'Portugal',bg:'#006600',fcd:'pt',info:{c:'Europa',i:'Portugués',p:'10 millones',g:['C.Ronaldo','Eusébio','Pauleta'],cp:'0 Mundiales',co:'2 Eurocopas'}},
-  {id:'fr',n:'Francia',bg:'#002395',fcd:'fr',info:{c:'Europa',i:'Francés',p:'68 millones',g:['Platini','Fontaine','Zidane'],cp:'2 Mundiales 🏆',co:'2 Eurocopas'}},
-  {id:'en',n:'Inglaterra',bg:'#012169',fcd:'gb-eng',info:{c:'Europa',i:'Inglés',p:'57 millones',g:['Rooney','Charlton','Lineker'],cp:'1 Mundial 🏆',co:'0 Eurocopas'}},
-  {id:'de',n:'Alemania',bg:'#333',fcd:'de',info:{c:'Europa',i:'Alemán',p:'84 millones',g:['T.Müller','Klose','Rahn'],cp:'4 Mundiales 🏆',co:'3 Eurocopas'}},
-  {id:'jp',n:'Japón',bg:'#bc002d',fcd:'jp',info:{c:'Asia',i:'Japonés',p:'125 millones',g:['Nakamura','Ono','Miura'],cp:'0 Mundiales',co:'4 Copas Asia'}},
-  {id:'kr',n:'Corea del Sur',bg:'#c60c30',fcd:'kr',info:{c:'Asia',i:'Coreano',p:'52 millones',g:['Cha','Park','Son'],cp:'0 Mundiales',co:'2 Copas Asia'}},
-  {id:'sn',n:'Senegal',bg:'#00853f',fcd:'sn',info:{c:'África',i:'Francés',p:'17 millones',g:['Mané','Diouf','Ba'],cp:'0 Mundiales',co:'1 Copa África'}},
-  {id:'ma',n:'Marruecos',bg:'#c1272d',fcd:'ma',info:{c:'África',i:'Árabe',p:'37 millones',g:['Hakimi','Ziyech','Hadda'],cp:'0 Mundiales',co:'1 Copa África'}},
-  {id:'au',n:'Australia',bg:'#00008b',fcd:'au',info:{c:'Oceanía',i:'Inglés',p:'26 millones',g:['Cahill','Kewell','Viduka'],cp:'0 Mundiales',co:'5 Copas Asia'}}
+  {id:'ar',n:'Argentina',bg:'#5588bb',fcd:'ar',coords:[-34,-64],info:{c:'América del Sur',i:'Español',p:'46 millones',g:['Messi 🐐','Batistuta','Crespo'],cp:'3 Mundiales 🏆',co:'15 Copas América'}},
+  {id:'br',n:'Brasil',bg:'#009c3b',fcd:'br',coords:[-10,-55],info:{c:'América del Sur',i:'Portugués',p:'215 millones',g:['Ronaldo','Pelé','Romário'],cp:'5 Mundiales 🏆',co:'9 Copas América'}},
+  {id:'uy',n:'Uruguay',bg:'#4477aa',fcd:'uy',coords:[-33,-56],info:{c:'América del Sur',i:'Español',p:'3.5 millones',g:['Suárez','Forlán','Schiaffino'],cp:'2 Mundiales 🏆',co:'15 Copas América'}},
+  {id:'us',n:'EE.UU.',bg:'#b22234',fcd:'us',coords:[38,-97],info:{c:'América del Norte',i:'Inglés',p:'335 millones',g:['Donovan','McBride','Pulisic'],cp:'0 Mundiales',co:'1 Copa Oro'}},
+  {id:'mx',n:'México',bg:'#006847',fcd:'mx',coords:[24,-102],info:{c:'América del Norte',i:'Español',p:'128 millones',g:['Blanco','J.Hernández','Borgetti'],cp:'0 Mundiales',co:'11 Copas Oro'}},
+  {id:'es',n:'España',bg:'#c60b1e',fcd:'es',coords:[40,-4],info:{c:'Europa',i:'Español',p:'47 millones',g:['Villa','Hierro','Morientes'],cp:'1 Mundial 🏆',co:'3 Eurocopas'}},
+  {id:'pt',n:'Portugal',bg:'#006600',fcd:'pt',coords:[39,-8],info:{c:'Europa',i:'Portugués',p:'10 millones',g:['C.Ronaldo','Eusébio','Pauleta'],cp:'0 Mundiales',co:'2 Eurocopas'}},
+  {id:'fr',n:'Francia',bg:'#002395',fcd:'fr',coords:[46,2],info:{c:'Europa',i:'Francés',p:'68 millones',g:['Platini','Fontaine','Zidane'],cp:'2 Mundiales 🏆',co:'2 Eurocopas'}},
+  {id:'en',n:'Inglaterra',bg:'#012169',fcd:'gb-eng',coords:[53,-1],info:{c:'Europa',i:'Inglés',p:'57 millones',g:['Rooney','Charlton','Lineker'],cp:'1 Mundial 🏆',co:'0 Eurocopas'}},
+  {id:'de',n:'Alemania',bg:'#333',fcd:'de',coords:[51,10],info:{c:'Europa',i:'Alemán',p:'84 millones',g:['T.Müller','Klose','Rahn'],cp:'4 Mundiales 🏆',co:'3 Eurocopas'}},
+  {id:'jp',n:'Japón',bg:'#bc002d',fcd:'jp',coords:[36,138],info:{c:'Asia',i:'Japonés',p:'125 millones',g:['Nakamura','Ono','Miura'],cp:'0 Mundiales',co:'4 Copas Asia'}},
+  {id:'kr',n:'Corea del Sur',bg:'#c60c30',fcd:'kr',coords:[36,128],info:{c:'Asia',i:'Coreano',p:'52 millones',g:['Cha','Park','Son'],cp:'0 Mundiales',co:'2 Copas Asia'}},
+  {id:'sn',n:'Senegal',bg:'#00853f',fcd:'sn',coords:[14,-14],info:{c:'África',i:'Francés',p:'17 millones',g:['Mané','Diouf','Ba'],cp:'0 Mundiales',co:'1 Copa África'}},
+  {id:'ma',n:'Marruecos',bg:'#c1272d',fcd:'ma',coords:[32,-5],info:{c:'África',i:'Árabe',p:'37 millones',g:['Hakimi','Ziyech','Hadda'],cp:'0 Mundiales',co:'1 Copa África'}},
+  {id:'au',n:'Australia',bg:'#00008b',fcd:'au',coords:[-25,133],info:{c:'Oceanía',i:'Inglés',p:'26 millones',g:['Cahill','Kewell','Viduka'],cp:'0 Mundiales',co:'5 Copas Asia'}}
 ];
+
 function flagImg(p,w,h){return`<img src="https://flagcdn.com/w${w||80}/${p.fcd}.png" style="width:100%;height:100%;object-fit:cover" alt="${p.n}" onerror="this.style.display='none'">`;}
 const ECOLE=[
   {id:'sc01',nombre:'Equipo de Dirección',desc:'Nuestros directivos',e:'👨‍💼',holo:false},
@@ -553,17 +579,19 @@ PAISES.forEach(p=>{
   a.push({id:`${p.id}-holo`,num:'★',nm:'Escudo Holográfico',gr:'ESPECIAL',em:'🛡️',pos:'Especial',hab:'✨ Holográfica',pais:p.id,holo:true});
   FPP[p.id]=a;
 });
-// Figuritas con fotos reales (repetir para llenar el álbum)
-const _rFigs=[
-  {pais:'ar',indices:[0,1,2],nm:'Emma',img:'Figuritas/ARG-Emma.png',pos:'Delantera',hab:'🔥 Goleadora'},
-  {pais:'br',indices:[0,1,2],nm:'Felipe',img:'Figuritas/BRA-Felipe.png',pos:'Mediocampista',hab:'⚡ Velocidad'},
-  {pais:'es',indices:[0,1,2],nm:'Polo',img:'Figuritas/ESP-Polo.png',pos:'Defensor',hab:'🛡️ Defensa'},
+// Asignar fotos reales rotando entre las 3 disponibles
+const REAL_IMGS=[
+  {img:'Figuritas/ARG-Emma.png',nm:'Emma',pos:'Delantera',hab:'🔥 Goleadora'},
+  {img:'Figuritas/BRA-Felipe.png',nm:'Felipe',pos:'Mediocampista',hab:'⚡ Velocidad'},
+  {img:'Figuritas/ESP-Polo.png',nm:'Polo',pos:'Defensor',hab:'🛡️ Defensa'},
 ];
-_rFigs.forEach(({pais,indices,nm,img,pos,hab})=>{
-  indices.forEach((idx,i)=>{
-    if(FPP[pais]&&FPP[pais][idx]){
-      const suffix=i>0?` (${i+1})`:'';
-      FPP[pais][idx]={...FPP[pais][idx],nm:nm+suffix,img,pos,hab};
+let _ri=0;
+PAISES.forEach(p=>{
+  FPP[p.id].forEach(f=>{
+    if(!f.holo){
+      const rd=REAL_IMGS[_ri%REAL_IMGS.length];
+      f.img=rd.img;f.nm=rd.nm;f.pos=rd.pos;f.hab=rd.hab;
+      _ri++;
     }
   });
 });
@@ -768,21 +796,24 @@ function renderPg(id){
       </div>
       <button class="pnavbtn" onclick="showPage('${next}')" ${!next?'disabled':''}>→</button>
     </div>
-    <div class="cph" style="background:linear-gradient(135deg,${p.bg}44,rgba(0,0,0,.75))">
+    <div class="cph" style="background:linear-gradient(135deg,${p.bg}33,rgba(0,0,0,.8));margin-bottom:.6rem">
       <div class="cphc">
-        <div class="cphe" style="background:${p.bg};overflow:hidden">${flagImg(p,80)}</div>
+        <div class="cphe" style="background:${p.bg};overflow:hidden;width:44px;height:30px;border-radius:4px;">${flagImg(p,80)}</div>
         <div class="cphi">
-          <h2>${p.n}</h2>
+          <h2 style="font-size:1rem;color:var(--dorado)">${p.n}</h2>
           <div class="pills">
             <span class="pill">🌎 ${p.info.c}</span>
             <span class="pill">🗣️ ${p.info.i}</span>
             <span class="pill">👥 ${p.info.p}</span>
-            <span class="pill g">🏆 ${p.info.cp}</span>
+            <span class="pill">🏆 ${p.info.cp}</span>
             <span class="pill">🌟 ${p.info.co}</span>
           </div>
-          <div class="golea">⚽ Máximos goleadores: <b>${p.info.g.join(' · ')}</b></div>
+          <div class="golea">⚽ <b>${p.info.g.join(' · ')}</b></div>
         </div>
       </div>
+    </div>
+    <div style="margin-bottom:.6rem;border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,.1)">
+      <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=${(p.coords[1]-25)},${(p.coords[0]-18)},${(p.coords[1]+25)},${(p.coords[0]+18)}&layer=mapnik&marker=${p.coords[0]},${p.coords[1]}" style="width:100%;height:140px;border:none;display:block;filter:invert(93%) hue-rotate(180deg) saturate(0.8)" loading="lazy" title="Ubicación ${p.n}"></iframe>
     </div>
     <div class="abar" style="border-radius:8px;margin-bottom:.6rem;font-size:.72rem">🏅 FIGURITAS DE ${p.n.toUpperCase()} · SAN CARLOS MUNDIAL 2026</div>
     <div class="fgrid" style="grid-template-columns:repeat(6,1fr)">${norm.map(f=>rfig(f)).join('')}</div>
@@ -903,7 +934,7 @@ function mostrarFigs(figs){
     if(rep)S.rep.push(f);else S.ap.push(f);
     const d=document.createElement('div');
     d.className=`frc ${rep?'rep':''}`;
-    d.innerHTML=`${f.img?`<img class="frc-img" src="${f.img}">`:`<div class="frc-ico">${f.em}</div>`}<div style="font-size:.58rem;font-weight:700;line-height:1.2">${f.nm}</div><div style="font-size:.5rem;color:rgba(255,255,255,.5)">#${f.num}</div>${rep?'<span class="repbdg">REP</span>':''}`;
+    d.innerHTML=`${f.img?`<img class="frc-img" src="${f.img}">`:`<div class="frc-ico">${f.em}</div>`}<div class="frc-info"><div style="font-size:.6rem;font-weight:900;line-height:1.2;color:#fff">${f.nm}</div><div style="font-size:.5rem;color:rgba(255,255,255,.45)">#${f.num}</div>${rep?'<span class="repbdg">REP</span>':''}</div>`;
     rev.appendChild(d);
     setTimeout(()=>d.classList.add('show'),i*120+100);
   });
@@ -936,10 +967,14 @@ function renderAP(){
   hint.style.display=FSel?'block':'none';
   grid.innerHTML=S.ap.map(f=>{
     const p=PAISES.find(x=>x.id===f.pais);
-    return`<div class="pfig ${FSel===f.id?'sel':''}" onclick="selF('${f.id}')" ondblclick="irAF('${f.id}')" id="pf-${f.id}" title="Doble click: ir a la página">
-      ${f.img?`<img src="${f.img}" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:5px;margin-bottom:.2rem">`:`<div style="font-size:1.6rem">${f.em}</div>`}
-      <div style="font-size:.6rem;font-weight:700">${f.nm}</div>
-      <div style="font-size:.52rem;color:rgba(255,255,255,.45)">${p?p.e:''} #${f.num}</div>
+    const imgSrc = f.img || 'Figuritas/ARG-Emma.png';
+    return`<div class="pfig ${FSel===f.id?'sel':''}" onclick="selF('${f.id}')" ondblclick="irAF('${f.id}')" id="pf-${f.id}" title="${f.nm} · Doble click para ir al álbum">
+      <img src="${imgSrc}" style="width:100%;aspect-ratio:3/4;object-fit:cover;display:block;border-radius:10px">
+      <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.85));border-radius:0 0 10px 10px;padding:.3rem .3rem .25rem;text-align:center">
+        <div style="font-size:.55rem;font-weight:900;color:#fff;line-height:1.2">${f.nm}</div>
+        <div style="font-size:.48rem;color:rgba(255,255,255,.5)">#${f.num}</div>
+      </div>
+      ${FSel===f.id?`<div style="position:absolute;top:4px;right:4px;background:var(--rojo);border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:.55rem;font-weight:900">✓</div>`:''}
     </div>`;
   }).join('');
 }
