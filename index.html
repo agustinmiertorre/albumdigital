@@ -159,19 +159,21 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 .sovl{display:none;position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:200;flex-direction:column;align-items:center;justify-content:center;padding:1rem;}
 .sovl.active{display:flex;}
 .sovtit{font-size:1.4rem;color:var(--dorado);margin-bottom:1rem;letter-spacing:2px;font-weight:900;}
-.sobig{width:110px;height:150px;border-radius:12px;cursor:pointer;position:relative;transform-style:preserve-3d;transition:transform .65s;margin-bottom:1.5rem;}
+.sobig{width:155px;height:212px;border-radius:12px;cursor:pointer;position:relative;transform-style:preserve-3d;transition:transform .65s;margin-bottom:1.5rem;}
 .sobig.flip{transform:rotateY(180deg);}
 .sbf,.sbb{position:absolute;inset:0;border-radius:12px;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;flex-direction:column;}
 .sbf{background:linear-gradient(135deg,var(--rojo),#8b0000);border:3px solid var(--dorado);box-shadow:0 0 30px rgba(228,5,31,.5);}
 .sbf::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.2),transparent 40%);border-radius:12px;}
-.sbf .sbl{font-size:2.8rem;}
-.sbf .sbsc{font-size:.85rem;color:rgba(255,255,255,.8);letter-spacing:2px;font-weight:700;}
+.sbf .sbl{font-size:3.2rem;}
+.sbf .sbsc{font-size:.8rem;color:rgba(255,255,255,.9);letter-spacing:1px;font-weight:900;white-space:nowrap;margin-top:.3rem;}
 .sbb{background:linear-gradient(135deg,var(--azul),#001f33);border:3px solid var(--dorado);transform:rotateY(180deg);}
-.frev{display:grid;grid-template-columns:repeat(5,1fr);gap:.45rem;max-width:400px;width:90vw;}
-.frc{background:linear-gradient(135deg,var(--azul),#001f33);border:2px solid var(--dorado);border-radius:10px;padding:.45rem;text-align:center;opacity:0;transform:translateY(30px) scale(.8);transition:all .4s cubic-bezier(.34,1.56,.64,1);}
+.frev{display:grid;grid-template-columns:repeat(5,1fr);gap:.45rem;max-width:420px;width:95vw;}
+.frc{background:linear-gradient(135deg,var(--azul),#001f33);border:2px solid var(--dorado);border-radius:10px;padding:.3rem;text-align:center;opacity:0;transform:translateY(30px) scale(.8);transition:all .4s cubic-bezier(.34,1.56,.64,1);display:flex;flex-direction:column;align-items:center;}
 .frc.show{opacity:1;transform:translateY(0) scale(1);}
 .frc.rep{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.05);}
-.repbdg{background:rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:.52rem;padding:1px 4px;border-radius:4px;display:inline-block;margin-top:.15rem;}
+.frc-img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:6px;margin-bottom:.2rem;}
+.frc-ico{font-size:1.5rem;line-height:1;padding:.3rem 0;}
+.repbdg{background:rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:.52rem;padding:1px 4px;border-radius:4px;display:inline-block;margin-top:.1rem;}
 .revbtns{display:flex;gap:.8rem;margin-top:1rem;flex-wrap:wrap;justify-content:center;}
 .rbtn{background:linear-gradient(135deg,var(--dorado),#c8922a);color:var(--negro);border:none;padding:.7rem 1.4rem;border-radius:12px;font-size:1rem;font-weight:900;cursor:pointer;}
 .rbtn.sec{background:rgba(255,255,255,.1);color:#fff;}
@@ -901,7 +903,7 @@ function mostrarFigs(figs){
     if(rep)S.rep.push(f);else S.ap.push(f);
     const d=document.createElement('div');
     d.className=`frc ${rep?'rep':''}`;
-    d.innerHTML=`${f.img?`<img src="${f.img}" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:5px;margin-bottom:.15rem">`:`<div style="font-size:1.5rem">${f.em}</div>`}<div style="font-size:.58rem;font-weight:700">${f.nm}</div><div style="font-size:.52rem;color:rgba(255,255,255,.5)">#${f.num}</div>${rep?'<span class="repbdg">REP</span>':''}`;
+    d.innerHTML=`${f.img?`<img class="frc-img" src="${f.img}">`:`<div class="frc-ico">${f.em}</div>`}<div style="font-size:.58rem;font-weight:700;line-height:1.2">${f.nm}</div><div style="font-size:.5rem;color:rgba(255,255,255,.5)">#${f.num}</div>${rep?'<span class="repbdg">REP</span>':''}`;
     rev.appendChild(d);
     setTimeout(()=>d.classList.add('show'),i*120+100);
   });
@@ -1045,7 +1047,7 @@ async function cargarVista(){
   PAISES.forEach(p=>{
     const fs=FPP[p.id];const pg=fs.filter(f=>VPEG.has(f.id)).length;const t2=fs.length;const p2=Math.round(pg/t2*100);
     html+=`<div class="vpais" onclick="verVistaPais('${p.id}')">
-      <div style="font-size:1.8rem">${p.em}</div>
+      <div style="width:48px;height:32px;border-radius:4px;overflow:hidden;margin:0 auto .3rem">${flagImg(p,80)}</div>
       <div style="font-size:.75rem;font-weight:900;margin:.15rem 0">${p.n}</div>
       <div style="font-size:.58rem;color:rgba(255,255,255,.45)">${pg}/${t2} · ${p2}%</div>
       <div style="height:4px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;margin-top:.3rem">
@@ -1070,7 +1072,7 @@ function verVistaPais(id){
   document.getElementById('vpaisdetalle').innerHTML=`
     <div style="margin-bottom:.8rem">
       <button class="bbtn" onclick="document.getElementById('vpaisdetalle').innerHTML=''">← Países</button>
-      <div style="font-size:1rem;font-weight:900;color:var(--dorado);margin:.4rem 0">${p.em} ${p.n} · ${pg}/${fs.length} pegadas</div>
+      <div style="font-size:1rem;font-weight:900;color:var(--dorado);margin:.4rem 0">${p.n} · ${pg}/${fs.length} pegadas</div>
       <div class="fgrid" style="grid-template-columns:repeat(6,1fr)">${fs.map(f=>rfigRO(f)).join('')}</div>
     </div>`;
   document.getElementById('vpaisdetalle').scrollIntoView({behavior:'smooth',block:'start'});
