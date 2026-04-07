@@ -270,7 +270,7 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 <div id="sp" class="screen active">
   <div id="stc"></div>
   <div class="pc">
-    <div class="logo-cole"><img src="Logo San Carlos.png" style="width:100%;height:100%;object-fit:cover;border-radius:50%"></div>
+    <div class="logo-cole" style="background:#fff;"><img src="Logo San Carlos.png" style="width:82%;height:82%;object-fit:contain"></div>
     <div class="pbadge">COLEGIO SAN CARLOS</div>
     <div class="ptit bb">ÁLBUM<br>MUNDIAL</div>
     <div class="psub bb">⚡ 2026 ⚡</div>
@@ -314,7 +314,7 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
   <div class="abar">🏫 COLEGIO SAN CARLOS · ÁLBUM MUNDIAL 2026 ⚽</div>
   <div class="aheader">
     <button class="hamtog" onclick="toggleHam()"><span></span><span></span><span></span></button>
-    <div style="width:36px;height:36px;border-radius:50%;overflow:hidden;flex-shrink:0"><img src="Logo San Carlos.png" style="width:100%;height:100%;object-fit:cover"></div>
+    <div style="width:36px;height:36px;border-radius:50%;overflow:hidden;flex-shrink:0;background:#fff;display:flex;align-items:center;justify-content:center"><img src="Logo San Carlos.png" style="width:82%;height:82%;object-fit:contain"></div>
     <div class="ahinfo"><h3 id="cdisplay">-</h3><p>Álbum Mundial 2026 · San Carlos</p></div>
   </div>
   <div class="progbar-wrap">
@@ -331,7 +331,7 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
       <div class="cgrid" id="cgrid"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:.8rem">
         <div class="ccard" onclick="showPage('cole')" style="border-color:rgba(228,5,31,.4)">
-          <div class="flag-box" style="background:linear-gradient(135deg,var(--rojo),var(--azul));overflow:hidden"><img src="Logo San Carlos.png" style="width:100%;height:100%;object-fit:cover"></div>
+          <div class="flag-box" style="background:#fff;overflow:hidden;padding:3px"><img src="Logo San Carlos.png" style="width:100%;height:100%;object-fit:contain"></div>
           <div class="cname">San Carlos</div><div class="cprog" id="pgcole">Especial</div>
         </div>
         <div class="ccard" onclick="showPage('mundial')" style="border-color:rgba(240,192,64,.4)">
@@ -417,7 +417,7 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 <div class="sovl" id="sovl">
   <div class="sovtit bb" id="sovtit">¡TOCÁ EL SOBRE!</div>
   <div class="sobig" id="sobig" onclick="flipSobre()">
-    <div class="sbf"><div class="sbl"><img src="Trionda.png" style="width:2.8rem;height:2.8rem;border-radius:50%;object-fit:cover;display:block"></div><div class="sbsc">SAN CARLOS</div></div>
+    <div class="sbf"><div class="sbl"><img src="logoFifa.png" style="width:3.2rem;height:3.2rem;object-fit:contain;display:block;filter:drop-shadow(0 0 6px rgba(255,255,255,.4))"></div><div class="sbsc">SAN CARLOS · 2026</div></div>
     <div class="sbb"><div style="font-size:3rem">✨</div></div>
   </div>
   <div class="frev" id="frev" style="display:none"></div>
@@ -432,7 +432,7 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 <div class="hov" id="hov" onclick="toggleHam()"></div>
 <div class="hmenu" id="hmenu">
   <div class="hmh">
-    <div class="hlogo" style="overflow:hidden"><img src="Logo San Carlos.png" style="width:100%;height:100%;object-fit:cover;border-radius:50%"></div>
+    <div class="hlogo" style="overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center"><img src="Logo San Carlos.png" style="width:82%;height:82%;object-fit:contain"></div>
     <h3>SAN CARLOS</h3>
     <p id="hcl">MUNDIAL 2026</p>
   </div>
@@ -526,7 +526,7 @@ const ECOLE=[
 ];
 const EMUNDIAL=[
   {id:'mw01',nombre:'La Copa del Mundo',desc:'El trofeo más codiciado',e:'🏆',holo:false,img:'Copa del Mundo.png'},
-  {id:'mw02',nombre:'Logo FIFA 2026',desc:'Organismo mundial del fútbol',e:'⚽',holo:false,img:'Logo Fifa.jpg'},
+  {id:'mw02',nombre:'Logo FIFA 2026',desc:'Organismo mundial del fútbol',e:'⚽',holo:false,img:'logoFifa.png'},
   {id:'mw03',nombre:'La Trionda',desc:'Pelota oficial Adidas 2026',e:'🔴',holo:false,img:'Trionda.png'},
   {id:'mw04',nombre:'Francia 2018',desc:'Campeón del Mundo',e:'🇫🇷',holo:false},
   {id:'mw05',nombre:'Argentina 2022',desc:'Campeón del Mundo',e:'🇦🇷',holo:false},
@@ -550,6 +550,20 @@ PAISES.forEach(p=>{
   });
   a.push({id:`${p.id}-holo`,num:'★',nm:'Escudo Holográfico',gr:'ESPECIAL',em:'🛡️',pos:'Especial',hab:'✨ Holográfica',pais:p.id,holo:true});
   FPP[p.id]=a;
+});
+// Figuritas con fotos reales (repetir para llenar el álbum)
+const _rFigs=[
+  {pais:'ar',indices:[0,1,2],nm:'Emma',img:'Figuritas/ARG-Emma.png',pos:'Delantera',hab:'🔥 Goleadora'},
+  {pais:'br',indices:[0,1,2],nm:'Felipe',img:'Figuritas/BRA-Felipe.png',pos:'Mediocampista',hab:'⚡ Velocidad'},
+  {pais:'es',indices:[0,1,2],nm:'Polo',img:'Figuritas/ESP-Polo.png',pos:'Defensor',hab:'🛡️ Defensa'},
+];
+_rFigs.forEach(({pais,indices,nm,img,pos,hab})=>{
+  indices.forEach((idx,i)=>{
+    if(FPP[pais]&&FPP[pais][idx]){
+      const suffix=i>0?` (${i+1})`:'';
+      FPP[pais][idx]={...FPP[pais][idx],nm:nm+suffix,img,pos,hab};
+    }
+  });
 });
 function allFigs(){
   const a=[];
@@ -796,8 +810,12 @@ function rfig(f){
   const pg=S.peg.has(f.id);const av=S.ap.some(x=>x.id===f.id);
   const cls=`fig ${pg?'peg':''} ${av&&!pg?'avail':''} ${f.holo?'holo':''}`;
   const ck=pg?`openMod('${f.id}')`:av?`pegFig('${f.id}')`:';';
+  let avContent;
+  if(!pg&&!av) avContent=`<div class="fvac">❓</div>`;
+  else if(f.img) avContent=`<img src="${f.img}" style="width:100%;height:100%;object-fit:cover;border-radius:3px">`;
+  else avContent=f.em;
   return`<div class="${cls}" onclick="${ck}" id="fig-${f.id}">
-    <div class="fav">${!pg&&!av?`<div class="fvac">❓</div>`:f.em}</div>
+    <div class="fav">${avContent}</div>
     <div class="ftxt">
       <div class="fnum">#${f.num}</div>
       <div class="fnm">${f.nm}</div>
@@ -883,7 +901,7 @@ function mostrarFigs(figs){
     if(rep)S.rep.push(f);else S.ap.push(f);
     const d=document.createElement('div');
     d.className=`frc ${rep?'rep':''}`;
-    d.innerHTML=`<div style="font-size:1.5rem">${f.em}</div><div style="font-size:.58rem;font-weight:700">${f.nm}</div><div style="font-size:.52rem;color:rgba(255,255,255,.5)">#${f.num}</div>${rep?'<span class="repbdg">REP</span>':''}`;
+    d.innerHTML=`${f.img?`<img src="${f.img}" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:5px;margin-bottom:.15rem">`:`<div style="font-size:1.5rem">${f.em}</div>`}<div style="font-size:.58rem;font-weight:700">${f.nm}</div><div style="font-size:.52rem;color:rgba(255,255,255,.5)">#${f.num}</div>${rep?'<span class="repbdg">REP</span>':''}`;
     rev.appendChild(d);
     setTimeout(()=>d.classList.add('show'),i*120+100);
   });
@@ -917,7 +935,7 @@ function renderAP(){
   grid.innerHTML=S.ap.map(f=>{
     const p=PAISES.find(x=>x.id===f.pais);
     return`<div class="pfig ${FSel===f.id?'sel':''}" onclick="selF('${f.id}')" ondblclick="irAF('${f.id}')" id="pf-${f.id}" title="Doble click: ir a la página">
-      <div style="font-size:1.6rem">${f.em}</div>
+      ${f.img?`<img src="${f.img}" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:5px;margin-bottom:.2rem">`:`<div style="font-size:1.6rem">${f.em}</div>`}
       <div style="font-size:.6rem;font-weight:700">${f.nm}</div>
       <div style="font-size:.52rem;color:rgba(255,255,255,.45)">${p?p.e:''} #${f.num}</div>
     </div>`;
