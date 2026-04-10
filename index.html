@@ -19,7 +19,7 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 .star{position:absolute;border-radius:50%;animation:tw 3s infinite;}
 @keyframes tw{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:1;transform:scale(1.4)}}
 .pc{position:relative;z-index:2;padding:2rem;}
-.logo-cole{width:100px;height:100px;border-radius:50%;background:transparent;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:2.5rem;box-shadow:0 0 40px rgba(240,192,64,.5);border:3px solid rgba(240,192,64,.4);overflow:hidden;}
+.logo-cole{width:140px;height:140px;border-radius:50%;background:transparent;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:2.5rem;box-shadow:0 0 50px rgba(240,192,64,.6);border:4px solid rgba(240,192,64,.5);overflow:hidden;}
 .pbadge{display:inline-block;background:var(--rojo);color:#fff;padding:.4rem 1.5rem;border-radius:20px;font-weight:900;font-size:.95rem;margin:.5rem 0;letter-spacing:2px;}
 .ptit{font-size:clamp(2.5rem,8vw,5rem);line-height:1;color:var(--dorado);text-shadow:3px 3px 0 var(--rojo),-1px -1px 0 var(--azul);letter-spacing:3px;}
 .psub{font-size:clamp(1.2rem,4vw,2.2rem);color:#fff;letter-spacing:5px;margin:.5rem 0;}
@@ -174,7 +174,7 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 .sbf::after{content:'';position:absolute;inset:8px;border:1px solid rgba(240,192,64,.4);border-radius:12px;pointer-events:none;}
 .sbf .sbl{position:relative;z-index:1;}
 .sbf .sbsc{font-size:.9rem;color:rgba(255,255,255,.95);letter-spacing:2px;font-weight:900;white-space:nowrap;position:relative;z-index:1;text-shadow:0 2px 8px rgba(0,0,0,.5);}
-.sbb{background:linear-gradient(160deg,#0a1a3a,#000820);border:3px solid rgba(240,192,64,.5);}
+.sbb{background:linear-gradient(160deg,#0a1a3a,#000820);border:3px solid rgba(240,192,64,.5);transform:rotateY(180deg);}
 .frev{display:grid;grid-template-columns:repeat(5,1fr);gap:.55rem;max-width:440px;width:96vw;}
 .frc{background:linear-gradient(160deg,#1a2a6c,#001028);border:2px solid var(--dorado);border-radius:12px;overflow:hidden;text-align:center;opacity:0;transform:translateY(40px) scale(.7);transition:all .45s cubic-bezier(.34,1.56,.64,1);display:flex;flex-direction:column;align-items:center;}
 .frc.show{opacity:1;transform:translateY(0) scale(1);}
@@ -349,14 +349,13 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 
 <!-- APP -->
 <div id="sa" class="screen">
-  <div class="abar" id="sabiasbar" style="cursor:pointer" onclick="nextSabias()">
-    <span style="color:var(--dorado);font-weight:900">💡 ¿SABÍAS QUE? </span>
-    <span id="sabiastext">El Mundial 2026 será el primero con 48 selecciones.</span>
-  </div>
   <div class="aheader">
     <button class="hamtog" onclick="toggleHam()"><span></span><span></span><span></span></button>
-    <div style="width:36px;height:36px;border-radius:50%;overflow:hidden;flex-shrink:0;background:#fff;display:flex;align-items:center;justify-content:center"><img src="Logo San Carlos.png" style="width:82%;height:82%;object-fit:contain"></div>
-    <div class="ahinfo"><h3 id="cdisplay">-</h3><p>Álbum Mundial 2026 · San Carlos</p></div>
+    <div style="width:44px;height:44px;border-radius:50%;overflow:hidden;flex-shrink:0;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 0 10px rgba(240,192,64,.4);border:2px solid rgba(240,192,64,.3)"><img src="Logo San Carlos.png" style="width:88%;height:88%;object-fit:contain"></div>
+    <div class="ahinfo">
+      <h3 id="cdisplay">-</h3>
+      <p id="sabiastext" style="cursor:pointer;font-size:.6rem;color:rgba(255,255,255,.6);font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px" onclick="nextSabias()" title="¿Sabías que?">💡 Cargando...</p>
+    </div>
   </div>
   <div class="progbar-wrap">
     <span class="pbl">📊</span>
@@ -625,6 +624,12 @@ const ECOLE=[
   {id:'sc04',nombre:'Rincón Literario',desc:'Nuestra biblioteca',e:'📚',holo:false},
   {id:'sc05',nombre:'La Canchita',desc:'Patio deportivo',e:'⚽',holo:false},
   {id:'sc06',nombre:'Logo San Carlos',desc:'FIGURITA HOLOGRÁFICA ✨',e:'⭐',holo:true,img:'Logo San Carlos.png'},
+  {id:'sc07',nombre:'Sala de Arte',desc:'Creatividad y expresión',e:'🎨',holo:false},
+  {id:'sc08',nombre:'Laboratorio',desc:'Ciencia y experimentos',e:'🔬',holo:false},
+  {id:'sc09',nombre:'Música y Ritmo',desc:'Coro e instrumentos',e:'🎵',holo:false},
+  {id:'sc10',nombre:'El Comedor',desc:'Rico menú del cole',e:'🍽️',holo:false},
+  {id:'sc11',nombre:'Jardín del Cole',desc:'Naturaleza y plantas',e:'🌿',holo:false},
+  {id:'sc12',nombre:'Copa San Carlos',desc:'HOLOGRÁFICA ESPECIAL ✨',e:'🏅',holo:true},
 ];
 const EMUNDIAL=[
   {id:'mw01',nombre:'La Copa del Mundo',desc:'El trofeo más codiciado',e:'🏆',holo:false,img:'Copa del Mundo.png'},
@@ -633,6 +638,12 @@ const EMUNDIAL=[
   {id:'mw04',nombre:'Francia 2018',desc:'Campeón del Mundo',e:'🇫🇷',holo:false},
   {id:'mw05',nombre:'Argentina 2022',desc:'Campeón del Mundo',e:'🇦🇷',holo:false},
   {id:'mw06',nombre:'Estadios 2026',desc:'USA · México · Canadá',e:'🏟️',holo:false},
+  {id:'mw07',nombre:'Sede Nueva York',desc:'MetLife Stadium · USA',e:'🗽',holo:false},
+  {id:'mw08',nombre:'Sede Ciudad de México',desc:'Estadio Azteca · México',e:'🏔️',holo:false},
+  {id:'mw09',nombre:'Mascota 2026',desc:'El símbolo del torneo',e:'🦁',holo:false},
+  {id:'mw10',nombre:'Balón de Oro 2026',desc:'El mejor jugador del mundo',e:'🌟',holo:false},
+  {id:'mw11',nombre:'Gol del Siglo',desc:'Maradona vs Inglaterra 1986',e:'💫',holo:true},
+  {id:'mw12',nombre:'La Final Épica',desc:'Argentina vs Francia 2022',e:'🔥',holo:false},
 ];
 const NMS=['Sofía','Valentina','Lucía','Emma','Camila','Florencia','Martina','Isabella','Santiago','Mateo','Tomás','Benjamín','Lucas','Facundo','Nicolás','Agustín','Joaquín','Thiago','Mia','Bruno'];
 const GRS=['1°A','1°J','1°C','2°A','2°J','2°C','3°A','3°J','3°C','4°A','4°J','4°C','5°A','5°J','5°C','6°A','6°J','6°C'];
@@ -815,7 +826,7 @@ function startSabias(){
   setInterval(nextSabias,12000);
 }
 function nextSabias(){_sabIdx=(_sabIdx+1)%SABIAS.length;showSabias();}
-function showSabias(){const el=document.getElementById('sabiastext');if(el)el.textContent=SABIAS[_sabIdx];}
+function showSabias(){const el=document.getElementById('sabiastext');if(el)el.textContent='💡 '+SABIAS[_sabIdx];}
 
 // NAV
 let CT='album';
@@ -920,7 +931,7 @@ function renderPg(id){
     </div>
     <div class="abar" style="border-radius:8px;margin-bottom:.6rem;font-size:.72rem">🏅 FIGURITAS DE ${p.n.toUpperCase()} · SAN CARLOS MUNDIAL 2026</div>
     <div class="fgrid" style="grid-template-columns:repeat(8,1fr)">${norm.map(f=>rfig(f)).join('')}</div>
-    ${holo?`<div style="margin-top:.7rem"><div class="abar" style="border-radius:8px;margin-bottom:.5rem;font-size:.68rem">✨ ESCUDO HOLOGRÁFICO · ${p.n.toUpperCase()}</div><div style="display:flex;justify-content:center">${rfig(holo)}</div></div>`:''}
+    ${holo?`<div style="margin-top:.7rem"><div class="abar" style="border-radius:8px;margin-bottom:.5rem;font-size:.68rem">✨ ESCUDO HOLOGRÁFICO · ${p.n.toUpperCase()}</div><div style="display:flex;justify-content:center"><div style="width:min(150px,30vw)">${rfig(holo)}</div></div></div>`:''}
   `;
 }
 
@@ -937,7 +948,7 @@ function renderSPg(id,prev,next){
       <button class="pnavbtn" onclick="showPage('${next}')" ${!next?'disabled':''}>→</button>
     </div>
     <div class="abar" style="border-radius:8px;margin-bottom:.6rem;font-size:.72rem">⭐ PÁGINA ESPECIAL · SAN CARLOS MUNDIAL 2026</div>
-    <div class="espg" style="grid-template-columns:repeat(8,1fr)">${figs.map(f=>rfig(f)).join('')}</div>
+    <div class="espg" style="grid-template-columns:repeat(6,1fr);gap:.6rem">${figs.map(f=>rfig(f)).join('')}</div>
   `;
 }
 
@@ -948,17 +959,20 @@ function rfig(f){
   const ck=pg?`openMod('${f.id}')`:av?`pegFig('${f.id}')`:';';
   let avContent;
   const numBadge=`<div style="position:absolute;top:2px;left:2px;background:rgba(0,71,108,.9);color:var(--dorado);font-size:.38rem;font-weight:900;padding:1px 3px;border-radius:2px;z-index:2">#${f.num}</div>`;
-  if(!pg&&!av){
-    // Placeholder: mostrar info del alumno
+  if(pg){
+    // Pegada: mostrar imagen real
+    if(f.img){
+      avContent=`<img src="${f.img}" style="width:100%;height:100%;object-fit:cover">`;
+    } else {
+      avContent=`<div style="font-size:1.2rem">${f.em||f.e||'⭐'}</div>`;
+    }
+  } else {
+    // No pegada (libre o disponible): mostrar placeholder con info
     avContent=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.1rem;padding:.2rem;text-align:center;width:100%;height:100%">
-      <div style="font-size:.48rem;font-weight:900;color:rgba(255,255,255,.7);line-height:1.2">${f.nm}</div>
-      <div style="font-size:.4rem;color:rgba(255,255,255,.4)">${f.gr}</div>
+      <div style="font-size:.48rem;font-weight:900;color:rgba(255,255,255,.7);line-height:1.2">${f.nm||f.nombre||'?'}</div>
+      <div style="font-size:.4rem;color:rgba(255,255,255,.4)">${f.gr||'Especial'}</div>
       <div style="font-size:.38rem;color:var(--dorado);background:rgba(0,71,108,.6);padding:1px 3px;border-radius:2px">#${f.num}</div>
     </div>`;
-  } else if(f.img){
-    avContent=`<img src="${f.img}" style="width:100%;height:100%;object-fit:cover">`;
-  } else {
-    avContent=`<div style="font-size:1.2rem">${f.em}</div>`;
   }
   return`<div class="${cls}" onclick="${ck}" id="fig-${f.id}">
     <div class="fav">${avContent}</div>
@@ -1246,7 +1260,7 @@ function renderEspPag(){
   document.getElementById('esp-prev-btn').disabled=_espPag===0;
   document.getElementById('esp-next-btn').disabled=_espPag===ESP_PAGES.length-1;
   const figs=ep.figs();
-  document.getElementById('esp-page').innerHTML=`<div class="espg" style="grid-template-columns:repeat(4,1fr);gap:.5rem">${figs.map(f=>rfig(f)).join('')}</div>`;
+  document.getElementById('esp-page').innerHTML=`<div class="espg" style="grid-template-columns:repeat(6,1fr);gap:.6rem">${figs.map(f=>rfig(f)).join('')}</div>`;
 }
 
 // MODAL
