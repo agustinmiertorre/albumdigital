@@ -108,13 +108,13 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 
 /* FIGURITAS GRID */
 .fgrid{display:grid;gap:.3rem;}
-.fig{background:#13132a;border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:.2rem .2rem .25rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;}
+.fig{background:#13132a;border:1px solid rgba(255,255,255,.1);border-radius:4px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;aspect-ratio:3/4;}
 .fig.peg{border-color:var(--dorado);background:rgba(240,192,64,.08);}
 .fig.peg::after{content:'✓';position:absolute;top:2px;right:3px;color:var(--dorado);font-size:.55rem;font-weight:900;}
 .fig.avail{border-color:var(--rojo);animation:pa 2s infinite;}
 @keyframes pa{0%,100%{box-shadow:0 0 5px rgba(228,5,31,.3)}50%{box-shadow:0 0 10px rgba(228,5,31,.6)}}
 .fig.holo{background:rgba(240,192,64,.08);border-color:var(--dorado);}
-.fav{width:100%;aspect-ratio:5/6;border-radius:3px;background:#1e1e3a;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem;overflow:hidden;}
+.fav{width:100%;height:100%;border-radius:0;background:#1e1e3a;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;overflow:hidden;}
 .ftxt{width:100%;text-align:center;margin-top:.15rem;}
 .fnum{font-size:.42rem;color:var(--dorado);background:rgba(0,71,108,.8);padding:0px 3px;border-radius:2px;display:inline-block;margin-bottom:.05rem;}
 .fnm{font-size:.48rem;font-weight:700;line-height:1.1;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;}
@@ -122,7 +122,7 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 .fvac{font-size:1.3rem;opacity:.18;}
 
 /* ESPECIALES - mismo formato que países */
-.espg{display:grid;gap:.45rem;}
+.espg{display:grid;gap:.4rem;}
 
 /* BARRA NAV INFERIOR */
 .bnav{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(to top,#001828,#0a0a1a);border-top:1px solid rgba(255,255,255,.12);display:none;z-index:120;}
@@ -164,15 +164,17 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 .sovl{display:none;position:fixed;inset:0;background:radial-gradient(ellipse at 50% 20%,#0d1a3a 0%,#050510 70%);z-index:200;flex-direction:column;align-items:center;justify-content:center;padding:1rem;overflow-y:auto;}
 .sovl.active{display:flex;}
 .sovtit{font-size:1.5rem;color:var(--dorado);margin-bottom:1.5rem;letter-spacing:3px;font-weight:900;text-shadow:0 0 25px rgba(240,192,64,.6);text-align:center;font-family:Impact,'Arial Black',Arial,sans-serif;}
-.sobig{width:200px;height:274px;border-radius:18px;cursor:pointer;position:relative;transform-style:preserve-3d;transition:transform .75s cubic-bezier(.4,1.4,.6,1);margin-bottom:2rem;filter:drop-shadow(0 20px 50px rgba(228,5,31,.55));}
+.sobig{width:210px;height:285px;border-radius:18px;cursor:pointer;position:relative;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.4,1.2,.6,1);margin-bottom:2rem;filter:drop-shadow(0 25px 50px rgba(228,5,31,.6)) drop-shadow(0 5px 15px rgba(0,0,0,.8));}
+.sobig:not(.flip):hover{transform:rotateY(8deg) rotateX(-3deg) scale(1.04);filter:drop-shadow(0 30px 60px rgba(228,5,31,.8)) drop-shadow(0 5px 20px rgba(0,0,0,.8));}
 .sobig.flip{transform:rotateY(180deg);}
-.sbf,.sbb{position:absolute;inset:0;border-radius:18px;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.4rem;}
-.sbf{background:linear-gradient(160deg,#c8000f 0%,#8b0006 45%,#5a0004 100%);border:3px solid var(--dorado);box-shadow:inset 0 0 40px rgba(0,0,0,.4);}
-.sbf::before{content:'';position:absolute;top:0;left:0;right:0;height:45%;background:linear-gradient(rgba(255,255,255,.2),transparent);border-radius:18px 18px 0 0;}
-.sbf::after{content:'';position:absolute;inset:8px;border:1px solid rgba(240,192,64,.3);border-radius:12px;pointer-events:none;}
-.sbf .sbl{font-size:3rem;position:relative;z-index:1;}
-.sbf .sbsc{font-size:.85rem;color:rgba(255,255,255,.95);letter-spacing:2px;font-weight:900;white-space:nowrap;position:relative;z-index:1;}
-.sbb{background:linear-gradient(160deg,var(--azul),#001028);border:3px solid var(--dorado);}
+.sbf,.sbb{position:absolute;inset:0;border-radius:18px;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.5rem;}
+.sbf{background:linear-gradient(160deg,#d40010 0%,#8b0006 55%,#4a0003 100%);border:3px solid var(--dorado);overflow:hidden;}
+.sbf::before{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.25) 50%,transparent 60%);animation:shimmer 3s infinite;pointer-events:none;}
+@keyframes shimmer{0%{left:-100%}100%{left:200%}}
+.sbf::after{content:'';position:absolute;inset:8px;border:1px solid rgba(240,192,64,.4);border-radius:12px;pointer-events:none;}
+.sbf .sbl{position:relative;z-index:1;}
+.sbf .sbsc{font-size:.9rem;color:rgba(255,255,255,.95);letter-spacing:2px;font-weight:900;white-space:nowrap;position:relative;z-index:1;text-shadow:0 2px 8px rgba(0,0,0,.5);}
+.sbb{background:linear-gradient(160deg,#0a1a3a,#000820);border:3px solid rgba(240,192,64,.5);}
 .frev{display:grid;grid-template-columns:repeat(5,1fr);gap:.55rem;max-width:440px;width:96vw;}
 .frc{background:linear-gradient(160deg,#1a2a6c,#001028);border:2px solid var(--dorado);border-radius:12px;overflow:hidden;text-align:center;opacity:0;transform:translateY(40px) scale(.7);transition:all .45s cubic-bezier(.34,1.56,.64,1);display:flex;flex-direction:column;align-items:center;}
 .frc.show{opacity:1;transform:translateY(0) scale(1);}
@@ -232,6 +234,7 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 ::-webkit-scrollbar-thumb{background:var(--dorado);border-radius:3px;}
 
 /* MODO VISTA */
+#vsel option, #vsel optgroup{background:#001f33;color:#fff;}
 #sv{background:linear-gradient(135deg,#001f33,#0a0a1a);align-items:flex-start;justify-content:flex-start;}
 .vhdr{background:linear-gradient(90deg,var(--azul),#001f33);padding:.8rem 1rem;display:flex;align-items:center;gap:.8rem;position:sticky;top:0;z-index:10;}
 .vpais-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:.6rem;margin-top:.8rem;}
@@ -251,6 +254,32 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 .acard .afill{height:100%;background:linear-gradient(90deg,var(--dorado),var(--rojo));border-radius:5px;transition:width .8s;}
 .areset{background:rgba(228,5,31,.15);border:1px solid rgba(228,5,31,.5);color:var(--rojo);padding:.3rem .7rem;border-radius:7px;font-size:.68rem;font-weight:900;cursor:pointer;margin-top:.4rem;font-family:inherit;transition:.2s;}
 .areset:hover{background:var(--rojo);color:#fff;}
+
+/* ACCIONES SOBRES */
+.sobre-accion-card{display:flex;align-items:center;gap:.8rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:.9rem 1rem;margin-bottom:.5rem;}
+.sac-ico{font-size:1.8rem;flex-shrink:0;}
+.sac-info{flex:1;display:flex;flex-direction:column;gap:.15rem;}
+.sac-info b{font-size:.85rem;color:#fff;font-weight:900;}
+.sac-info span{font-size:.7rem;color:rgba(255,255,255,.45);}
+.sac-btn{background:linear-gradient(135deg,var(--dorado),#c8922a);color:#000;border:none;padding:.5rem 1rem;border-radius:10px;font-size:.8rem;font-weight:900;cursor:pointer;white-space:nowrap;transition:.2s;flex-shrink:0;}
+.sac-btn:hover:not(:disabled){transform:scale(1.04);}
+.sac-btn:disabled{opacity:.4;cursor:not-allowed;background:rgba(255,255,255,.12);color:rgba(255,255,255,.4);}
+.sac-btn.azul{background:linear-gradient(135deg,#3a7bd5,var(--azul));}
+.sac-btn.rojo{background:linear-gradient(135deg,var(--rojo),#8b0000);color:#fff;}
+/* TRIVIA */
+.trivia-card{background:linear-gradient(160deg,#0d1a3a,#050518);border:2px solid var(--dorado);border-radius:20px;padding:2rem;max-width:480px;width:92vw;text-align:center;}
+.trivia-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;}
+.trivia-cat{background:var(--azul);color:#fff;font-size:.7rem;font-weight:900;padding:.3rem .8rem;border-radius:20px;letter-spacing:1px;}
+.trivia-prog{font-size:.75rem;color:rgba(255,255,255,.5);}
+.trivia-aciertos{display:flex;gap:.5rem;justify-content:center;margin-bottom:1.2rem;}
+.tac{font-size:1.4rem;transition:.3s;}
+.tac.ok{transform:scale(1.2);}
+.trivia-q{font-size:1.1rem;font-weight:900;color:#fff;margin-bottom:1.5rem;line-height:1.4;}
+.trivia-ops{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;}
+.trivia-opt{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:#fff;padding:.8rem;border-radius:12px;font-size:.85rem;font-weight:700;cursor:pointer;transition:.2s;text-align:center;}
+.trivia-opt:hover:not(:disabled){background:rgba(255,255,255,.15);border-color:var(--dorado);}
+.trivia-opt.correct{background:rgba(0,180,0,.3);border-color:#0b0;color:#0f0;}
+.trivia-opt.wrong{background:rgba(220,0,0,.3);border-color:#f00;color:#f88;}
 
 /* FLAG COLORS inline */
 .flag-ar{background:linear-gradient(to bottom,#74acdf 33%,#fff 33% 67%,#74acdf 67%);position:relative;}
@@ -320,7 +349,10 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 
 <!-- APP -->
 <div id="sa" class="screen">
-  <div class="abar">🏫 COLEGIO SAN CARLOS · ÁLBUM MUNDIAL 2026 ⚽</div>
+  <div class="abar" id="sabiasbar" style="cursor:pointer" onclick="nextSabias()">
+    <span style="color:var(--dorado);font-weight:900">💡 ¿SABÍAS QUE? </span>
+    <span id="sabiastext">El Mundial 2026 será el primero con 48 selecciones.</span>
+  </div>
   <div class="aheader">
     <button class="hamtog" onclick="toggleHam()"><span></span><span></span><span></span></button>
     <div style="width:36px;height:36px;border-radius:50%;overflow:hidden;flex-shrink:0;background:#fff;display:flex;align-items:center;justify-content:center"><img src="Logo San Carlos.png" style="width:82%;height:82%;object-fit:contain"></div>
@@ -356,39 +388,20 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
   <div id="tab-sobres" class="tc" style="padding:0 0 60px!important;">
     <div class="sobre-hero">
       <div class="sobre-hero-tit">🎴 APERTURA DE SOBRES</div>
-      <div class="sobre-hero-sub">La seño elige cuántos abrir según el comportamiento del curso</div>
+      <div class="sobre-hero-sub">Completá las actividades del día para ganar sobres</div>
       <div class="sobre-dots-row">
         <span style="font-size:.75rem;color:rgba(255,255,255,.5)">HOY:</span>
         <div class="pdots" id="pdots"></div>
         <span style="font-size:.75rem;color:rgba(255,255,255,.5)" id="ptxt">Máximo 5</span>
       </div>
     </div>
-    <div class="sobre-opts-section">
-      <div class="sobre-opts-tit">¿Cuántos sobres abrís hoy?</div>
-      <div class="sopts">
-        <div class="sopt" id="o1" onclick="elegir(1)">
-          <div class="sicon s1bg">
-            <div class="sball"><img src="logoFifa.png" style="width:2.2rem;height:2.2rem;object-fit:contain;display:block"></div>
-            <div class="scnt">×1</div>
-          </div>
-          <div class="slbl">1 SOBRE</div>
-        </div>
-        <div class="sopt" id="o3" onclick="elegir(3)">
-          <div class="sicon s3bg">
-            <div class="sball"><img src="logoFifa.png" style="width:2.2rem;height:2.2rem;object-fit:contain;display:block"></div>
-            <div class="scnt">×3</div>
-          </div>
-          <div class="slbl">3 SOBRES</div>
-        </div>
-        <div class="sopt" id="o5" onclick="elegir(5)">
-          <div class="sicon s5bg">
-            <div class="sball"><img src="logoFifa.png" style="width:2.2rem;height:2.2rem;object-fit:contain;display:block"></div>
-            <div class="scnt">×5</div>
-          </div>
-          <div class="slbl">5 SOBRES</div>
-        </div>
-      </div>
+    <div style="padding:1rem 1rem 0;max-width:500px;margin:0 auto">
+      <div id="asist-section"></div>
+      <div id="trivia-section" style="margin-top:.7rem"></div>
+      <div id="conv-section" style="margin-top:.7rem"></div>
     </div>
+    <!-- TRIVIA OVERLAY -->
+    <div id="trivia-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:190;align-items:center;justify-content:center;padding:1rem"></div>
   </div>
 
   <!-- PEGAR -->
@@ -406,12 +419,12 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
     <div class="ibox">
       <div class="abar" style="border-radius:10px;margin-bottom:1rem">🔄 INTERCAMBIO A CIEGAS</div>
       <p style="font-weight:900;font-size:1.2rem;color:var(--dorado);margin-bottom:.3rem">INTERCAMBIO</p>
-      <p style="color:rgba(255,255,255,.5);font-size:.8rem;margin-bottom:1rem">Mandás 5 repetidas, recibís 5 al azar. Nadie ve las del otro. 1 intercambio por día.</p>
+      <p style="color:rgba(255,255,255,.5);font-size:.8rem;margin-bottom:1rem">Canjeás 10 repetidas por 1 sobre nuevo. 1 canje por día.</p>
       <div id="idiv"></div>
       <div class="icard">
         <h4>📤 ELEGIR CURSO DESTINO</h4>
         <select class="isel" id="idest" onchange="renderI()"><option value="">-- Seleccioná --</option></select>
-        <h4>📦 VOS MANDÁS (5 repetidas)</h4>
+        <h4>📦 VOS MANDÁS (10 repetidas)</h4>
         <div class="ifboxes" id="imis" style="margin:.5rem 0"></div>
         <h4 style="margin-top:.5rem">📬 VOS RECIBÍS (a ciegas)</h4>
         <div class="ifboxes" id="isu" style="margin:.5rem 0"></div>
@@ -421,21 +434,17 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
   </div>
 
   <!-- ESPECIALES -->
-  <div id="tab-especiales" class="tc">
-    <div class="abar" style="border-radius:10px;margin-bottom:1rem">⭐ PÁGINAS ESPECIALES</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-      <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:15px;padding:1rem">
-        <p style="font-size:1rem;font-weight:900;color:var(--dorado);margin-bottom:.8rem">🏫 Nuestro Cole</p>
-        <div class="espg" id="espcole"></div>
+  <div id="tab-especiales" class="tc" style="padding:0 0 60px!important;">
+    <div style="padding:.8rem;display:flex;align-items:center;justify-content:space-between">
+      <button id="esp-prev-btn" class="pnavbtn" onclick="navEsp(-1)" disabled>←</button>
+      <div style="text-align:center">
+        <div style="font-size:.85rem;font-weight:900;color:var(--dorado)" id="esp-tit">⭐ ESPECIALES</div>
+        <div style="font-size:.62rem;color:rgba(255,255,255,.4)" id="esp-sub">Página 1 de 2</div>
       </div>
-      <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:15px;padding:1rem">
-        <p style="font-size:1rem;font-weight:900;color:var(--dorado);margin-bottom:.8rem">🏆 Mundial 2026</p>
-        <div class="espg" id="espmundial"></div>
-      </div>
+      <button id="esp-next-btn" class="pnavbtn" onclick="navEsp(1)">→</button>
     </div>
-    <div style="margin-top:1rem;background:rgba(240,192,64,.06);border:1px solid rgba(240,192,64,.25);border-radius:12px;padding:.8rem;text-align:center">
-      <p style="color:var(--dorado);font-weight:900">✨ FIGURITAS HOLOGRÁFICAS</p>
-      <p style="color:rgba(255,255,255,.5);font-size:.76rem;margin-top:.3rem">Los escudos de cada selección son holográficos. ¡Las más difíciles de conseguir!</p>
+    <div style="overflow:hidden;position:relative">
+      <div id="esp-page" style="padding:.5rem .8rem"></div>
     </div>
   </div>
 </div>
@@ -444,8 +453,17 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 <div class="sovl" id="sovl">
   <div class="sovtit bb" id="sovtit">¡TOCÁ EL SOBRE!</div>
   <div class="sobig" id="sobig" onclick="flipSobre()">
-    <div class="sbf"><div class="sbl"><img src="logoFifa.png" style="width:3.2rem;height:3.2rem;object-fit:contain;display:block;filter:drop-shadow(0 0 6px rgba(255,255,255,.4))"></div><div class="sbsc">SAN CARLOS · 2026</div></div>
-    <div class="sbb"><div style="font-size:3rem">✨</div></div>
+    <div class="sbf">
+      <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:.5rem">
+        <img src="Logo San Carlos.png" style="width:55px;height:55px;object-fit:contain;background:#fff;border-radius:50%;padding:4px;box-shadow:0 0 15px rgba(240,192,64,.6)">
+        <img src="logoFifa.png" style="width:70px;height:auto;object-fit:contain;filter:brightness(1.2)">
+        <div class="sbsc">MUNDIAL 2026</div>
+      </div>
+    </div>
+    <div class="sbb">
+      <div style="font-size:2rem;margin-bottom:.3rem">🎴</div>
+      <div style="font-size:.75rem;color:var(--dorado);font-weight:900;letter-spacing:2px">5 FIGURITAS</div>
+    </div>
   </div>
   <div class="frev" id="frev" style="display:none"></div>
   <div class="revbtns" id="revbtns" style="display:none">
@@ -523,6 +541,62 @@ function snd(t){
   else if(t==='click'){mk(300,0,'triangle',0,.1,.1);}
   else if(t==='inter'){[330,440,550].forEach((f,i)=>mk(f,0,'sine',i*.15,.3,.2));}
 }
+
+// TRIVIA DATA (ajustadas por grado)
+const TRIVIAS=[
+  {id:'T001',q:'¿De qué color es el pasto de una cancha de fútbol?',ok:'Verde',ops:['Azul','Rojo','Amarillo'],nmin:1,nmax:2,cat:'cultura'},
+  {id:'T002',q:'¿Cuántos jugadores hay en un equipo de fútbol?',ok:'11',ops:['5','22','10'],nmin:1,nmax:2,cat:'mundial'},
+  {id:'T003',q:'¿Qué forma tiene la pelota de fútbol?',ok:'Redonda',ops:['Cuadrada','Triangular','Ovalada'],nmin:1,nmax:2,cat:'mundial'},
+  {id:'T004',q:'¿Cuánto es 2 + 3?',ok:'5',ops:['4','6','7'],nmin:1,nmax:2,cat:'escolar'},
+  {id:'T005',q:'¿De qué colores es la camiseta de Argentina?',ok:'Azul y blanca',ops:['Roja y negra','Verde y amarilla','Naranja y azul'],nmin:1,nmax:2,cat:'mundial'},
+  {id:'T006',q:'¿Cuántas letras tiene la palabra GATO?',ok:'4',ops:['3','5','2'],nmin:1,nmax:2,cat:'escolar'},
+  {id:'T007',q:'¿Qué obtenés mezclando azul y amarillo?',ok:'Verde',ops:['Naranja','Violeta','Marrón'],nmin:1,nmax:2,cat:'escolar'},
+  {id:'T008',q:'¿En qué continente está Argentina?',ok:'América',ops:['Europa','Asia','África'],nmin:1,nmax:2,cat:'mundial'},
+  {id:'T009',q:'¿Cuántos dedos tiene una mano?',ok:'5',ops:['4','6','10'],nmin:1,nmax:2,cat:'escolar'},
+  {id:'T010',q:'¿Cuál es el animal más grande del mundo?',ok:'Ballena azul',ops:['Elefante','Jirafa','Tiburón'],nmin:1,nmax:2,cat:'cultura'},
+  {id:'T011',q:'¿Cuántos países participan en el Mundial 2026?',ok:'48',ops:['32','24','64'],nmin:3,nmax:4,cat:'mundial'},
+  {id:'T012',q:'¿En qué país nació Lionel Messi?',ok:'Argentina',ops:['Brasil','Uruguay','España'],nmin:3,nmax:4,cat:'cultura'},
+  {id:'T013',q:'¿Quién ganó el Mundial de fútbol 2022?',ok:'Argentina',ops:['Francia','Brasil','Alemania'],nmin:3,nmax:4,cat:'mundial'},
+  {id:'T014',q:'¿Cuál es la capital de Brasil?',ok:'Brasilia',ops:['Río de Janeiro','São Paulo','Buenos Aires'],nmin:3,nmax:4,cat:'mundial'},
+  {id:'T015',q:'¿En qué continente está Marruecos?',ok:'África',ops:['Asia','América','Europa'],nmin:3,nmax:4,cat:'mundial'},
+  {id:'T016',q:'¿Cuánto es 7 × 8?',ok:'56',ops:['48','64','54'],nmin:3,nmax:4,cat:'escolar'},
+  {id:'T017',q:'¿Cuántos días tiene un año no bisiesto?',ok:'365',ops:['360','366','364'],nmin:3,nmax:4,cat:'escolar'},
+  {id:'T018',q:'¿Cuánto es 100 ÷ 4?',ok:'25',ops:['20','30','40'],nmin:3,nmax:4,cat:'escolar'},
+  {id:'T019',q:'¿Cuál es el idioma oficial de Francia?',ok:'Francés',ops:['Inglés','Español','Alemán'],nmin:3,nmax:4,cat:'mundial'},
+  {id:'T020',q:'¿Cuántos lados tiene un hexágono?',ok:'6',ops:['5','7','8'],nmin:3,nmax:4,cat:'escolar'},
+  {id:'T021',q:'¿Qué planeta es el más cercano al Sol?',ok:'Mercurio',ops:['Venus','La Tierra','Marte'],nmin:3,nmax:4,cat:'escolar'},
+  {id:'T022',q:'¿En qué continente está Japón?',ok:'Asia',ops:['América','Europa','Oceanía'],nmin:3,nmax:4,cat:'mundial'},
+  {id:'T023',q:'¿Cuántos colores tiene el arcoíris?',ok:'7',ops:['5','6','8'],nmin:3,nmax:4,cat:'cultura'},
+  {id:'T024',q:'¿En qué año se jugó el primer Mundial de fútbol?',ok:'1930',ops:['1920','1950','1910'],nmin:5,nmax:6,cat:'mundial'},
+  {id:'T025',q:'¿Qué país ganó más Mundiales de fútbol?',ok:'Brasil (5)',ops:['Alemania (4)','Italia (4)','Argentina (3)'],nmin:5,nmax:6,cat:'mundial'},
+  {id:'T026',q:'¿Cuántos títulos mundiales tiene Alemania?',ok:'4',ops:['3','5','2'],nmin:5,nmax:6,cat:'mundial'},
+  {id:'T027',q:'¿Cuál es la moneda oficial de Japón?',ok:'Yen',ops:['Yuan','Won','Dólar'],nmin:5,nmax:6,cat:'mundial'},
+  {id:'T028',q:'¿Cuánto es el 15% de 200?',ok:'30',ops:['25','20','40'],nmin:5,nmax:6,cat:'escolar'},
+  {id:'T029',q:'¿Cuál es el perímetro de un cuadrado de lado 5 cm?',ok:'20 cm',ops:['25 cm','10 cm','15 cm'],nmin:5,nmax:6,cat:'escolar'},
+  {id:'T030',q:'¿Quién escribió Don Quijote de la Mancha?',ok:'Miguel de Cervantes',ops:['Shakespeare','Borges','García Márquez'],nmin:5,nmax:6,cat:'escolar'},
+  {id:'T031',q:'¿Cuántos países tiene América del Sur?',ok:'12',ops:['10','14','8'],nmin:5,nmax:6,cat:'cultura'},
+  {id:'T032',q:'¿En qué año Argentina ganó su segundo Mundial?',ok:'1986',ops:['1978','1990','1982'],nmin:5,nmax:6,cat:'mundial'},
+  {id:'T033',q:'¿Cuál es la fórmula del área de un triángulo?',ok:'Base × Altura ÷ 2',ops:['Base × Altura','Base + Altura','2 × Base + Altura'],nmin:5,nmax:6,cat:'escolar'},
+  {id:'T034',q:'¿Qué gas necesitan los seres vivos para respirar?',ok:'Oxígeno',ops:['Nitrógeno','Dióxido de carbono','Hidrógeno'],nmin:5,nmax:6,cat:'escolar'},
+  {id:'T035',q:'¿Cuántas selecciones clasifica Europa al Mundial 2026?',ok:'16',ops:['12','10','8'],nmin:5,nmax:6,cat:'mundial'},
+];
+const SABIAS=[
+  'Brasil es el único país que jugó TODOS los Mundiales de fútbol de la historia.',
+  'La Copa del Mundo pesa 6.175 kg y está hecha de oro de 18 quilates.',
+  'El Mundial 2026 será el primero con 48 selecciones en lugar de 32.',
+  'El gol más rápido en un Mundial lo marcó Hakan Şükür en 11 segundos (Corea 2002).',
+  'Argentina ganó su tercer Mundial en 2022, venciendo a Francia en la final.',
+  'Japón tiene más de 6.800 islas en su territorio.',
+  'Marruecos fue el primer país africano en semifinales de un Mundial (Qatar 2022).',
+  'El álbum de figuritas del Mundial fue creado por Panini en Italia en 1970.',
+  'México organizará el Mundial 2026 junto con EE.UU. y Canadá.',
+  'Australia clasificó a 5 Mundiales consecutivos entre 2006 y 2022.',
+  'Portugal tiene 10 millones de habitantes, pero más de 250 millones hablan portugués.',
+  'Francia es el país con más jugadores nacidos en el exterior en su selección.',
+  'Senegal ganó su primera Copa de África en 2021 con Sadio Mané como figura.',
+  'La bandera de Uruguay tiene el mismo celeste que Argentina pero con franjas horizontales.',
+  '¡Cada edición del Mundial se venden cientos de millones de figuritas Panini!',
+];
 
 // DATA
 const PAISES=[
@@ -636,7 +710,11 @@ function _parseS(d){
     rep:d.rep||[],
     shoy:parseInt(d.shoy||0),
     fhoy:d.fhoy||'',
-    ihoy:d.ihoy||''
+    ihoy:d.ihoy||'',
+    thoy:d.thoy||'',
+    tAciertos:parseInt(d.tAciertos||0),
+    asHoy:d.asHoy||'',
+    cvHoy:d.cvHoy||''
   };
 }
 function ldS(){
@@ -646,7 +724,11 @@ function ldS(){
     rep:JSON.parse(localStorage.getItem(SK('rep'))||'[]'),
     shoy:parseInt(localStorage.getItem(SK('sh'))||'0'),
     fhoy:localStorage.getItem(SK('fh'))||'',
-    ihoy:localStorage.getItem(SK('ih'))||''
+    ihoy:localStorage.getItem(SK('ih'))||'',
+    thoy:localStorage.getItem(SK('th'))||'',
+    tAciertos:parseInt(localStorage.getItem(SK('ta'))||'0'),
+    asHoy:localStorage.getItem(SK('as'))||'',
+    cvHoy:localStorage.getItem(SK('cv'))||''
   };
 }
 function _cacheS(){
@@ -656,13 +738,18 @@ function _cacheS(){
   localStorage.setItem(SK('sh'),S.shoy);
   localStorage.setItem(SK('fh'),S.fhoy);
   localStorage.setItem(SK('ih'),S.ihoy||'');
+  localStorage.setItem(SK('th'),S.thoy||'');
+  localStorage.setItem(SK('ta'),S.tAciertos||0);
+  localStorage.setItem(SK('as'),S.asHoy||'');
+  localStorage.setItem(SK('cv'),S.cvHoy||'');
 }
 function svS(){
   _cacheS();
   if(!fbDB)return;
   fbDB.ref(`albums/${CC}`).set({
     peg:[...S.peg],ap:S.ap,rep:S.rep,
-    shoy:S.shoy,fhoy:S.fhoy,ihoy:S.ihoy||''
+    shoy:S.shoy,fhoy:S.fhoy,ihoy:S.ihoy||'',
+    thoy:S.thoy||'',tAciertos:S.tAciertos||0,asHoy:S.asHoy||'',cvHoy:S.cvHoy||''
   });
 }
 function startSync(){
@@ -675,6 +762,8 @@ function startSync(){
     S.ap=d.ap||[];S.rep=d.rep||[];
     S.shoy=parseInt(d.shoy||0);
     S.fhoy=d.fhoy||'';S.ihoy=d.ihoy||'';
+    S.thoy=d.thoy||'';S.tAciertos=parseInt(d.tAciertos||0);
+    S.asHoy=d.asHoy||'';S.cvHoy=d.cvHoy||'';
     _cacheS();
     updProg();buildCG();updPaqUI();renderAP();
   });
@@ -706,7 +795,7 @@ async function login(){
     }catch(e){S=ldS();}
   }else{S=ldS();}
   const hoy=new Date().toDateString();
-  if(S.fhoy!==hoy){S.shoy=0;S.fhoy=hoy;S.ihoy='';svS();}
+  if(S.fhoy!==hoy){S.shoy=0;S.fhoy=hoy;S.ihoy='';S.thoy='';S.tAciertos=0;S.asHoy='';S.cvHoy='';svS();}
   const lbl=`${g}° ${DN[d]||d}`;
   document.getElementById('cdisplay').textContent=lbl.toUpperCase();
   document.getElementById('hcl').textContent=lbl.toUpperCase();
@@ -716,7 +805,17 @@ async function login(){
 function salir(){toggleHam();go('sp');document.getElementById('lpass').value='';document.getElementById('bnav').classList.remove('vis');}
 
 // INIT
-function initApp(){buildCG();buildIS();buildEsp();updProg();updPaqUI();renderAP();nav('album',true);document.getElementById('bnav').classList.add('vis');}
+function initApp(){buildCG();buildIS();buildEsp();updProg();updPaqUI();renderAP();nav('album',true);document.getElementById('bnav').classList.add('vis');startSabias();}
+
+// SABÍAS QUE
+let _sabIdx=0;
+function startSabias(){
+  _sabIdx=Math.floor(Math.random()*SABIAS.length);
+  showSabias();
+  setInterval(nextSabias,12000);
+}
+function nextSabias(){_sabIdx=(_sabIdx+1)%SABIAS.length;showSabias();}
+function showSabias(){const el=document.getElementById('sabiastext');if(el)el.textContent=SABIAS[_sabIdx];}
 
 // NAV
 let CT='album';
@@ -812,11 +911,15 @@ function renderPg(id){
         </div>
       </div>
     </div>
-    <div style="margin-bottom:.6rem;border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,.1)">
-      <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=${(p.coords[1]-25)},${(p.coords[0]-18)},${(p.coords[1]+25)},${(p.coords[0]+18)}&layer=mapnik&marker=${p.coords[0]},${p.coords[1]}" style="width:100%;height:140px;border:none;display:block;filter:invert(93%) hue-rotate(180deg) saturate(0.8)" loading="lazy" title="Ubicación ${p.n}"></iframe>
+    <div style="margin-bottom:.6rem;border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,.1);position:relative;height:130px;background:#0d1a2e;pointer-events:none">
+      <img src="https://staticmap.openstreetmap.de/staticmap.php?center=${p.coords[0]},${p.coords[1]}&zoom=4&size=600x260&markers=${p.coords[0]},${p.coords[1]},red" style="width:100%;height:100%;object-fit:cover;filter:saturate(0.6) brightness(0.7);display:block" onerror="this.style.display='none'" loading="lazy" alt="Mapa ${p.n}">
+      <div style="position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center">
+        <div style="width:14px;height:14px;background:var(--rojo);border-radius:50%;border:2px solid #fff;box-shadow:0 0 8px rgba(228,5,31,.8);animation:hp 1.5s infinite"></div>
+      </div>
+      <div style="position:absolute;bottom:4px;right:6px;font-size:.55rem;color:rgba(255,255,255,.4)">© OpenStreetMap</div>
     </div>
     <div class="abar" style="border-radius:8px;margin-bottom:.6rem;font-size:.72rem">🏅 FIGURITAS DE ${p.n.toUpperCase()} · SAN CARLOS MUNDIAL 2026</div>
-    <div class="fgrid" style="grid-template-columns:repeat(6,1fr)">${norm.map(f=>rfig(f)).join('')}</div>
+    <div class="fgrid" style="grid-template-columns:repeat(8,1fr)">${norm.map(f=>rfig(f)).join('')}</div>
     ${holo?`<div style="margin-top:.7rem"><div class="abar" style="border-radius:8px;margin-bottom:.5rem;font-size:.68rem">✨ ESCUDO HOLOGRÁFICO · ${p.n.toUpperCase()}</div><div style="display:flex;justify-content:center">${rfig(holo)}</div></div>`:''}
   `;
 }
@@ -834,7 +937,7 @@ function renderSPg(id,prev,next){
       <button class="pnavbtn" onclick="showPage('${next}')" ${!next?'disabled':''}>→</button>
     </div>
     <div class="abar" style="border-radius:8px;margin-bottom:.6rem;font-size:.72rem">⭐ PÁGINA ESPECIAL · SAN CARLOS MUNDIAL 2026</div>
-    <div class="espg" style="grid-template-columns:repeat(6,1fr)">${figs.map(f=>rfig(f)).join('')}</div>
+    <div class="espg" style="grid-template-columns:repeat(8,1fr)">${figs.map(f=>rfig(f)).join('')}</div>
   `;
 }
 
@@ -844,17 +947,24 @@ function rfig(f){
   const cls=`fig ${pg?'peg':''} ${av&&!pg?'avail':''} ${f.holo?'holo':''}`;
   const ck=pg?`openMod('${f.id}')`:av?`pegFig('${f.id}')`:';';
   let avContent;
-  if(!pg&&!av) avContent=`<div class="fvac">❓</div>`;
-  else if(f.img) avContent=`<img src="${f.img}" style="width:100%;height:100%;object-fit:cover;border-radius:3px">`;
-  else avContent=f.em;
+  const numBadge=`<div style="position:absolute;top:2px;left:2px;background:rgba(0,71,108,.9);color:var(--dorado);font-size:.38rem;font-weight:900;padding:1px 3px;border-radius:2px;z-index:2">#${f.num}</div>`;
+  if(!pg&&!av){
+    // Placeholder: mostrar info del alumno
+    avContent=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.1rem;padding:.2rem;text-align:center;width:100%;height:100%">
+      <div style="font-size:.48rem;font-weight:900;color:rgba(255,255,255,.7);line-height:1.2">${f.nm}</div>
+      <div style="font-size:.4rem;color:rgba(255,255,255,.4)">${f.gr}</div>
+      <div style="font-size:.38rem;color:var(--dorado);background:rgba(0,71,108,.6);padding:1px 3px;border-radius:2px">#${f.num}</div>
+    </div>`;
+  } else if(f.img){
+    avContent=`<img src="${f.img}" style="width:100%;height:100%;object-fit:cover">`;
+  } else {
+    avContent=`<div style="font-size:1.2rem">${f.em}</div>`;
+  }
   return`<div class="${cls}" onclick="${ck}" id="fig-${f.id}">
     <div class="fav">${avContent}</div>
-    <div class="ftxt">
-      <div class="fnum">#${f.num}</div>
-      <div class="fnm">${f.nm}</div>
-      <div class="fgr">${f.gr}</div>
-      ${av&&!pg?`<div style="font-size:.55rem;color:var(--rojo);font-weight:900;margin-top:.15rem">⚡ PEGAR</div>`:''}
-    </div>
+    ${numBadge}
+    ${pg?`<div style="position:absolute;top:2px;right:2px;background:rgba(240,192,64,.9);color:#000;font-size:.38rem;font-weight:900;padding:1px 3px;border-radius:2px;z-index:2">✓</div>`:''}
+    ${av&&!pg?`<div style="position:absolute;bottom:0;left:0;right:0;background:rgba(228,5,31,.85);color:#fff;font-size:.42rem;font-weight:900;text-align:center;padding:1px">PEGAR ⚡</div>`:''}
   </div>`;
 }
 
@@ -878,7 +988,7 @@ function pegFig(id){
   const i=S.ap.findIndex(f=>f.id===id);if(i<0)return;
   S.peg.add(id);S.ap.splice(i,1);svS();
   snd('pegar');updProg();buildCG();toast('✅ ¡Figurita pegada!');
-  if(CPG)renderPg(CPG);
+  if(CPG){renderPg(CPG);setTimeout(()=>{const el=document.getElementById(`fig-${id}`);if(el){el.style.transition='none';el.style.transform='scale(0) rotate(-15deg)';el.style.opacity='0';requestAnimationFrame(()=>{el.style.transition='transform .5s cubic-bezier(.34,1.56,.64,1), opacity .3s';el.style.transform='scale(1) rotate(0)';el.style.opacity='1';});setTimeout(()=>{el.style.transition='';el.style.transform='';el.style.opacity='';},600);}},50);}
   renderAP();
   // check complete
   const fig=allFigs().find(f=>f.id===id);
@@ -889,29 +999,122 @@ function pegFig(id){
 }
 
 // SOBRES
+function getTriviaParaGrado(){
+  const g=parseInt((CC||'1').split('-')[0])||3;
+  const aptas=TRIVIAS.filter(t=>g>=t.nmin&&g<=t.nmax);
+  if(aptas.length<3){
+    const resto=TRIVIAS.filter(t=>!aptas.find(a=>a.id===t.id));
+    const falta=3-aptas.length;
+    for(let i=0;i<falta&&i<resto.length;i++) aptas.push(resto[i]);
+  }
+  const mezc=[...aptas].sort(()=>Math.random()-.5);
+  return mezc.slice(0,3);
+}
+let _triviaHecha=false;let _triviaPregs=[];let _triviaIdx=0;let _triviaAciertos=0;
 function updPaqUI(){
   document.getElementById('pdots').innerHTML=Array(5).fill(0).map((_,i)=>`<div class="pdot ${i<S.shoy?'used':''}"></div>`).join('');
   const r=5-S.shoy;
-  document.getElementById('ptxt').textContent=r>0?`Quedan ${r} sobres para hoy`:'🚫 Límite diario alcanzado';
-  ['o1','o3','o5'].forEach((id,i)=>{
-    const el=document.getElementById(id);if(!el)return;
-    el.classList.toggle('dis',S.shoy+[1,3,5][i]>5);
-  });
-  setTimeout(()=>{
-    ['o1','o3','o5'].forEach((id,i)=>{
-      const el=document.getElementById(id);
-      if(!el||el.classList.contains('dis'))return;
-      setTimeout(()=>{el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),600);},i*220);
-    });
-  },600);
+  document.getElementById('ptxt').textContent=r>0?`Quedan ${r} sobres`:'🚫 Límite diario alcanzado';
+  const hoy=new Date().toDateString();
+  _triviaHecha=(S.fhoy===hoy&&(S.thoy||0)>0);
+  renderSobresUI();
 }
+function renderSobresUI(){
+  const hoy=new Date().toDateString();
+  const r=5-S.shoy;
+  const tDiv=document.getElementById('trivia-section');
+  const asDiv=document.getElementById('asist-section');
+  const cvDiv=document.getElementById('conv-section');
+  if(!tDiv)return;
+  // ASISTENCIA
+  const asUsed=S.asHoy===hoy;
+  asDiv.innerHTML=`
+    <div class="sobre-accion-card" style="border-color:${asUsed?'rgba(255,255,255,.2)':'var(--dorado)'}">
+      <div class="sac-ico">✅</div>
+      <div class="sac-info"><b>ASISTENCIA</b><span>1 sobre por venir al cole</span></div>
+      <button class="sac-btn" ${asUsed||r<=0?'disabled':''} onclick="darSobreAsist()">${asUsed?'✓ YA DADO':'OTORGAR'}</button>
+    </div>`;
+  // TRIVIA
+  const tUsed=S.thoy===hoy;
+  if(tUsed){
+    tDiv.innerHTML=`<div class="sobre-accion-card" style="border-color:rgba(255,255,255,.2)"><div class="sac-ico">🎯</div><div class="sac-info"><b>TRIVIA DEL DÍA</b><span>Ya realizada · ${S.tAciertos||0}/3 correctas</span></div><button class="sac-btn" disabled>✓ HECHA</button></div>`;
+  } else {
+    tDiv.innerHTML=`<div class="sobre-accion-card" style="border-color:var(--azul)"><div class="sac-ico">🧠</div><div class="sac-info"><b>TRIVIA INTERDISCIPLINARIA</b><span>3 preguntas · hasta 3 sobres</span></div><button class="sac-btn azul" ${r<=0?'disabled':''} onclick="iniciarTrivia()">JUGAR</button></div>`;
+  }
+  // CONVIVENCIA
+  const cvUsed=S.cvHoy===hoy;
+  cvDiv.innerHTML=`
+    <div class="sobre-accion-card" style="border-color:${cvUsed?'rgba(255,255,255,.2)':'var(--rojo)'}">
+      <div class="sac-ico">🤝</div>
+      <div class="sac-info"><b>CONVIVENCIA</b><span>A criterio del docente</span></div>
+      <button class="sac-btn rojo" ${cvUsed||r<=0?'disabled':''} onclick="darSobreConv()">${cvUsed?'✓ DADO':'OTORGAR'}</button>
+    </div>`;
+}
+function darSobreAsist(){
+  if(S.shoy>=5){toast('🚫 Límite diario alcanzado');return;}
+  const hoy=new Date().toDateString();
+  S.asHoy=hoy;S.shoy+=1;svS();updPaqUI();
+  toast('✅ 1 sobre de asistencia otorgado');
+  pend=[genSobre()];cidx=0;openSov();
+}
+function darSobreConv(){
+  if(S.shoy>=5){toast('🚫 Límite diario alcanzado');return;}
+  const hoy=new Date().toDateString();
+  S.cvHoy=hoy;S.shoy+=1;svS();updPaqUI();
+  toast('🤝 1 sobre de convivencia otorgado');
+  pend=[genSobre()];cidx=0;openSov();
+}
+function iniciarTrivia(){
+  if(S.shoy>=5){toast('🚫 Límite diario alcanzado');return;}
+  _triviaPregs=getTriviaParaGrado();_triviaIdx=0;_triviaAciertos=0;
+  mostrarPreguntaTrivia();
+}
+function mostrarPreguntaTrivia(){
+  const p=_triviaPregs[_triviaIdx];
+  const ops=[p.ok,...p.ops].sort(()=>Math.random()-.5);
+  const catLbl={mundial:'🌍 Mundial','escolar':'📚 Escolar','cultura':'💡 Cultura'}[p.cat]||p.cat;
+  document.getElementById('trivia-overlay').innerHTML=`
+    <div class="trivia-card">
+      <div class="trivia-header"><span class="trivia-cat">${catLbl}</span><span class="trivia-prog">Pregunta ${_triviaIdx+1} de 3</span></div>
+      <div class="trivia-aciertos">${Array(3).fill(0).map((_,i)=>`<span class="tac ${i<_triviaAciertos?'ok':''}">${i<_triviaAciertos?'⭐':'○'}</span>`).join('')}</div>
+      <div class="trivia-q">${p.q}</div>
+      <div class="trivia-ops">${ops.map(o=>`<button class="trivia-opt" onclick="respTrivia('${o.replace(/'/g,"\\'")}','${p.ok.replace(/'/g,"\\'")}',this)">${o}</button>`).join('')}</div>
+    </div>`;
+  document.getElementById('trivia-overlay').style.display='flex';
+}
+function respTrivia(sel,ok,btn){
+  const btns=document.querySelectorAll('.trivia-opt');
+  btns.forEach(b=>{b.disabled=true;if(b.textContent===ok)b.classList.add('correct');});
+  if(sel===ok){btn.classList.add('correct');_triviaAciertos++;}
+  else{btn.classList.add('wrong');}
+  setTimeout(()=>{
+    _triviaIdx++;
+    if(_triviaIdx<3){mostrarPreguntaTrivia();}
+    else{finTrivia();}
+  },1200);
+}
+function finTrivia(){
+  document.getElementById('trivia-overlay').style.display='none';
+  const hoy=new Date().toDateString();
+  S.thoy=hoy;S.tAciertos=_triviaAciertos;
+  const sobresGanados=_triviaAciertos;
+  if(sobresGanados>0&&S.shoy+sobresGanados<=5){
+    S.shoy+=sobresGanados;svS();
+    pend=[];for(let i=0;i<sobresGanados;i++)pend.push(genSobre());
+    cidx=0;svS();updPaqUI();openSov();
+    toast(`🎯 ${_triviaAciertos}/3 correctas → ${sobresGanados} sobre${sobresGanados>1?'s':''}!`);
+  } else if(sobresGanados===0){
+    svS();updPaqUI();toast('😅 0/3 correctas, sin sobres esta vez');
+  } else {
+    const posible=Math.min(sobresGanados,5-S.shoy);
+    S.shoy+=posible;svS();
+    if(posible>0){pend=[];for(let i=0;i<posible;i++)pend.push(genSobre());cidx=0;openSov();}
+    updPaqUI();toast(`🎯 ${_triviaAciertos}/3 correctas → ${posible} sobre${posible>1?'s':''}!`);
+  }
+}
+function elegir(n){toast('ℹ️ Usá los botones de Asistencia, Trivia o Convivencia');}
 
 let pend=[];let cidx=0;
-function elegir(n){
-  if(S.shoy+n>5){toast(`⚠️ Solo podés abrir ${5-S.shoy} más hoy`);return;}
-  pend=[];for(let i=0;i<n;i++)pend.push(genSobre());
-  cidx=0;S.shoy+=n;svS();updPaqUI();openSov();
-}
 function openSov(){
   document.getElementById('sovl').classList.add('active');
   document.getElementById('frev').style.display='none';
@@ -995,36 +1198,55 @@ function renderI(){
   const hoy=new Date().toDateString();
   if(S.ihoy===hoy){div.innerHTML=`<div class="istatus">✅ Ya intercambiaste hoy. ¡Volvé mañana!</div>`;document.getElementById('binter').disabled=true;return;}
   div.innerHTML='';
-  const reps=S.rep.slice(0,5);
+  const reps=S.rep.slice(0,10);
   const mis=document.getElementById('imis');const su=document.getElementById('isu');
-  if(reps.length<5){
-    mis.innerHTML=`<p style="color:rgba(255,255,255,.4);font-size:.76rem">Necesitás al menos 5 repetidas (tenés ${S.rep.length})</p>`;
+  if(reps.length<10){
+    mis.innerHTML=`<p style="color:rgba(255,255,255,.4);font-size:.76rem">Necesitás al menos 10 repetidas (tenés ${S.rep.length})</p>`;
     document.getElementById('binter').disabled=true;
   } else {
     mis.innerHTML=reps.map(f=>`<div class="ifb" title="${f.nm}">${f.em}</div>`).join('');
     const dest=document.getElementById('idest').value;
-    if(dest){su.innerHTML=Array(5).fill(0).map(()=>`<div class="ifb oculta"></div>`).join('');document.getElementById('binter').disabled=false;}
+    if(dest){su.innerHTML=`<div class="ifb oculta"></div>`;document.getElementById('binter').disabled=false;}
     else{su.innerHTML=`<p style="color:rgba(255,255,255,.4);font-size:.76rem">Seleccioná un curso</p>`;document.getElementById('binter').disabled=true;}
   }
 }
 function doInter(){
-  const dest=document.getElementById('idest').value;
-  if(!dest||S.rep.length<5){toast('⚠️ Seleccioná curso y tener 5 repetidas');return;}
-  S.rep.splice(0,5);
-  genSobre().forEach(f=>{
-    if(!S.peg.has(f.id)&&!S.ap.some(x=>x.id===f.id))S.ap.push(f);else S.rep.push(f);
-  });
+  if(S.rep.length<10){toast('⚠️ Necesitás 10 repetidas');return;}
+  const dest=document.getElementById('binter').getAttribute('data-dest')||document.getElementById('idest').value||_randDest();
+  S.rep.splice(0,10);
+  if(S.shoy<5){S.shoy+=1;svS();pend=[genSobre()];cidx=0;openSov();toast('🔄 ¡Canjeaste 10 repetidas por 1 sobre!');}
+  else{svS();toast('🚫 Ya alcanzaste el límite de 5 sobres hoy');}
   S.ihoy=new Date().toDateString();svS();
-  const[g,d]=dest.split('-');snd('inter');toast(`🔄 ¡Intercambio con ${g}° ${DN[d]||d}!`);
   renderI();renderAP();
 }
+function _randDest(){const opts=[];for(let g=1;g<=6;g++)Object.keys(DN).forEach(d=>{if(`${g}-${d}`!==CC)opts.push(`${g}-${d}`);});return opts[Math.floor(Math.random()*opts.length)];}
 
 // ESPECIALES
-function buildEsp(){
-  document.getElementById('espcole').style.gridTemplateColumns='repeat(5,1fr)';
-  document.getElementById('espmundial').style.gridTemplateColumns='repeat(5,1fr)';
-  document.getElementById('espcole').innerHTML=ECOLE.map(f=>rfig(f)).join('');
-  document.getElementById('espmundial').innerHTML=EMUNDIAL.map(f=>rfig(f)).join('');
+let _espPag=0;
+const ESP_PAGES=[
+  {tit:'🏫 Colegio San Carlos',figs:()=>ECOLE},
+  {tit:'🏆 Mundial 2026',figs:()=>EMUNDIAL},
+];
+function buildEsp(){renderEspPag();}
+function navEsp(dir){
+  const pg=document.getElementById('esp-page');
+  pg.style.transition='none';pg.style.transform=`translateX(${dir>0?'100%':'-100%'})`;
+  setTimeout(()=>{
+    _espPag=Math.max(0,Math.min(ESP_PAGES.length-1,_espPag+dir));
+    renderEspPag();
+    pg.style.transition='transform .35s cubic-bezier(.4,0,.2,1)';
+    pg.style.transform=`translateX(${dir>0?'-100%':'100%'})`;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{pg.style.transform='translateX(0)';snd('click');}));
+  },10);
+}
+function renderEspPag(){
+  const ep=ESP_PAGES[_espPag];
+  document.getElementById('esp-tit').textContent=ep.tit;
+  document.getElementById('esp-sub').textContent=`Página ${_espPag+1} de ${ESP_PAGES.length}`;
+  document.getElementById('esp-prev-btn').disabled=_espPag===0;
+  document.getElementById('esp-next-btn').disabled=_espPag===ESP_PAGES.length-1;
+  const figs=ep.figs();
+  document.getElementById('esp-page').innerHTML=`<div class="espg" style="grid-template-columns:repeat(4,1fr);gap:.5rem">${figs.map(f=>rfig(f)).join('')}</div>`;
 }
 
 // MODAL
@@ -1108,7 +1330,7 @@ function verVistaPais(id){
     <div style="margin-bottom:.8rem">
       <button class="bbtn" onclick="document.getElementById('vpaisdetalle').innerHTML=''">← Países</button>
       <div style="font-size:1rem;font-weight:900;color:var(--dorado);margin:.4rem 0">${p.n} · ${pg}/${fs.length} pegadas</div>
-      <div class="fgrid" style="grid-template-columns:repeat(6,1fr)">${fs.map(f=>rfigRO(f)).join('')}</div>
+      <div class="fgrid" style="grid-template-columns:repeat(8,1fr)">${fs.map(f=>rfigRO(f)).join('')}</div>
     </div>`;
   document.getElementById('vpaisdetalle').scrollIntoView({behavior:'smooth',block:'start'});
 }
@@ -1170,7 +1392,7 @@ async function resetCurso(cc,lbl){
   </div>
   <div style="padding:1rem;width:100%;max-width:620px;margin:0 auto">
     <div style="display:flex;gap:.6rem;margin-bottom:1rem">
-      <select id="vsel" style="flex:1;padding:.8rem;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font-family:inherit;font-size:.9rem;outline:none">
+      <select id="vsel" style="flex:1;padding:.8rem;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:#001f33;color:#fff;font-family:inherit;font-size:.9rem;outline:none;-webkit-appearance:none">
         <option value="">-- Elegí un curso --</option>
         <optgroup label="1° Grado"><option value="1-arayan">1° Arrayán</option><option value="1-jacaranda">1° Jacarandá</option><option value="1-ceibo">1° Ceibo</option></optgroup>
         <optgroup label="2° Grado"><option value="2-arayan">2° Arrayán</option><option value="2-jacaranda">2° Jacarandá</option><option value="2-ceibo">2° Ceibo</option></optgroup>
