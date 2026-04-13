@@ -72,11 +72,15 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 .lang-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);color:#fff;padding:.38rem .8rem;border-radius:8px;cursor:pointer;font-size:.8rem;font-weight:900;font-family:inherit;transition:.2s;flex-shrink:0;letter-spacing:1px;}
 .lang-btn:hover{background:var(--dorado);color:var(--negro);}
 /* SABIAS QUE - fila completa en header */
-.hdr-sabias-row{width:100%;text-align:center;padding:.3rem .5rem .35rem;border-top:1px solid rgba(255,255,255,.12);cursor:pointer;position:relative;}
-.hdr-sabias-row p{font-size:.92rem;font-weight:700;font-style:italic;letter-spacing:.3px;line-height:1.3;transition:opacity .35s,transform .35s;background:linear-gradient(90deg,var(--dorado) 0%,#fff 40%,var(--dorado) 80%,#ffe87a 100%);background-size:250%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:sabmov 5s linear infinite;}
-@keyframes sabmov{0%{background-position:0%}100%{background-position:250%}}
+.hdr-sabias-row{width:100%;text-align:center;padding:.35rem .6rem .4rem;cursor:pointer;position:relative;margin-top:.3rem;}
+.sab-card{background:linear-gradient(135deg,rgba(240,192,64,.13) 0%,rgba(0,71,108,.3) 60%,rgba(240,192,64,.08) 100%);border:1px solid rgba(240,192,64,.35);border-radius:10px;padding:.4rem .7rem;display:flex;align-items:center;gap:.5rem;box-shadow:0 0 12px rgba(240,192,64,.18),inset 0 1px 0 rgba(255,255,255,.07);animation:sabglow 3s ease-in-out infinite;transition:opacity .35s,transform .35s;}
+.sab-card.sab-hidden{opacity:0;transform:translateY(-6px);}
+.sab-icon{font-size:1.1rem;animation:sabspin 6s linear infinite;flex-shrink:0;}
+.sab-txt{font-size:.88rem;font-weight:800;font-style:italic;letter-spacing:.2px;line-height:1.3;flex:1;background:linear-gradient(90deg,#ffe87a 0%,#fff 35%,var(--dorado) 65%,#fff 85%,#ffe87a 100%);background-size:300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:sabmov 4s linear infinite;}
+@keyframes sabmov{0%{background-position:0%}100%{background-position:300%}}
+@keyframes sabglow{0%,100%{box-shadow:0 0 10px rgba(240,192,64,.15),inset 0 1px 0 rgba(255,255,255,.07)}50%{box-shadow:0 0 22px rgba(240,192,64,.45),inset 0 1px 0 rgba(255,255,255,.12)}}
+@keyframes sabspin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
 @keyframes pulse-btn{from{transform:scale(1);box-shadow:0 4px 20px rgba(240,192,64,.5)}to{transform:scale(1.03);box-shadow:0 6px 28px rgba(240,192,64,.8)}}
-.hdr-sabias-row p.sab-hidden{opacity:0;transform:translateY(-5px);}
 /* SIDE NAV ARROWS */
 .pg-figs-wrapper{display:flex;align-items:center;gap:.25rem;}
 .side-nav-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.5);width:22px;min-width:22px;align-self:stretch;cursor:pointer;border-radius:5px;font-size:1.3rem;display:flex;align-items:center;justify-content:center;transition:.2s;padding:0;flex-shrink:0;}
@@ -378,7 +382,10 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
       <button class="lang-btn" id="lang-btn" onclick="toggleLang()">EN</button>
     </div>
     <div class="hdr-sabias-row" onclick="nextSabias()">
-      <p id="sabiastext">💡 Cargando...</p>
+      <div class="sab-card" id="sabiastext">
+        <span class="sab-icon">⭐</span>
+        <span class="sab-txt">Cargando...</span>
+      </div>
     </div>
   </div>
   <div class="progbar-wrap">
@@ -762,35 +769,39 @@ function applyLang(){
   const sht=document.getElementById('sobre-hero-tit');if(sht)sht.textContent=tx('sobre_hero_tit');
   const shs=document.getElementById('sobre-hero-sub');if(shs)shs.textContent=tx('sobre_hero_sub');
   const lblhoy=document.getElementById('lbl-hoy');if(lblhoy)lblhoy.textContent=tx('lbl_hoy');
-  // Hamburger menu items
-  const hmItems=document.querySelectorAll('.hni[data-tr]');
-  hmItems.forEach(el=>{const k=el.getAttribute('data-tr');const sp=el.querySelector('.hni-txt');if(sp)sp.textContent=tx(k);});
+  // Hamburger menu items (por ID directo)
+  [['hn-album','nav_album'],['hn-sobres','nav_sobres'],['hn-pegar','nav_pegar_full'],
+   ['hn-intercambio','nav_intercambio'],['hn-especiales','nav_especiales']].forEach(([id,k])=>{
+    const el=document.getElementById(id);if(!el)return;
+    const sp=el.querySelector('.hni-txt');if(sp)sp.textContent=tx(k);
+  });
   // Sabías que refresh
   showSabias();
   // Re-render dynamic views
   if(CT==='sobres')updPaqUI();
   if(CT==='intercambio')renderI();
   if(CT==='especiales')buildEsp();
-  if(CPG)renderPg(CPG);
+  if(CT==='album')buildCG();
+  if(CPG){const vpEl=document.getElementById('vp');if(vpEl&&vpEl.style.display!=='none')renderPg(CPG);}
 }
 
 // DATA
 const PAISES=[
-  {id:'ar',n:'Argentina',bg:'#5588bb',fcd:'ar',coords:[-34,-64],info:{c:'América del Sur',i:'Español',p:'46 millones',g:['Messi 🐐','Batistuta','Crespo'],cp:'3 Mundiales 🏆',co:'15 Copas América'},info_en:{c:'South America',i:'Spanish',p:'46 million',g:['Messi 🐐','Batistuta','Crespo'],cp:'3 World Cups 🏆',co:'15 Copa América'}},
-  {id:'br',n:'Brasil',bg:'#009c3b',fcd:'br',coords:[-10,-55],info:{c:'América del Sur',i:'Portugués',p:'215 millones',g:['Ronaldo','Pelé','Romário'],cp:'5 Mundiales 🏆',co:'9 Copas América'},info_en:{c:'South America',i:'Portuguese',p:'215 million',g:['Ronaldo','Pelé','Romário'],cp:'5 World Cups 🏆',co:'9 Copa América'}},
-  {id:'uy',n:'Uruguay',bg:'#4477aa',fcd:'uy',coords:[-33,-56],info:{c:'América del Sur',i:'Español',p:'3.5 millones',g:['Suárez','Forlán','Schiaffino'],cp:'2 Mundiales 🏆',co:'15 Copas América'},info_en:{c:'South America',i:'Spanish',p:'3.5 million',g:['Suárez','Forlán','Schiaffino'],cp:'2 World Cups 🏆',co:'15 Copa América'}},
-  {id:'us',n:'EE.UU.',bg:'#b22234',fcd:'us',coords:[38,-97],info:{c:'América del Norte',i:'Inglés',p:'335 millones',g:['Donovan','McBride','Pulisic'],cp:'0 Mundiales',co:'1 Copa Oro'},info_en:{c:'North America',i:'English',p:'335 million',g:['Donovan','McBride','Pulisic'],cp:'0 World Cups',co:'1 Gold Cup'}},
-  {id:'mx',n:'México',bg:'#006847',fcd:'mx',coords:[24,-102],info:{c:'América del Norte',i:'Español',p:'128 millones',g:['Blanco','J.Hernández','Borgetti'],cp:'0 Mundiales',co:'11 Copas Oro'},info_en:{c:'North America',i:'Spanish',p:'128 million',g:['Blanco','J.Hernández','Borgetti'],cp:'0 World Cups',co:'11 Gold Cups'}},
-  {id:'es',n:'España',bg:'#c60b1e',fcd:'es',coords:[40,-4],info:{c:'Europa',i:'Español',p:'47 millones',g:['Villa','Hierro','Morientes'],cp:'1 Mundial 🏆',co:'3 Eurocopas'},info_en:{c:'Europe',i:'Spanish',p:'47 million',g:['Villa','Hierro','Morientes'],cp:'1 World Cup 🏆',co:'3 Euros'}},
-  {id:'pt',n:'Portugal',bg:'#006600',fcd:'pt',coords:[39,-8],info:{c:'Europa',i:'Portugués',p:'10 millones',g:['C.Ronaldo','Eusébio','Pauleta'],cp:'0 Mundiales',co:'2 Eurocopas'},info_en:{c:'Europe',i:'Portuguese',p:'10 million',g:['C.Ronaldo','Eusébio','Pauleta'],cp:'0 World Cups',co:'2 Euros'}},
-  {id:'fr',n:'Francia',bg:'#002395',fcd:'fr',coords:[46,2],info:{c:'Europa',i:'Francés',p:'68 millones',g:['Platini','Fontaine','Zidane'],cp:'2 Mundiales 🏆',co:'2 Eurocopas'},info_en:{c:'Europe',i:'French',p:'68 million',g:['Platini','Fontaine','Zidane'],cp:'2 World Cups 🏆',co:'2 Euros'}},
-  {id:'en',n:'Inglaterra',bg:'#012169',fcd:'gb-eng',coords:[53,-1],info:{c:'Europa',i:'Inglés',p:'57 millones',g:['Rooney','Charlton','Lineker'],cp:'1 Mundial 🏆',co:'0 Eurocopas'},info_en:{c:'Europe',i:'English',p:'57 million',g:['Rooney','Charlton','Lineker'],cp:'1 World Cup 🏆',co:'0 Euros'}},
-  {id:'de',n:'Alemania',bg:'#333',fcd:'de',coords:[51,10],info:{c:'Europa',i:'Alemán',p:'84 millones',g:['T.Müller','Klose','Rahn'],cp:'4 Mundiales 🏆',co:'3 Eurocopas'},info_en:{c:'Europe',i:'German',p:'84 million',g:['T.Müller','Klose','Rahn'],cp:'4 World Cups 🏆',co:'3 Euros'}},
-  {id:'jp',n:'Japón',bg:'#bc002d',fcd:'jp',coords:[36,138],info:{c:'Asia',i:'Japonés',p:'125 millones',g:['Nakamura','Ono','Miura'],cp:'0 Mundiales',co:'4 Copas Asia'},info_en:{c:'Asia',i:'Japanese',p:'125 million',g:['Nakamura','Ono','Miura'],cp:'0 World Cups',co:'4 Asian Cups'}},
-  {id:'kr',n:'Corea del Sur',bg:'#c60c30',fcd:'kr',coords:[36,128],info:{c:'Asia',i:'Coreano',p:'52 millones',g:['Cha','Park','Son'],cp:'0 Mundiales',co:'2 Copas Asia'},info_en:{c:'Asia',i:'Korean',p:'52 million',g:['Cha','Park','Son'],cp:'0 World Cups',co:'2 Asian Cups'}},
-  {id:'sn',n:'Senegal',bg:'#00853f',fcd:'sn',coords:[14,-14],info:{c:'África',i:'Francés',p:'17 millones',g:['Mané','Diouf','Ba'],cp:'0 Mundiales',co:'1 Copa África'},info_en:{c:'Africa',i:'French',p:'17 million',g:['Mané','Diouf','Ba'],cp:'0 World Cups',co:'1 Africa Cup'}},
-  {id:'ma',n:'Marruecos',bg:'#c1272d',fcd:'ma',coords:[32,-5],info:{c:'África',i:'Árabe',p:'37 millones',g:['Hakimi','Ziyech','Hadda'],cp:'0 Mundiales',co:'1 Copa África'},info_en:{c:'Africa',i:'Arabic',p:'37 million',g:['Hakimi','Ziyech','Hadda'],cp:'0 World Cups',co:'1 Africa Cup'}},
-  {id:'au',n:'Australia',bg:'#00008b',fcd:'au',coords:[-25,133],info:{c:'Oceanía',i:'Inglés',p:'26 millones',g:['Cahill','Kewell','Viduka'],cp:'0 Mundiales',co:'5 Copas Asia'},info_en:{c:'Oceania',i:'English',p:'26 million',g:['Cahill','Kewell','Viduka'],cp:'0 World Cups',co:'5 Asian Cups'}}
+  {id:'ar',n:'Argentina',n_en:'Argentina',bg:'#5588bb',fcd:'ar',coords:[-34,-64],info:{c:'América del Sur',i:'Español',p:'46 millones',g:['Messi 🐐','Batistuta','Crespo'],cp:'3 Mundiales 🏆',co:'15 Copas América'},info_en:{c:'South America',i:'Spanish',p:'46 million',g:['Messi 🐐','Batistuta','Crespo'],cp:'3 World Cups 🏆',co:'15 Copa América'}},
+  {id:'br',n:'Brasil',n_en:'Brazil',bg:'#009c3b',fcd:'br',coords:[-10,-55],info:{c:'América del Sur',i:'Portugués',p:'215 millones',g:['Ronaldo','Pelé','Romário'],cp:'5 Mundiales 🏆',co:'9 Copas América'},info_en:{c:'South America',i:'Portuguese',p:'215 million',g:['Ronaldo','Pelé','Romário'],cp:'5 World Cups 🏆',co:'9 Copa América'}},
+  {id:'uy',n:'Uruguay',n_en:'Uruguay',bg:'#4477aa',fcd:'uy',coords:[-33,-56],info:{c:'América del Sur',i:'Español',p:'3.5 millones',g:['Suárez','Forlán','Schiaffino'],cp:'2 Mundiales 🏆',co:'15 Copas América'},info_en:{c:'South America',i:'Spanish',p:'3.5 million',g:['Suárez','Forlán','Schiaffino'],cp:'2 World Cups 🏆',co:'15 Copa América'}},
+  {id:'us',n:'EE.UU.',n_en:'USA',bg:'#b22234',fcd:'us',coords:[38,-97],info:{c:'América del Norte',i:'Inglés',p:'335 millones',g:['Donovan','McBride','Pulisic'],cp:'0 Mundiales',co:'1 Copa Oro'},info_en:{c:'North America',i:'English',p:'335 million',g:['Donovan','McBride','Pulisic'],cp:'0 World Cups',co:'1 Gold Cup'}},
+  {id:'mx',n:'México',n_en:'Mexico',bg:'#006847',fcd:'mx',coords:[24,-102],info:{c:'América del Norte',i:'Español',p:'128 millones',g:['Blanco','J.Hernández','Borgetti'],cp:'0 Mundiales',co:'11 Copas Oro'},info_en:{c:'North America',i:'Spanish',p:'128 million',g:['Blanco','J.Hernández','Borgetti'],cp:'0 World Cups',co:'11 Gold Cups'}},
+  {id:'es',n:'España',n_en:'Spain',bg:'#c60b1e',fcd:'es',coords:[40,-4],info:{c:'Europa',i:'Español',p:'47 millones',g:['Villa','Hierro','Morientes'],cp:'1 Mundial 🏆',co:'3 Eurocopas'},info_en:{c:'Europe',i:'Spanish',p:'47 million',g:['Villa','Hierro','Morientes'],cp:'1 World Cup 🏆',co:'3 Euros'}},
+  {id:'pt',n:'Portugal',n_en:'Portugal',bg:'#006600',fcd:'pt',coords:[39,-8],info:{c:'Europa',i:'Portugués',p:'10 millones',g:['C.Ronaldo','Eusébio','Pauleta'],cp:'0 Mundiales',co:'2 Eurocopas'},info_en:{c:'Europe',i:'Portuguese',p:'10 million',g:['C.Ronaldo','Eusébio','Pauleta'],cp:'0 World Cups',co:'2 Euros'}},
+  {id:'fr',n:'Francia',n_en:'France',bg:'#002395',fcd:'fr',coords:[46,2],info:{c:'Europa',i:'Francés',p:'68 millones',g:['Platini','Fontaine','Zidane'],cp:'2 Mundiales 🏆',co:'2 Eurocopas'},info_en:{c:'Europe',i:'French',p:'68 million',g:['Platini','Fontaine','Zidane'],cp:'2 World Cups 🏆',co:'2 Euros'}},
+  {id:'en',n:'Inglaterra',n_en:'England',bg:'#012169',fcd:'gb-eng',coords:[53,-1],info:{c:'Europa',i:'Inglés',p:'57 millones',g:['Rooney','Charlton','Lineker'],cp:'1 Mundial 🏆',co:'0 Eurocopas'},info_en:{c:'Europe',i:'English',p:'57 million',g:['Rooney','Charlton','Lineker'],cp:'1 World Cup 🏆',co:'0 Euros'}},
+  {id:'de',n:'Alemania',n_en:'Germany',bg:'#333',fcd:'de',coords:[51,10],info:{c:'Europa',i:'Alemán',p:'84 millones',g:['T.Müller','Klose','Rahn'],cp:'4 Mundiales 🏆',co:'3 Eurocopas'},info_en:{c:'Europe',i:'German',p:'84 million',g:['T.Müller','Klose','Rahn'],cp:'4 World Cups 🏆',co:'3 Euros'}},
+  {id:'jp',n:'Japón',n_en:'Japan',bg:'#bc002d',fcd:'jp',coords:[36,138],info:{c:'Asia',i:'Japonés',p:'125 millones',g:['Nakamura','Ono','Miura'],cp:'0 Mundiales',co:'4 Copas Asia'},info_en:{c:'Asia',i:'Japanese',p:'125 million',g:['Nakamura','Ono','Miura'],cp:'0 World Cups',co:'4 Asian Cups'}},
+  {id:'kr',n:'Corea del Sur',n_en:'South Korea',bg:'#c60c30',fcd:'kr',coords:[36,128],info:{c:'Asia',i:'Coreano',p:'52 millones',g:['Cha','Park','Son'],cp:'0 Mundiales',co:'2 Copas Asia'},info_en:{c:'Asia',i:'Korean',p:'52 million',g:['Cha','Park','Son'],cp:'0 World Cups',co:'2 Asian Cups'}},
+  {id:'sn',n:'Senegal',n_en:'Senegal',bg:'#00853f',fcd:'sn',coords:[14,-14],info:{c:'África',i:'Francés',p:'17 millones',g:['Mané','Diouf','Ba'],cp:'0 Mundiales',co:'1 Copa África'},info_en:{c:'Africa',i:'French',p:'17 million',g:['Mané','Diouf','Ba'],cp:'0 World Cups',co:'1 Africa Cup'}},
+  {id:'ma',n:'Marruecos',n_en:'Morocco',bg:'#c1272d',fcd:'ma',coords:[32,-5],info:{c:'África',i:'Árabe',p:'37 millones',g:['Hakimi','Ziyech','Hadda'],cp:'0 Mundiales',co:'1 Copa África'},info_en:{c:'Africa',i:'Arabic',p:'37 million',g:['Hakimi','Ziyech','Hadda'],cp:'0 World Cups',co:'1 Africa Cup'}},
+  {id:'au',n:'Australia',n_en:'Australia',bg:'#00008b',fcd:'au',coords:[-25,133],info:{c:'Oceanía',i:'Inglés',p:'26 millones',g:['Cahill','Kewell','Viduka'],cp:'0 Mundiales',co:'5 Copas Asia'},info_en:{c:'Oceania',i:'English',p:'26 million',g:['Cahill','Kewell','Viduka'],cp:'0 World Cups',co:'5 Asian Cups'}}
 ];
 
 function flagImg(p,w,h){return`<img src="https://flagcdn.com/w${w||80}/${p.fcd}.png" style="width:100%;height:100%;object-fit:cover" alt="${p.n}" onerror="this.style.display='none'">`;}
@@ -1013,7 +1024,10 @@ function showSabias(){
   const el=document.getElementById('sabiastext');if(!el)return;
   el.classList.add('sab-hidden');
   setTimeout(()=>{
-    el.textContent='💡 '+getCurrentSabias()[_sabIdx%getCurrentSabias().length];
+    const arr=getCurrentSabias();
+    const txt=el.querySelector('.sab-txt');
+    if(txt)txt.textContent=arr[_sabIdx%arr.length];
+    else el.textContent=arr[_sabIdx%arr.length];
     el.classList.remove('sab-hidden');
   },350);
 }
@@ -1054,7 +1068,7 @@ function buildCG(){
     return`<div class="ccard ${pg===fs.length?'completo':''}" onclick="showPage('${p.id}')">
       <div class="hbadge"></div>
       <div class="flag-box" style="overflow:hidden;background:#111">${flagImg(p,80)}</div>
-      <div class="cname">${p.n}</div>
+      <div class="cname">${(_lang==='en'&&p.n_en)?p.n_en:p.n}</div>
       <div class="cprog">${pg}/${fs.length}</div>
     </div>`;
   }).join('');
@@ -1092,7 +1106,7 @@ function renderPg(id){
       <div class="cphc">
         <div style="width:58px;height:40px;border-radius:5px;overflow:hidden;flex-shrink:0;border:1px solid rgba(255,255,255,.2)">${flagImg(p,80)}</div>
         <div class="cphi" style="flex:1">
-          <h2 style="font-size:1.05rem;color:var(--dorado);margin-bottom:.2rem">${p.n}</h2>
+          <h2 style="font-size:1.05rem;color:var(--dorado);margin-bottom:.2rem">${(_lang==='en'&&p.n_en)?p.n_en:p.n}</h2>
           <div class="pills">
             <span class="pill">🌎 ${inf.c}</span>
             <span class="pill">🗣️ ${inf.i}</span>
