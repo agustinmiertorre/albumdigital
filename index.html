@@ -63,12 +63,20 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 /* APP */
 #sa{background:#0a0a1a;}
 .abar{background:linear-gradient(90deg,var(--rojo),var(--azul));padding:.35rem 1rem;text-align:center;font-size:.78rem;letter-spacing:2px;color:rgba(255,255,255,.8);}
-.aheader{background:linear-gradient(90deg,var(--azul),#001f33);padding:.7rem 1rem;display:flex;align-items:center;gap:.8rem;position:sticky;top:0;z-index:100;box-shadow:0 2px 15px rgba(0,0,0,.5);}
+.aheader{background:linear-gradient(90deg,var(--azul),#001f33);padding:.9rem 1rem;display:flex;align-items:center;gap:.8rem;position:sticky;top:0;z-index:100;box-shadow:0 2px 15px rgba(0,0,0,.5);}
 .hamtog{background:none;border:none;cursor:pointer;padding:.3rem;display:flex;flex-direction:column;gap:5px;}
-.hamtog span{display:block;width:24px;height:2px;background:var(--dorado);border-radius:2px;}
-.ahinfo{flex:1;}
-.ahinfo h3{font-size:.95rem;color:var(--dorado);}
-.ahinfo p{font-size:.68rem;color:rgba(255,255,255,.5);}
+.hamtog span{display:block;width:26px;height:2px;background:var(--dorado);border-radius:2px;}
+.hdr-left{flex-shrink:0;}
+.hdr-left h3{font-size:1rem;color:var(--dorado);font-weight:900;}
+.hdr-sabias{flex:1;text-align:center;padding:0 .6rem;overflow:hidden;}
+.hdr-sabias p{font-size:.7rem;color:rgba(255,255,255,.75);font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;line-height:1.3;}
+.lang-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);color:#fff;padding:.38rem .8rem;border-radius:8px;cursor:pointer;font-size:.8rem;font-weight:900;font-family:inherit;transition:.2s;flex-shrink:0;letter-spacing:1px;}
+.lang-btn:hover{background:var(--dorado);color:var(--negro);}
+/* SIDE NAV ARROWS */
+.pg-figs-wrapper{display:flex;align-items:center;gap:.25rem;}
+.side-nav-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.5);width:22px;min-width:22px;align-self:stretch;cursor:pointer;border-radius:5px;font-size:1.3rem;display:flex;align-items:center;justify-content:center;transition:.2s;padding:0;flex-shrink:0;}
+.side-nav-btn:hover:not(:disabled){background:rgba(240,192,64,.2);color:var(--dorado);border-color:var(--dorado);}
+.side-nav-btn:disabled{opacity:.12;cursor:not-allowed;}
 .progbar-wrap{background:rgba(0,0,0,.2);padding:.4rem 1rem;display:flex;align-items:center;gap:.6rem;}
 .pbl{font-size:.65rem;color:rgba(255,255,255,.4);}
 .pbw{flex:1;background:rgba(255,255,255,.08);border-radius:20px;height:6px;overflow:hidden;}
@@ -76,7 +84,7 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 .ppc{font-family:Impact,Arial,sans-serif;font-size:.9rem;color:var(--dorado);}
 
 /* TAB CONTENT */
-.tc{display:none;padding:.6rem .6rem 60px;flex:1;}
+.tc{display:none;padding:.6rem .6rem 80px;flex:1;}
 .tc.active{display:block;}
 
 /* COUNTRIES */
@@ -125,12 +133,13 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 .espg{display:grid;gap:.4rem;}
 
 /* BARRA NAV INFERIOR */
-.bnav{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(to top,#001828,#0a0a1a);border-top:1px solid rgba(255,255,255,.12);display:none;z-index:120;}
+.bnav{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,var(--azul) 0%,#001433 60%,#001828 100%);border-top:2px solid var(--dorado);display:none;z-index:120;box-shadow:0 -4px 20px rgba(0,0,0,.6);}
 .bnav.vis{display:flex;}
-.bnb{flex:1;background:none;border:none;color:rgba(255,255,255,.45);padding:.5rem .2rem .6rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:.15rem;font-family:inherit;font-weight:700;transition:.2s;border-top:2px solid transparent;}
-.bnb.active{color:var(--dorado);border-top-color:var(--dorado);}
-.bnb .bi{font-size:1.2rem;line-height:1;}
-.bnb span{font-size:.52rem;}
+.bnb{flex:1;background:none;border:none;color:rgba(255,255,255,.5);padding:.75rem .2rem 1rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:.2rem;font-family:inherit;font-weight:700;transition:.2s;border-top:3px solid transparent;}
+.bnb.active{color:var(--dorado);border-top-color:var(--dorado);background:rgba(240,192,64,.08);}
+.bnb:hover:not(.active){color:rgba(255,255,255,.8);background:rgba(255,255,255,.05);}
+.bnb .bi{font-size:1.55rem;line-height:1;}
+.bnb span{font-size:.65rem;letter-spacing:.3px;}
 
 /* SOBRES */
 .sbox{max-width:600px;margin:0 auto;text-align:center;}
@@ -351,11 +360,10 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 <div id="sa" class="screen">
   <div class="aheader">
     <button class="hamtog" onclick="toggleHam()"><span></span><span></span><span></span></button>
-    <div style="width:44px;height:44px;border-radius:50%;overflow:hidden;flex-shrink:0;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 0 10px rgba(240,192,64,.4);border:2px solid rgba(240,192,64,.3)"><img src="Logo San Carlos.png" style="width:88%;height:88%;object-fit:contain"></div>
-    <div class="ahinfo">
-      <h3 id="cdisplay">-</h3>
-      <p id="sabiastext" style="cursor:pointer;font-size:.6rem;color:rgba(255,255,255,.6);font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px" onclick="nextSabias()" title="¿Sabías que?">💡 Cargando...</p>
-    </div>
+    <div style="width:52px;height:52px;border-radius:50%;overflow:hidden;flex-shrink:0;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 0 14px rgba(240,192,64,.5);border:2px solid rgba(240,192,64,.4)"><img src="Logo San Carlos.png" style="width:90%;height:90%;object-fit:contain"></div>
+    <div class="hdr-left"><h3 id="cdisplay">-</h3></div>
+    <div class="hdr-sabias"><p id="sabiastext" onclick="nextSabias()">💡 Cargando...</p></div>
+    <button class="lang-btn" id="lang-btn" onclick="toggleLang()">EN</button>
   </div>
   <div class="progbar-wrap">
     <span class="pbl">📊</span>
@@ -416,18 +424,15 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
   <!-- INTERCAMBIO -->
   <div id="tab-intercambio" class="tc">
     <div class="ibox">
-      <div class="abar" style="border-radius:10px;margin-bottom:1rem">🔄 INTERCAMBIO A CIEGAS</div>
-      <p style="font-weight:900;font-size:1.2rem;color:var(--dorado);margin-bottom:.3rem">INTERCAMBIO</p>
-      <p style="color:rgba(255,255,255,.5);font-size:.8rem;margin-bottom:1rem">Canjeás 10 repetidas por 1 sobre nuevo. 1 canje por día.</p>
+      <div class="abar" style="border-radius:10px;margin-bottom:.7rem" id="inter-titulo">🔄 CANJE DE FIGURITAS</div>
+      <p style="color:rgba(255,255,255,.5);font-size:.84rem;margin-bottom:1rem" id="inter-desc">Canjeás 10 repetidas por 1 sobre nuevo. 1 canje por semana, sin límite diario.</p>
       <div id="idiv"></div>
       <div class="icard">
-        <h4>📤 ELEGIR CURSO DESTINO</h4>
-        <select class="isel" id="idest" onchange="renderI()"><option value="">-- Seleccioná --</option></select>
-        <h4>📦 VOS MANDÁS (10 repetidas)</h4>
+        <h4 id="inter-tus-rep">📦 TUS REPETIDAS (necesitás 10)</h4>
         <div class="ifboxes" id="imis" style="margin:.5rem 0"></div>
-        <h4 style="margin-top:.5rem">📬 VOS RECIBÍS (a ciegas)</h4>
+        <h4 style="margin-top:.5rem" id="inter-vas-recibir">📬 VAS A RECIBIR</h4>
         <div class="ifboxes" id="isu" style="margin:.5rem 0"></div>
-        <button class="ibtn" id="binter" onclick="doInter()" disabled>🔄 CONFIRMAR</button>
+        <button class="ibtn" id="binter" onclick="doInter()" disabled>🔄 CANJEAR POR 1 SOBRE</button>
       </div>
     </div>
   </div>
@@ -597,6 +602,85 @@ const SABIAS=[
   '¡Cada edición del Mundial se venden cientos de millones de figuritas Panini!',
 ];
 
+// ── IDIOMA ───────────────────────────────────────────────────────
+let _lang='es';
+const TR={
+  nav_album:{es:'Álbum',en:'Album'},
+  nav_sobres:{es:'Sobres',en:'Packs'},
+  nav_pegar:{es:'Pegar',en:'Stick'},
+  nav_intercambio:{es:'Cambio',en:'Trade'},
+  nav_especiales:{es:'Especiales',en:'Special'},
+  btn_volver_paises:{es:'Países',en:'Countries'},
+  btn_pegar_ir:{es:'🖼️ IR A PEGAR',en:'🖼️ STICK THEM'},
+  btn_cerrar:{es:'✕ CERRAR',en:'✕ CLOSE'},
+  btn_siguiente_sobre:{es:'▶ SIGUIENTE SOBRE',en:'▶ NEXT PACK'},
+  lbl_faltan:{es:'Faltan',en:'Missing'},
+  lbl_figuritas:{es:'figuritas',en:'stickers'},
+  lbl_hoy:{es:'HOY:',en:'TODAY:'},
+  lbl_quedan:{es:'Quedan',en:'Remaining'},
+  lbl_sobres:{es:'sobres',en:'packs'},
+  lbl_limite:{es:'🚫 Límite diario alcanzado',en:'🚫 Daily limit reached'},
+  sobres_tit:{es:'🎴 APERTURA DE SOBRES',en:'🎴 PACK OPENING'},
+  sobres_sub:{es:'Completá las actividades del día para ganar sobres',en:'Complete daily activities to earn sticker packs'},
+  asist_label:{es:'ASISTENCIA',en:'ATTENDANCE'},
+  asist_desc:{es:'1 sobre por venir al cole',en:'1 pack for coming to school'},
+  asist_btn:{es:'OTORGAR',en:'GIVE'},
+  asist_dado:{es:'✓ YA DADO',en:'✓ GIVEN'},
+  trivia_label:{es:'TRIVIA INTERDISCIPLINARIA',en:'INTERDISCIPLINARY TRIVIA'},
+  trivia_desc:{es:'3 preguntas · hasta 3 sobres',en:'3 questions · up to 3 packs'},
+  trivia_btn:{es:'JUGAR',en:'PLAY'},
+  trivia_hecha:{es:'✓ HECHA',en:'✓ DONE'},
+  trivia_hecha_sub:{es:'Ya realizada ·',en:'Done ·'},
+  trivia_correctas:{es:'correctas',en:'correct'},
+  conv_label:{es:'CONVIVENCIA',en:'COMMUNITY'},
+  conv_desc:{es:'A criterio del docente',en:'At teacher\'s discretion'},
+  conv_btn:{es:'OTORGAR',en:'GIVE'},
+  conv_dado:{es:'✓ DADO',en:'✓ GIVEN'},
+  inter_ya:{es:'✅ Ya canjeaste esta semana. ¡Volvé la próxima!',en:'✅ Already traded this week. Come back next week!'},
+  inter_pocas:{es:'Necesitás al menos 10 repetidas (tenés',en:'You need at least 10 duplicates (you have'},
+  inter_tus_rep:{es:'📦 TUS REPETIDAS (necesitás 10)',en:'📦 YOUR DUPLICATES (need 10)'},
+  inter_vas_recibir:{es:'📬 VAS A RECIBIR',en:'📬 YOU\'LL RECEIVE'},
+  inter_btn:{es:'🔄 CANJEAR POR 1 SOBRE',en:'🔄 TRADE FOR 1 PACK'},
+  pegar_tit:{es:'🖼️ FIGURITAS A PEGAR',en:'🖼️ STICKERS TO STICK'},
+  pg_figuritas:{es:'FIGURITAS DE',en:'STICKERS OF'},
+  pg_holo:{es:'ESCUDO HOLOGRÁFICO',en:'HOLOGRAPHIC CREST'},
+  pg_especial:{es:'PÁGINA ESPECIAL',en:'SPECIAL PAGE'},
+  pg_faltan:{es:'Faltan',en:'Missing'},
+  pg_pegar_lbl:{es:'PEGAR ⚡',en:'STICK ⚡'},
+  toast_pegada:{es:'✅ ¡Figurita pegada!',en:'✅ Sticker stuck!'},
+  toast_completo:{es:'🎉 ¡PÁGINA COMPLETA!',en:'🎉 PAGE COMPLETE!'},
+  toast_canje:{es:'🔄 ¡Canjeaste 10 repetidas por 1 sobre!',en:'🔄 Traded 10 duplicates for 1 pack!'},
+};
+function tx(k){return(TR[k]||{})[_lang]||TR[k]?.es||k;}
+function getWeekStart(){
+  const d=new Date();const day=d.getDay();
+  const diff=d.getDate()-day+(day===0?-6:1);
+  return new Date(d.getFullYear(),d.getMonth(),diff).toDateString();
+}
+function toggleLang(){
+  _lang=_lang==='es'?'en':'es';
+  const lb=document.getElementById('lang-btn');if(lb)lb.textContent=_lang==='es'?'EN':'ES';
+  applyLang();
+}
+function applyLang(){
+  // Nav inferior
+  [['bn-album','nav_album'],['bn-sobres','nav_sobres'],['bn-pegar','nav_pegar'],
+   ['bn-intercambio','nav_intercambio'],['bn-especiales','nav_especiales']].forEach(([id,k])=>{
+    const el=document.getElementById(id);if(!el)return;
+    const sp=el.querySelectorAll('span')[1];if(sp)sp.textContent=tx(k);
+  });
+  // Intercambio tab labels
+  const irt=document.getElementById('inter-titulo');if(irt)irt.textContent='🔄 '+(_lang==='es'?'CANJE DE FIGURITAS':'STICKER TRADE');
+  const ird=document.getElementById('inter-desc');if(ird)ird.textContent=_lang==='es'?'Canjeás 10 repetidas por 1 sobre nuevo. 1 canje por semana, sin límite diario.':'Trade 10 duplicates for 1 new pack. 1 trade per week, no daily limit.';
+  // Pegar tab
+  const pb=document.querySelector('#tab-pegar .abar');if(pb)pb.textContent=tx('pegar_tit');
+  // Re-render dynamic views
+  if(CT==='sobres')updPaqUI();
+  if(CT==='intercambio')renderI();
+  if(CT==='especiales')buildEsp();
+  if(CPG)renderPg(CPG);
+}
+
 // DATA
 const PAISES=[
   {id:'ar',n:'Argentina',bg:'#5588bb',fcd:'ar',coords:[-34,-64],info:{c:'América del Sur',i:'Español',p:'46 millones',g:['Messi 🐐','Batistuta','Crespo'],cp:'3 Mundiales 🏆',co:'15 Copas América'}},
@@ -722,6 +806,7 @@ function _parseS(d){
     shoy:parseInt(d.shoy||0),
     fhoy:d.fhoy||'',
     ihoy:d.ihoy||'',
+    isem:d.isem||'',
     thoy:d.thoy||'',
     tAciertos:parseInt(d.tAciertos||0),
     asHoy:d.asHoy||'',
@@ -736,6 +821,7 @@ function ldS(){
     shoy:parseInt(localStorage.getItem(SK('sh'))||'0'),
     fhoy:localStorage.getItem(SK('fh'))||'',
     ihoy:localStorage.getItem(SK('ih'))||'',
+    isem:localStorage.getItem(SK('is'))||'',
     thoy:localStorage.getItem(SK('th'))||'',
     tAciertos:parseInt(localStorage.getItem(SK('ta'))||'0'),
     asHoy:localStorage.getItem(SK('as'))||'',
@@ -749,6 +835,7 @@ function _cacheS(){
   localStorage.setItem(SK('sh'),S.shoy);
   localStorage.setItem(SK('fh'),S.fhoy);
   localStorage.setItem(SK('ih'),S.ihoy||'');
+  localStorage.setItem(SK('is'),S.isem||'');
   localStorage.setItem(SK('th'),S.thoy||'');
   localStorage.setItem(SK('ta'),S.tAciertos||0);
   localStorage.setItem(SK('as'),S.asHoy||'');
@@ -759,7 +846,7 @@ function svS(){
   if(!fbDB)return;
   fbDB.ref(`albums/${CC}`).set({
     peg:[...S.peg],ap:S.ap,rep:S.rep,
-    shoy:S.shoy,fhoy:S.fhoy,ihoy:S.ihoy||'',
+    shoy:S.shoy,fhoy:S.fhoy,ihoy:S.ihoy||'',isem:S.isem||'',
     thoy:S.thoy||'',tAciertos:S.tAciertos||0,asHoy:S.asHoy||'',cvHoy:S.cvHoy||''
   });
 }
@@ -772,7 +859,7 @@ function startSync(){
     S.peg=new Set(d.peg||[]);
     S.ap=d.ap||[];S.rep=d.rep||[];
     S.shoy=parseInt(d.shoy||0);
-    S.fhoy=d.fhoy||'';S.ihoy=d.ihoy||'';
+    S.fhoy=d.fhoy||'';S.ihoy=d.ihoy||'';S.isem=d.isem||'';
     S.thoy=d.thoy||'';S.tAciertos=parseInt(d.tAciertos||0);
     S.asHoy=d.asHoy||'';S.cvHoy=d.cvHoy||'';
     _cacheS();
@@ -896,42 +983,30 @@ function renderPg(id){
   const peg=fs.filter(f=>S.peg.has(f.id)).length;
   const falt=fs.length-peg;
   document.getElementById('vp').innerHTML=`
-    <button class="bbtn" onclick="backC()">← Países</button>
-    <div class="pnav">
-      <button class="pnavbtn" onclick="showPage('${prev}')" ${!prev?'disabled':''}>←</button>
-      <div class="pnavmid">
-        <div style="width:48px;height:32px;border-radius:4px;overflow:hidden;margin:0 auto .3rem;border:1px solid rgba(255,255,255,.2)">${flagImg(p,80)}</div>
-        <h3>${p.n}</h3>
-        <span class="progbadge">📌 Faltan ${falt} figuritas</span>
-      </div>
-      <button class="pnavbtn" onclick="showPage('${next}')" ${!next?'disabled':''}>→</button>
-    </div>
-    <div class="cph" style="background:linear-gradient(135deg,${p.bg}33,rgba(0,0,0,.8));margin-bottom:.6rem">
+    <button class="bbtn" onclick="backC()">← ${tx('btn_volver_paises')}</button>
+    <div class="cph" style="background:linear-gradient(135deg,${p.bg}44,rgba(0,0,0,.8));margin-bottom:.6rem;border-radius:10px;padding:.6rem .8rem">
       <div class="cphc">
-        <div class="cphe" style="background:${p.bg};overflow:hidden;width:44px;height:30px;border-radius:4px;">${flagImg(p,80)}</div>
-        <div class="cphi">
-          <h2 style="font-size:1rem;color:var(--dorado)">${p.n}</h2>
+        <div style="width:58px;height:40px;border-radius:5px;overflow:hidden;flex-shrink:0;border:1px solid rgba(255,255,255,.2)">${flagImg(p,80)}</div>
+        <div class="cphi" style="flex:1">
+          <h2 style="font-size:1.05rem;color:var(--dorado);margin-bottom:.2rem">${p.n}</h2>
           <div class="pills">
             <span class="pill">🌎 ${p.info.c}</span>
             <span class="pill">🗣️ ${p.info.i}</span>
             <span class="pill">👥 ${p.info.p}</span>
             <span class="pill">🏆 ${p.info.cp}</span>
-            <span class="pill">🌟 ${p.info.co}</span>
+            <span class="pill">📌 ${tx('pg_faltan')} <b>${falt}</b></span>
           </div>
           <div class="golea">⚽ <b>${p.info.g.join(' · ')}</b></div>
         </div>
       </div>
     </div>
-    <div style="margin-bottom:.6rem;border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,.1);position:relative;height:130px;background:#0d1a2e;pointer-events:none">
-      <img src="https://staticmap.openstreetmap.de/staticmap.php?center=${p.coords[0]},${p.coords[1]}&zoom=4&size=600x260&markers=${p.coords[0]},${p.coords[1]},red" style="width:100%;height:100%;object-fit:cover;filter:saturate(0.6) brightness(0.7);display:block" onerror="this.style.display='none'" loading="lazy" alt="Mapa ${p.n}">
-      <div style="position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center">
-        <div style="width:14px;height:14px;background:var(--rojo);border-radius:50%;border:2px solid #fff;box-shadow:0 0 8px rgba(228,5,31,.8);animation:hp 1.5s infinite"></div>
-      </div>
-      <div style="position:absolute;bottom:4px;right:6px;font-size:.55rem;color:rgba(255,255,255,.4)">© OpenStreetMap</div>
+    <div class="abar" style="border-radius:8px;margin-bottom:.5rem;font-size:.74rem">🏅 ${tx('pg_figuritas')} ${p.n.toUpperCase()}</div>
+    <div class="pg-figs-wrapper">
+      <button class="side-nav-btn" onclick="${prev?`showPage('${prev}')`:'void(0)'}" ${!prev?'disabled':''}>‹</button>
+      <div class="fgrid" style="grid-template-columns:repeat(8,1fr);flex:1">${norm.map(f=>rfig(f)).join('')}</div>
+      <button class="side-nav-btn" onclick="${next?`showPage('${next}')`:'void(0)'}" ${!next?'disabled':''}>›</button>
     </div>
-    <div class="abar" style="border-radius:8px;margin-bottom:.6rem;font-size:.72rem">🏅 FIGURITAS DE ${p.n.toUpperCase()} · SAN CARLOS MUNDIAL 2026</div>
-    <div class="fgrid" style="grid-template-columns:repeat(8,1fr)">${norm.map(f=>rfig(f)).join('')}</div>
-    ${holo?`<div style="margin-top:.7rem"><div class="abar" style="border-radius:8px;margin-bottom:.5rem;font-size:.68rem">✨ ESCUDO HOLOGRÁFICO · ${p.n.toUpperCase()}</div><div style="display:flex;justify-content:center"><div style="width:min(150px,30vw)">${rfig(holo)}</div></div></div>`:''}
+    ${holo?`<div style="margin-top:.7rem"><div class="abar" style="border-radius:8px;margin-bottom:.5rem;font-size:.68rem">✨ ${tx('pg_holo')} · ${p.n.toUpperCase()}</div><div style="display:flex;justify-content:center"><div style="width:min(150px,30vw)">${rfig(holo)}</div></div></div>`:''}
   `;
 }
 
@@ -941,14 +1016,28 @@ function renderSPg(id,prev,next){
   const falt=figs.length-peg;
   const tit=id==='cole'?'🏫 Colegio San Carlos':'🏆 Mundial 2026';
   document.getElementById('vp').innerHTML=`
-    <button class="bbtn" onclick="backC()">← Países</button>
-    <div class="pnav">
-      <button class="pnavbtn" onclick="showPage('${prev}')" ${!prev?'disabled':''}>←</button>
-      <div class="pnavmid"><h3>${tit}</h3><span class="progbadge">📌 Faltan ${falt} figuritas</span></div>
-      <button class="pnavbtn" onclick="showPage('${next}')" ${!next?'disabled':''}>→</button>
+    <button class="bbtn" onclick="backC()">← ${tx('btn_volver_paises')}</button>
+    <div class="cph" style="background:linear-gradient(135deg,rgba(240,192,64,.15),rgba(0,0,0,.8));margin-bottom:.6rem;border-radius:10px;padding:.6rem .8rem">
+      <div class="cphc">
+        <div class="cphi" style="flex:1">
+          <h2 style="font-size:1.05rem;color:var(--dorado)">${tit}</h2>
+          <div class="pills" style="margin-top:.3rem">
+            <span class="pill">⭐ ${tx('pg_especial')}</span>
+            <span class="pill">📌 ${tx('pg_faltan')} <b>${falt}</b></span>
+          </div>
+        </div>
+        <div style="display:flex;gap:.4rem;flex-shrink:0">
+          <button class="pnavbtn" onclick="${prev?`showPage('${prev}')`:'void(0)'}" ${!prev?'disabled':''}>←</button>
+          <button class="pnavbtn" onclick="${next?`showPage('${next}')`:'void(0)'}" ${!next?'disabled':''}>→</button>
+        </div>
+      </div>
     </div>
-    <div class="abar" style="border-radius:8px;margin-bottom:.6rem;font-size:.72rem">⭐ PÁGINA ESPECIAL · SAN CARLOS MUNDIAL 2026</div>
-    <div class="espg" style="grid-template-columns:repeat(6,1fr);gap:.6rem">${figs.map(f=>rfig(f)).join('')}</div>
+    <div class="abar" style="border-radius:8px;margin-bottom:.5rem;font-size:.74rem">⭐ ${tx('pg_especial').toUpperCase()} · SAN CARLOS MUNDIAL 2026</div>
+    <div class="pg-figs-wrapper">
+      <button class="side-nav-btn" onclick="${prev?`showPage('${prev}')`:'void(0)'}" ${!prev?'disabled':''}>‹</button>
+      <div class="espg" style="grid-template-columns:repeat(6,1fr);gap:.6rem;flex:1">${figs.map(f=>rfig(f)).join('')}</div>
+      <button class="side-nav-btn" onclick="${next?`showPage('${next}')`:'void(0)'}" ${!next?'disabled':''}>›</button>
+    </div>
   `;
 }
 
@@ -978,7 +1067,7 @@ function rfig(f){
     <div class="fav">${avContent}</div>
     ${numBadge}
     ${pg?`<div style="position:absolute;top:2px;right:2px;background:rgba(240,192,64,.9);color:#000;font-size:.38rem;font-weight:900;padding:1px 3px;border-radius:2px;z-index:2">✓</div>`:''}
-    ${av&&!pg?`<div style="position:absolute;bottom:0;left:0;right:0;background:rgba(228,5,31,.85);color:#fff;font-size:.42rem;font-weight:900;text-align:center;padding:1px">PEGAR ⚡</div>`:''}
+    ${av&&!pg?`<div style="position:absolute;bottom:0;left:0;right:0;background:rgba(228,5,31,.85);color:#fff;font-size:.42rem;font-weight:900;text-align:center;padding:1px">${tx('pg_pegar_lbl')}</div>`:''}
   </div>`;
 }
 
@@ -1001,14 +1090,14 @@ function rfigv(f){
 function pegFig(id){
   const i=S.ap.findIndex(f=>f.id===id);if(i<0)return;
   S.peg.add(id);S.ap.splice(i,1);svS();
-  snd('pegar');updProg();buildCG();toast('✅ ¡Figurita pegada!');
+  snd('pegar');updProg();buildCG();toast(tx('toast_pegada'));
   if(CPG){renderPg(CPG);setTimeout(()=>{const el=document.getElementById(`fig-${id}`);if(el){el.style.transition='none';el.style.transform='scale(0) rotate(-15deg)';el.style.opacity='0';requestAnimationFrame(()=>{el.style.transition='transform .5s cubic-bezier(.34,1.56,.64,1), opacity .3s';el.style.transform='scale(1) rotate(0)';el.style.opacity='1';});setTimeout(()=>{el.style.transition='';el.style.transform='';el.style.opacity='';},600);}},50);}
   renderAP();
   // check complete
   const fig=allFigs().find(f=>f.id===id);
   if(fig){
     const arr=fig.pais==='cole'?ECOLE:fig.pais==='mundial'?EMUNDIAL:FPP[fig.pais];
-    if(arr&&arr.every(f=>S.peg.has(f.id))){snd('completo');toast('🎉 ¡PÁGINA COMPLETA!');}
+    if(arr&&arr.every(f=>S.peg.has(f.id))){snd('completo');toast(tx('toast_completo'));}
   }
 }
 
@@ -1028,7 +1117,7 @@ let _triviaHecha=false;let _triviaPregs=[];let _triviaIdx=0;let _triviaAciertos=
 function updPaqUI(){
   document.getElementById('pdots').innerHTML=Array(5).fill(0).map((_,i)=>`<div class="pdot ${i<S.shoy?'used':''}"></div>`).join('');
   const r=5-S.shoy;
-  document.getElementById('ptxt').textContent=r>0?`Quedan ${r} sobres`:'🚫 Límite diario alcanzado';
+  document.getElementById('ptxt').textContent=r>0?`${tx('lbl_quedan')} ${r} ${tx('lbl_sobres')}`:tx('lbl_limite');
   const hoy=new Date().toDateString();
   _triviaHecha=(S.fhoy===hoy&&(S.thoy||0)>0);
   renderSobresUI();
@@ -1045,23 +1134,23 @@ function renderSobresUI(){
   asDiv.innerHTML=`
     <div class="sobre-accion-card" style="border-color:${asUsed?'rgba(255,255,255,.2)':'var(--dorado)'}">
       <div class="sac-ico">✅</div>
-      <div class="sac-info"><b>ASISTENCIA</b><span>1 sobre por venir al cole</span></div>
-      <button class="sac-btn" ${asUsed||r<=0?'disabled':''} onclick="darSobreAsist()">${asUsed?'✓ YA DADO':'OTORGAR'}</button>
+      <div class="sac-info"><b>${tx('asist_label')}</b><span>${tx('asist_desc')}</span></div>
+      <button class="sac-btn" ${asUsed||r<=0?'disabled':''} onclick="darSobreAsist()">${asUsed?tx('asist_dado'):tx('asist_btn')}</button>
     </div>`;
   // TRIVIA
   const tUsed=S.thoy===hoy;
   if(tUsed){
-    tDiv.innerHTML=`<div class="sobre-accion-card" style="border-color:rgba(255,255,255,.2)"><div class="sac-ico">🎯</div><div class="sac-info"><b>TRIVIA DEL DÍA</b><span>Ya realizada · ${S.tAciertos||0}/3 correctas</span></div><button class="sac-btn" disabled>✓ HECHA</button></div>`;
+    tDiv.innerHTML=`<div class="sobre-accion-card" style="border-color:rgba(255,255,255,.2)"><div class="sac-ico">🎯</div><div class="sac-info"><b>${tx('trivia_label')}</b><span>${tx('trivia_hecha_sub')} ${S.tAciertos||0}/3 ${tx('trivia_correctas')}</span></div><button class="sac-btn" disabled>${tx('trivia_hecha')}</button></div>`;
   } else {
-    tDiv.innerHTML=`<div class="sobre-accion-card" style="border-color:var(--azul)"><div class="sac-ico">🧠</div><div class="sac-info"><b>TRIVIA INTERDISCIPLINARIA</b><span>3 preguntas · hasta 3 sobres</span></div><button class="sac-btn azul" ${r<=0?'disabled':''} onclick="iniciarTrivia()">JUGAR</button></div>`;
+    tDiv.innerHTML=`<div class="sobre-accion-card" style="border-color:var(--azul)"><div class="sac-ico">🧠</div><div class="sac-info"><b>${tx('trivia_label')}</b><span>${tx('trivia_desc')}</span></div><button class="sac-btn azul" ${r<=0?'disabled':''} onclick="iniciarTrivia()">${tx('trivia_btn')}</button></div>`;
   }
   // CONVIVENCIA
   const cvUsed=S.cvHoy===hoy;
   cvDiv.innerHTML=`
     <div class="sobre-accion-card" style="border-color:${cvUsed?'rgba(255,255,255,.2)':'var(--rojo)'}">
       <div class="sac-ico">🤝</div>
-      <div class="sac-info"><b>CONVIVENCIA</b><span>A criterio del docente</span></div>
-      <button class="sac-btn rojo" ${cvUsed||r<=0?'disabled':''} onclick="darSobreConv()">${cvUsed?'✓ DADO':'OTORGAR'}</button>
+      <div class="sac-info"><b>${tx('conv_label')}</b><span>${tx('conv_desc')}</span></div>
+      <button class="sac-btn rojo" ${cvUsed||r<=0?'disabled':''} onclick="darSobreConv()">${cvUsed?tx('conv_dado'):tx('conv_btn')}</button>
     </div>`;
 }
 function darSobreAsist(){
@@ -1159,9 +1248,9 @@ function mostrarFigs(figs){
   setTimeout(()=>{
     const btns=document.getElementById('revbtns');btns.style.display='flex';
     if(cidx<pend.length-1){
-      btns.innerHTML=`<button class="rbtn" onclick="nextS()">▶ SIGUIENTE SOBRE (${cidx+2}/${pend.length})</button><button class="rbtn sec" onclick="closeSov()">✕</button>`;
+      btns.innerHTML=`<button class="rbtn" onclick="nextS()">${tx('btn_siguiente_sobre')} (${cidx+2}/${pend.length})</button><button class="rbtn sec" onclick="closeSov()">✕</button>`;
     } else {
-      btns.innerHTML=`<button class="rbtn" onclick="irPegar()">🖼️ IR A PEGAR</button><button class="rbtn sec" onclick="closeSov()">✕ CERRAR</button>`;
+      btns.innerHTML=`<button class="rbtn" onclick="irPegar()">${tx('btn_pegar_ir')}</button><button class="rbtn sec" onclick="closeSov()">${tx('btn_cerrar')}</button>`;
     }
   },figs.length*120+400);
 }
@@ -1199,41 +1288,36 @@ function selF(id){snd('click');FSel=id;const f=S.ap.find(x=>x.id===id);document.
 function irAF(id){const f=S.ap.find(x=>x.id===id);if(!f)return;FSel=id;nav('album');setTimeout(()=>showPage(f.pais||'cole'),100);}
 
 // INTERCAMBIO
-function buildIS(){
-  const sel=document.getElementById('idest');
-  sel.innerHTML='<option value="">-- Seleccioná --</option>';
-  for(let g=1;g<=6;g++) Object.keys(DN).forEach(d=>{
-    if(`${g}-${d}`===CC)return;
-    const o=document.createElement('option');o.value=`${g}-${d}`;o.textContent=`${g}° ${DN[d]}`;sel.appendChild(o);
-  });
-}
+function buildIS(){/* sin selector de destino */}
 function renderI(){
   const div=document.getElementById('idiv');
-  const hoy=new Date().toDateString();
-  if(S.ihoy===hoy){div.innerHTML=`<div class="istatus">✅ Ya intercambiaste hoy. ¡Volvé mañana!</div>`;document.getElementById('binter').disabled=true;return;}
+  const sem=getWeekStart();
+  if(S.isem===sem){div.innerHTML=`<div class="istatus">${tx('inter_ya')}</div>`;document.getElementById('binter').disabled=true;
+    document.getElementById('imis').innerHTML='';document.getElementById('isu').innerHTML='';return;}
   div.innerHTML='';
   const reps=S.rep.slice(0,10);
   const mis=document.getElementById('imis');const su=document.getElementById('isu');
+  const binter=document.getElementById('binter');
+  binter.textContent=tx('inter_btn');
+  const h1=document.getElementById('inter-tus-rep');if(h1)h1.innerHTML=tx('inter_tus_rep');
+  const h2=document.getElementById('inter-vas-recibir');if(h2)h2.innerHTML=tx('inter_vas_recibir');
   if(reps.length<10){
-    mis.innerHTML=`<p style="color:rgba(255,255,255,.4);font-size:.76rem">Necesitás al menos 10 repetidas (tenés ${S.rep.length})</p>`;
-    document.getElementById('binter').disabled=true;
+    mis.innerHTML=`<p style="color:rgba(255,255,255,.4);font-size:.78rem">${tx('inter_pocas')} ${S.rep.length})</p>`;
+    su.innerHTML='';binter.disabled=true;
   } else {
-    mis.innerHTML=reps.map(f=>`<div class="ifb" title="${f.nm}">${f.em}</div>`).join('');
-    const dest=document.getElementById('idest').value;
-    if(dest){su.innerHTML=`<div class="ifb oculta"></div>`;document.getElementById('binter').disabled=false;}
-    else{su.innerHTML=`<p style="color:rgba(255,255,255,.4);font-size:.76rem">Seleccioná un curso</p>`;document.getElementById('binter').disabled=true;}
+    mis.innerHTML=reps.map(f=>`<div class="ifb" title="${f.nm}">${f.em||'🎴'}</div>`).join('');
+    su.innerHTML=`<div class="ifb oculta"></div>`;binter.disabled=false;
   }
 }
 function doInter(){
   if(S.rep.length<10){toast('⚠️ Necesitás 10 repetidas');return;}
-  const dest=document.getElementById('binter').getAttribute('data-dest')||document.getElementById('idest').value||_randDest();
-  S.rep.splice(0,10);
-  if(S.shoy<5){S.shoy+=1;svS();pend=[genSobre()];cidx=0;openSov();toast('🔄 ¡Canjeaste 10 repetidas por 1 sobre!');}
-  else{svS();toast('🚫 Ya alcanzaste el límite de 5 sobres hoy');}
-  S.ihoy=new Date().toDateString();svS();
+  const sem=getWeekStart();
+  if(S.isem===sem){toast(tx('inter_ya'));return;}
+  S.rep.splice(0,10);S.isem=sem;svS();
+  pend=[genSobre()];cidx=0;openSov();
+  toast(tx('toast_canje'));
   renderI();renderAP();
 }
-function _randDest(){const opts=[];for(let g=1;g<=6;g++)Object.keys(DN).forEach(d=>{if(`${g}-${d}`!==CC)opts.push(`${g}-${d}`);});return opts[Math.floor(Math.random()*opts.length)];}
 
 // ESPECIALES
 let _espPag=0;
@@ -1389,10 +1473,24 @@ async function resetCurso(cc,lbl){
   if(!confirm(`¿Borrar TODOS los datos de ${lbl}?\n\nEsta acción no se puede deshacer.`))return;
   if(!fbDB){toast('⚠️ Firebase no conectado');return;}
   await fbDB.ref(`albums/${cc}`).remove();
-  ['peg','ap','rep','sh','fh','ih'].forEach(k=>localStorage.removeItem(`sc_${cc}_${k}`));
+  ['peg','ap','rep','sh','fh','ih','is','th','ta','as','cv'].forEach(k=>localStorage.removeItem(`sc_${cc}_${k}`));
   toast(`✅ Datos de ${lbl} borrados`);
   loadAdminData();
 }
+
+// NAVEGACIÓN POR TECLADO
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowLeft'){
+    const dir=e.key==='ArrowRight'?1:-1;
+    if(CPG){
+      const idx=PAGE_ORDER.indexOf(CPG);
+      const ni=idx+dir;
+      if(ni>=0&&ni<PAGE_ORDER.length){e.preventDefault();showPage(PAGE_ORDER[ni]);}
+    } else if(CT==='especiales'){
+      e.preventDefault();navEsp(dir);
+    }
+  }
+});
 </script>
 
 <!-- MODO VISTA -->
