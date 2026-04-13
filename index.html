@@ -63,15 +63,25 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 /* APP */
 #sa{background:#0a0a1a;}
 .abar{background:linear-gradient(90deg,var(--rojo),var(--azul));padding:.35rem 1rem;text-align:center;font-size:.78rem;letter-spacing:2px;color:rgba(255,255,255,.8);}
-.aheader{background:linear-gradient(90deg,var(--azul),#001f33);padding:.9rem 1rem;display:flex;align-items:center;gap:.8rem;position:sticky;top:0;z-index:100;box-shadow:0 2px 15px rgba(0,0,0,.5);}
-.hamtog{background:none;border:none;cursor:pointer;padding:.3rem;display:flex;flex-direction:column;gap:5px;}
+.aheader{background:linear-gradient(180deg,var(--azul) 0%,#001428 100%);padding:.7rem 1rem .4rem;display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;position:sticky;top:0;z-index:100;box-shadow:0 3px 20px rgba(0,0,0,.6);}
+.hdr-top{display:flex;align-items:center;gap:.7rem;width:100%;}
+.hamtog{background:none;border:none;cursor:pointer;padding:.3rem;display:flex;flex-direction:column;gap:5px;flex-shrink:0;}
 .hamtog span{display:block;width:26px;height:2px;background:var(--dorado);border-radius:2px;}
-.hdr-left{flex-shrink:0;}
+.hdr-left{flex:1;}
 .hdr-left h3{font-size:1rem;color:var(--dorado);font-weight:900;}
-.hdr-sabias{flex:1;text-align:center;padding:0 .6rem;overflow:hidden;}
-.hdr-sabias p{font-size:.7rem;color:rgba(255,255,255,.75);font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;line-height:1.3;}
 .lang-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);color:#fff;padding:.38rem .8rem;border-radius:8px;cursor:pointer;font-size:.8rem;font-weight:900;font-family:inherit;transition:.2s;flex-shrink:0;letter-spacing:1px;}
 .lang-btn:hover{background:var(--dorado);color:var(--negro);}
+/* SABIAS QUE - fila completa en header */
+.hdr-sabias-row{width:100%;text-align:center;padding:.3rem .5rem .35rem;border-top:1px solid rgba(255,255,255,.12);cursor:pointer;position:relative;}
+.hdr-sabias-row p{font-size:.92rem;font-weight:700;font-style:italic;letter-spacing:.3px;line-height:1.3;transition:opacity .35s,transform .35s;background:linear-gradient(90deg,var(--dorado) 0%,#fff 40%,var(--dorado) 80%,#ffe87a 100%);background-size:250%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:sabmov 5s linear infinite;}
+@keyframes sabmov{0%{background-position:0%}100%{background-position:250%}}
+@keyframes pulse-btn{from{transform:scale(1);box-shadow:0 4px 20px rgba(240,192,64,.5)}to{transform:scale(1.03);box-shadow:0 6px 28px rgba(240,192,64,.8)}}
+.hdr-sabias-row p.sab-hidden{opacity:0;transform:translateY(-5px);}
+/* SIDE NAV ARROWS */
+.pg-figs-wrapper{display:flex;align-items:center;gap:.25rem;}
+.side-nav-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.5);width:22px;min-width:22px;align-self:stretch;cursor:pointer;border-radius:5px;font-size:1.3rem;display:flex;align-items:center;justify-content:center;transition:.2s;padding:0;flex-shrink:0;}
+.side-nav-btn:hover:not(:disabled){background:rgba(240,192,64,.2);color:var(--dorado);border-color:var(--dorado);}
+.side-nav-btn:disabled{opacity:.12;cursor:not-allowed;}
 /* SIDE NAV ARROWS */
 .pg-figs-wrapper{display:flex;align-items:center;gap:.25rem;}
 .side-nav-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.5);width:22px;min-width:22px;align-self:stretch;cursor:pointer;border-radius:5px;font-size:1.3rem;display:flex;align-items:center;justify-content:center;transition:.2s;padding:0;flex-shrink:0;}
@@ -339,7 +349,8 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
     <div style="font-size:3rem;margin-bottom:.5rem">🎴</div>
     <h2 class="bb">INGRESÁ AL ÁLBUM</h2>
     <p>Seleccioná tu curso e ingresá la contraseña</p>
-    <select id="lcurso">
+    <form id="lform" onsubmit="login();return false;" autocomplete="on">
+    <select id="lcurso" name="username" autocomplete="username">
       <option value="">-- Seleccioná tu curso --</option>
       <optgroup label="1° Grado"><option value="1-arayan">1° Arrayán</option><option value="1-jacaranda">1° Jacarandá</option><option value="1-ceibo">1° Ceibo</option></optgroup>
       <optgroup label="2° Grado"><option value="2-arayan">2° Arrayán</option><option value="2-jacaranda">2° Jacarandá</option><option value="2-ceibo">2° Ceibo</option></optgroup>
@@ -348,9 +359,10 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
       <optgroup label="5° Grado"><option value="5-arayan">5° Arrayán</option><option value="5-jacaranda">5° Jacarandá</option><option value="5-ceibo">5° Ceibo</option></optgroup>
       <optgroup label="6° Grado"><option value="6-arayan">6° Arrayán</option><option value="6-jacaranda">6° Jacarandá</option><option value="6-ceibo">6° Ceibo</option></optgroup>
     </select>
-    <input type="password" id="lpass" placeholder="Contraseña del curso" onkeydown="if(event.key==='Enter')login()">
+    <input type="password" id="lpass" name="password" autocomplete="current-password" placeholder="Contraseña del curso">
     <div class="lerr" id="lerr">❌ Contraseña incorrecta</div>
-    <button class="pbtn" style="width:100%;margin:0" onclick="login()">ENTRAR ⚽</button>
+    <button type="submit" class="pbtn" style="width:100%;margin:0">ENTRAR ⚽</button>
+    </form>
     <br><button class="bvolver" onclick="go('sp')">← Volver al inicio</button>
     <p style="color:rgba(255,255,255,.22);font-size:.66rem;margin-top:.8rem">DEMO · contraseña = división + grado<br>Ej: 3° Arrayán → <b>arrayan3</b> (doble r)</p>
   </div>
@@ -359,11 +371,15 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
 <!-- APP -->
 <div id="sa" class="screen">
   <div class="aheader">
-    <button class="hamtog" onclick="toggleHam()"><span></span><span></span><span></span></button>
-    <div style="width:52px;height:52px;border-radius:50%;overflow:hidden;flex-shrink:0;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 0 14px rgba(240,192,64,.5);border:2px solid rgba(240,192,64,.4)"><img src="Logo San Carlos.png" style="width:90%;height:90%;object-fit:contain"></div>
-    <div class="hdr-left"><h3 id="cdisplay">-</h3></div>
-    <div class="hdr-sabias"><p id="sabiastext" onclick="nextSabias()">💡 Cargando...</p></div>
-    <button class="lang-btn" id="lang-btn" onclick="toggleLang()">EN</button>
+    <div class="hdr-top">
+      <button class="hamtog" onclick="toggleHam()"><span></span><span></span><span></span></button>
+      <div style="width:52px;height:52px;border-radius:50%;overflow:hidden;flex-shrink:0;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 0 14px rgba(240,192,64,.5);border:2px solid rgba(240,192,64,.4)"><img src="Logo San Carlos.png" style="width:90%;height:90%;object-fit:contain"></div>
+      <div class="hdr-left"><h3 id="cdisplay">-</h3></div>
+      <button class="lang-btn" id="lang-btn" onclick="toggleLang()">EN</button>
+    </div>
+    <div class="hdr-sabias-row" onclick="nextSabias()">
+      <p id="sabiastext">💡 Cargando...</p>
+    </div>
   </div>
   <div class="progbar-wrap">
     <span class="pbl">📊</span>
@@ -392,16 +408,17 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
   </div>
 
   <!-- SOBRES -->
-  <div id="tab-sobres" class="tc" style="padding:0 0 60px!important;">
+  <div id="tab-sobres" class="tc" style="padding:0 0 80px!important;">
     <div class="sobre-hero">
-      <div class="sobre-hero-tit">🎴 APERTURA DE SOBRES</div>
-      <div class="sobre-hero-sub">Completá las actividades del día para ganar sobres</div>
+      <div class="sobre-hero-tit" id="sobre-hero-tit">🎴 APERTURA DE SOBRES</div>
+      <div class="sobre-hero-sub" id="sobre-hero-sub">Completá las actividades del día para ganar sobres</div>
       <div class="sobre-dots-row">
-        <span style="font-size:.75rem;color:rgba(255,255,255,.5)">HOY:</span>
+        <span style="font-size:.75rem;color:rgba(255,255,255,.5)" id="lbl-hoy">HOY:</span>
         <div class="pdots" id="pdots"></div>
         <span style="font-size:.75rem;color:rgba(255,255,255,.5)" id="ptxt">Máximo 5</span>
       </div>
     </div>
+    <div id="abrir-section"></div>
     <div style="padding:1rem 1rem 0;max-width:500px;margin:0 auto">
       <div id="asist-section"></div>
       <div id="trivia-section" style="margin-top:.7rem"></div>
@@ -486,11 +503,11 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0a0a1a;color:#fff;mi
     <p id="hcl">MUNDIAL 2026</p>
   </div>
   <div class="hnav">
-    <div class="hni active" id="hn-album" onclick="nav('album')"><span class="ico">🌍</span>Álbum</div>
-    <div class="hni" id="hn-sobres" onclick="nav('sobres')"><span class="ico">📦</span>Sobres</div>
-    <div class="hni" id="hn-pegar" onclick="nav('pegar')"><span class="ico">🖼️</span>Pegar Figuritas</div>
-    <div class="hni" id="hn-intercambio" onclick="nav('intercambio')"><span class="ico">🔄</span>Intercambio</div>
-    <div class="hni" id="hn-especiales" onclick="nav('especiales')"><span class="ico">⭐</span>Especiales</div>
+    <div class="hni active" id="hn-album" data-tr="nav_album" onclick="nav('album')"><span class="ico">🌍</span><span class="hni-txt">Álbum</span></div>
+    <div class="hni" id="hn-sobres" data-tr="nav_sobres" onclick="nav('sobres')"><span class="ico">📦</span><span class="hni-txt">Sobres</span></div>
+    <div class="hni" id="hn-pegar" data-tr="nav_pegar_full" onclick="nav('pegar')"><span class="ico">🖼️</span><span class="hni-txt">Pegar Figuritas</span></div>
+    <div class="hni" id="hn-intercambio" data-tr="nav_intercambio" onclick="nav('intercambio')"><span class="ico">🔄</span><span class="hni-txt">Intercambio</span></div>
+    <div class="hni" id="hn-especiales" data-tr="nav_especiales" onclick="nav('especiales')"><span class="ico">⭐</span><span class="hni-txt">Especiales</span></div>
     <div class="hdiv"></div>
     <div class="hprog">
       <p style="font-size:.72rem;color:rgba(255,255,255,.4)">MI PROGRESO</p>
@@ -584,7 +601,7 @@ const TRIVIAS=[
   {id:'T034',q:'¿Qué gas necesitan los seres vivos para respirar?',ok:'Oxígeno',ops:['Nitrógeno','Dióxido de carbono','Hidrógeno'],nmin:5,nmax:6,cat:'escolar'},
   {id:'T035',q:'¿Cuántas selecciones clasifica Europa al Mundial 2026?',ok:'16',ops:['12','10','8'],nmin:5,nmax:6,cat:'mundial'},
 ];
-const SABIAS=[
+const SABIAS_ES=[
   'Brasil es el único país que jugó TODOS los Mundiales de fútbol de la historia.',
   'La Copa del Mundo pesa 6.175 kg y está hecha de oro de 18 quilates.',
   'El Mundial 2026 será el primero con 48 selecciones en lugar de 32.',
@@ -601,6 +618,61 @@ const SABIAS=[
   'La bandera de Uruguay tiene el mismo celeste que Argentina pero con franjas horizontales.',
   '¡Cada edición del Mundial se venden cientos de millones de figuritas Panini!',
 ];
+const SABIAS_EN=[
+  'Brazil is the ONLY country to have played in every single FIFA World Cup in history.',
+  'The World Cup trophy weighs 6.175 kg and is made of 18-karat gold.',
+  'The 2026 World Cup will be the first tournament with 48 teams instead of 32.',
+  'The fastest goal in World Cup history was scored by Hakan Şükür in just 11 seconds (Korea 2002).',
+  'Argentina won its third World Cup in 2022, defeating France in the final.',
+  'Japan has more than 6,800 islands in its territory.',
+  'Morocco became the first African country to reach a World Cup semi-final (Qatar 2022).',
+  'The FIFA World Cup sticker album was created by Panini in Italy in 1970.',
+  'Mexico will co-host the 2026 World Cup alongside the USA and Canada.',
+  'Australia qualified for 5 consecutive World Cups between 2006 and 2022.',
+  'Portugal has 10 million people, but over 250 million speak Portuguese worldwide.',
+  'France has more foreign-born players in its national team than any other country.',
+  'Senegal won its first Africa Cup of Nations in 2021 with Sadio Mané as its star.',
+  'The Uruguay flag has the same light blue as Argentina but with horizontal stripes.',
+  'Hundreds of millions of Panini stickers are sold every single World Cup edition!',
+];
+function getCurrentSabias(){return _lang==='en'?SABIAS_EN:SABIAS_ES;}
+const TRIVIAS_EN={
+  T001:{q:'What color is the grass on a football pitch?',ok:'Green',ops:['Blue','Red','Yellow']},
+  T002:{q:'How many players are on a football team?',ok:'11',ops:['5','22','10']},
+  T003:{q:'What shape is a football?',ok:'Round',ops:['Square','Triangular','Oval']},
+  T004:{q:'How much is 2 + 3?',ok:'5',ops:['4','6','7']},
+  T005:{q:"What colors are Argentina's jersey?",ok:'Blue and white',ops:['Red and black','Green and yellow','Orange and blue']},
+  T006:{q:'How many letters does the word MOON have?',ok:'4',ops:['3','5','2']},
+  T007:{q:'What color do you get mixing blue and yellow?',ok:'Green',ops:['Orange','Violet','Brown']},
+  T008:{q:'On which continent is Argentina?',ok:'America',ops:['Europe','Asia','Africa']},
+  T009:{q:'How many fingers does a hand have?',ok:'5',ops:['4','6','10']},
+  T010:{q:'What is the largest animal in the world?',ok:'Blue whale',ops:['Elephant','Giraffe','Shark']},
+  T011:{q:'How many countries participate in the 2026 World Cup?',ok:'48',ops:['32','24','64']},
+  T012:{q:'In which country was Lionel Messi born?',ok:'Argentina',ops:['Brazil','Uruguay','Spain']},
+  T013:{q:'Who won the 2022 Football World Cup?',ok:'Argentina',ops:['France','Brazil','Germany']},
+  T014:{q:'What is the capital of Brazil?',ok:'Brasília',ops:['Rio de Janeiro','São Paulo','Buenos Aires']},
+  T015:{q:'On which continent is Morocco?',ok:'Africa',ops:['Asia','America','Europe']},
+  T016:{q:'How much is 7 × 8?',ok:'56',ops:['48','64','54']},
+  T017:{q:'How many days does a non-leap year have?',ok:'365',ops:['360','366','364']},
+  T018:{q:'How much is 100 ÷ 4?',ok:'25',ops:['20','30','40']},
+  T019:{q:'What is the official language of France?',ok:'French',ops:['English','Spanish','German']},
+  T020:{q:'How many sides does a hexagon have?',ok:'6',ops:['5','7','8']},
+  T021:{q:'Which planet is closest to the Sun?',ok:'Mercury',ops:['Venus','Earth','Mars']},
+  T022:{q:'On which continent is Japan?',ok:'Asia',ops:['America','Europe','Oceania']},
+  T023:{q:'How many colors does a rainbow have?',ok:'7',ops:['5','6','8']},
+  T024:{q:'In what year was the first Football World Cup played?',ok:'1930',ops:['1920','1950','1910']},
+  T025:{q:'Which country has won the most World Cups?',ok:'Brazil (5)',ops:['Germany (4)','Italy (4)','Argentina (3)']},
+  T026:{q:'How many World Cup titles does Germany have?',ok:'4',ops:['3','5','2']},
+  T027:{q:'What is the official currency of Japan?',ok:'Yen',ops:['Yuan','Won','Dollar']},
+  T028:{q:'How much is 15% of 200?',ok:'30',ops:['25','20','40']},
+  T029:{q:'What is the perimeter of a square with side 5 cm?',ok:'20 cm',ops:['25 cm','10 cm','15 cm']},
+  T030:{q:'Who wrote Don Quixote?',ok:'Miguel de Cervantes',ops:['Shakespeare','Borges','García Márquez']},
+  T031:{q:'How many countries does South America have?',ok:'12',ops:['10','14','8']},
+  T032:{q:"In what year did Argentina win its second World Cup?",ok:'1986',ops:['1978','1990','1982']},
+  T033:{q:'What is the formula for the area of a triangle?',ok:'Base × Height ÷ 2',ops:['Base × Height','Base + Height','2 × Base + Height']},
+  T034:{q:'What gas do living beings need to breathe?',ok:'Oxygen',ops:['Nitrogen','Carbon dioxide','Hydrogen']},
+  T035:{q:'How many teams does Europe qualify to the 2026 World Cup?',ok:'16',ops:['12','10','8']},
+};
 
 // ── IDIOMA ───────────────────────────────────────────────────────
 let _lang='es';
@@ -650,6 +722,18 @@ const TR={
   toast_pegada:{es:'✅ ¡Figurita pegada!',en:'✅ Sticker stuck!'},
   toast_completo:{es:'🎉 ¡PÁGINA COMPLETA!',en:'🎉 PAGE COMPLETE!'},
   toast_canje:{es:'🔄 ¡Canjeaste 10 repetidas por 1 sobre!',en:'🔄 Traded 10 duplicates for 1 pack!'},
+  sov_toca:{es:'¡TOCÁ EL SOBRE PARA ABRIRLO!',en:'TAP THE PACK TO OPEN IT!'},
+  sov_figus:{es:'🌟 ¡TUS FIGURITAS!',en:'🌟 YOUR STICKERS!'},
+  sobre_hero_tit:{es:'🎴 APERTURA DE SOBRES',en:'🎴 PACK OPENING'},
+  sobre_hero_sub:{es:'Completá las actividades del día para ganar sobres',en:'Complete daily activities to earn sticker packs'},
+  lbl_hoy:{es:'HOY:',en:'TODAY:'},
+  nav_pegar_full:{es:'Pegar Figuritas',en:'Stick Stickers'},
+  abrir_sobres:{es:'ABRIR',en:'OPEN'},
+  abrir_sobres_0:{es:'Sin sobres pendientes',en:'No pending packs'},
+  sov_sobre:{es:'Sobre',en:'Pack'},
+  sov_de:{es:'de',en:'of'},
+  toast_asist:{es:'✅ 1 sobre ganado · Abrí tus sobres cuando quieras',en:'✅ 1 pack earned · Open your packs whenever you want'},
+  toast_conv:{es:'🤝 1 sobre ganado · Abrí tus sobres cuando quieras',en:'🤝 1 pack earned · Open your packs whenever you want'},
 };
 function tx(k){return(TR[k]||{})[_lang]||TR[k]?.es||k;}
 function getWeekStart(){
@@ -674,6 +758,15 @@ function applyLang(){
   const ird=document.getElementById('inter-desc');if(ird)ird.textContent=_lang==='es'?'Canjeás 10 repetidas por 1 sobre nuevo. 1 canje por semana, sin límite diario.':'Trade 10 duplicates for 1 new pack. 1 trade per week, no daily limit.';
   // Pegar tab
   const pb=document.querySelector('#tab-pegar .abar');if(pb)pb.textContent=tx('pegar_tit');
+  // Sobre hero
+  const sht=document.getElementById('sobre-hero-tit');if(sht)sht.textContent=tx('sobre_hero_tit');
+  const shs=document.getElementById('sobre-hero-sub');if(shs)shs.textContent=tx('sobre_hero_sub');
+  const lblhoy=document.getElementById('lbl-hoy');if(lblhoy)lblhoy.textContent=tx('lbl_hoy');
+  // Hamburger menu items
+  const hmItems=document.querySelectorAll('.hni[data-tr]');
+  hmItems.forEach(el=>{const k=el.getAttribute('data-tr');const sp=el.querySelector('.hni-txt');if(sp)sp.textContent=tx(k);});
+  // Sabías que refresh
+  showSabias();
   // Re-render dynamic views
   if(CT==='sobres')updPaqUI();
   if(CT==='intercambio')renderI();
@@ -683,21 +776,21 @@ function applyLang(){
 
 // DATA
 const PAISES=[
-  {id:'ar',n:'Argentina',bg:'#5588bb',fcd:'ar',coords:[-34,-64],info:{c:'América del Sur',i:'Español',p:'46 millones',g:['Messi 🐐','Batistuta','Crespo'],cp:'3 Mundiales 🏆',co:'15 Copas América'}},
-  {id:'br',n:'Brasil',bg:'#009c3b',fcd:'br',coords:[-10,-55],info:{c:'América del Sur',i:'Portugués',p:'215 millones',g:['Ronaldo','Pelé','Romário'],cp:'5 Mundiales 🏆',co:'9 Copas América'}},
-  {id:'uy',n:'Uruguay',bg:'#4477aa',fcd:'uy',coords:[-33,-56],info:{c:'América del Sur',i:'Español',p:'3.5 millones',g:['Suárez','Forlán','Schiaffino'],cp:'2 Mundiales 🏆',co:'15 Copas América'}},
-  {id:'us',n:'EE.UU.',bg:'#b22234',fcd:'us',coords:[38,-97],info:{c:'América del Norte',i:'Inglés',p:'335 millones',g:['Donovan','McBride','Pulisic'],cp:'0 Mundiales',co:'1 Copa Oro'}},
-  {id:'mx',n:'México',bg:'#006847',fcd:'mx',coords:[24,-102],info:{c:'América del Norte',i:'Español',p:'128 millones',g:['Blanco','J.Hernández','Borgetti'],cp:'0 Mundiales',co:'11 Copas Oro'}},
-  {id:'es',n:'España',bg:'#c60b1e',fcd:'es',coords:[40,-4],info:{c:'Europa',i:'Español',p:'47 millones',g:['Villa','Hierro','Morientes'],cp:'1 Mundial 🏆',co:'3 Eurocopas'}},
-  {id:'pt',n:'Portugal',bg:'#006600',fcd:'pt',coords:[39,-8],info:{c:'Europa',i:'Portugués',p:'10 millones',g:['C.Ronaldo','Eusébio','Pauleta'],cp:'0 Mundiales',co:'2 Eurocopas'}},
-  {id:'fr',n:'Francia',bg:'#002395',fcd:'fr',coords:[46,2],info:{c:'Europa',i:'Francés',p:'68 millones',g:['Platini','Fontaine','Zidane'],cp:'2 Mundiales 🏆',co:'2 Eurocopas'}},
-  {id:'en',n:'Inglaterra',bg:'#012169',fcd:'gb-eng',coords:[53,-1],info:{c:'Europa',i:'Inglés',p:'57 millones',g:['Rooney','Charlton','Lineker'],cp:'1 Mundial 🏆',co:'0 Eurocopas'}},
-  {id:'de',n:'Alemania',bg:'#333',fcd:'de',coords:[51,10],info:{c:'Europa',i:'Alemán',p:'84 millones',g:['T.Müller','Klose','Rahn'],cp:'4 Mundiales 🏆',co:'3 Eurocopas'}},
-  {id:'jp',n:'Japón',bg:'#bc002d',fcd:'jp',coords:[36,138],info:{c:'Asia',i:'Japonés',p:'125 millones',g:['Nakamura','Ono','Miura'],cp:'0 Mundiales',co:'4 Copas Asia'}},
-  {id:'kr',n:'Corea del Sur',bg:'#c60c30',fcd:'kr',coords:[36,128],info:{c:'Asia',i:'Coreano',p:'52 millones',g:['Cha','Park','Son'],cp:'0 Mundiales',co:'2 Copas Asia'}},
-  {id:'sn',n:'Senegal',bg:'#00853f',fcd:'sn',coords:[14,-14],info:{c:'África',i:'Francés',p:'17 millones',g:['Mané','Diouf','Ba'],cp:'0 Mundiales',co:'1 Copa África'}},
-  {id:'ma',n:'Marruecos',bg:'#c1272d',fcd:'ma',coords:[32,-5],info:{c:'África',i:'Árabe',p:'37 millones',g:['Hakimi','Ziyech','Hadda'],cp:'0 Mundiales',co:'1 Copa África'}},
-  {id:'au',n:'Australia',bg:'#00008b',fcd:'au',coords:[-25,133],info:{c:'Oceanía',i:'Inglés',p:'26 millones',g:['Cahill','Kewell','Viduka'],cp:'0 Mundiales',co:'5 Copas Asia'}}
+  {id:'ar',n:'Argentina',bg:'#5588bb',fcd:'ar',coords:[-34,-64],info:{c:'América del Sur',i:'Español',p:'46 millones',g:['Messi 🐐','Batistuta','Crespo'],cp:'3 Mundiales 🏆',co:'15 Copas América'},info_en:{c:'South America',i:'Spanish',p:'46 million',g:['Messi 🐐','Batistuta','Crespo'],cp:'3 World Cups 🏆',co:'15 Copa América'}},
+  {id:'br',n:'Brasil',bg:'#009c3b',fcd:'br',coords:[-10,-55],info:{c:'América del Sur',i:'Portugués',p:'215 millones',g:['Ronaldo','Pelé','Romário'],cp:'5 Mundiales 🏆',co:'9 Copas América'},info_en:{c:'South America',i:'Portuguese',p:'215 million',g:['Ronaldo','Pelé','Romário'],cp:'5 World Cups 🏆',co:'9 Copa América'}},
+  {id:'uy',n:'Uruguay',bg:'#4477aa',fcd:'uy',coords:[-33,-56],info:{c:'América del Sur',i:'Español',p:'3.5 millones',g:['Suárez','Forlán','Schiaffino'],cp:'2 Mundiales 🏆',co:'15 Copas América'},info_en:{c:'South America',i:'Spanish',p:'3.5 million',g:['Suárez','Forlán','Schiaffino'],cp:'2 World Cups 🏆',co:'15 Copa América'}},
+  {id:'us',n:'EE.UU.',bg:'#b22234',fcd:'us',coords:[38,-97],info:{c:'América del Norte',i:'Inglés',p:'335 millones',g:['Donovan','McBride','Pulisic'],cp:'0 Mundiales',co:'1 Copa Oro'},info_en:{c:'North America',i:'English',p:'335 million',g:['Donovan','McBride','Pulisic'],cp:'0 World Cups',co:'1 Gold Cup'}},
+  {id:'mx',n:'México',bg:'#006847',fcd:'mx',coords:[24,-102],info:{c:'América del Norte',i:'Español',p:'128 millones',g:['Blanco','J.Hernández','Borgetti'],cp:'0 Mundiales',co:'11 Copas Oro'},info_en:{c:'North America',i:'Spanish',p:'128 million',g:['Blanco','J.Hernández','Borgetti'],cp:'0 World Cups',co:'11 Gold Cups'}},
+  {id:'es',n:'España',bg:'#c60b1e',fcd:'es',coords:[40,-4],info:{c:'Europa',i:'Español',p:'47 millones',g:['Villa','Hierro','Morientes'],cp:'1 Mundial 🏆',co:'3 Eurocopas'},info_en:{c:'Europe',i:'Spanish',p:'47 million',g:['Villa','Hierro','Morientes'],cp:'1 World Cup 🏆',co:'3 Euros'}},
+  {id:'pt',n:'Portugal',bg:'#006600',fcd:'pt',coords:[39,-8],info:{c:'Europa',i:'Portugués',p:'10 millones',g:['C.Ronaldo','Eusébio','Pauleta'],cp:'0 Mundiales',co:'2 Eurocopas'},info_en:{c:'Europe',i:'Portuguese',p:'10 million',g:['C.Ronaldo','Eusébio','Pauleta'],cp:'0 World Cups',co:'2 Euros'}},
+  {id:'fr',n:'Francia',bg:'#002395',fcd:'fr',coords:[46,2],info:{c:'Europa',i:'Francés',p:'68 millones',g:['Platini','Fontaine','Zidane'],cp:'2 Mundiales 🏆',co:'2 Eurocopas'},info_en:{c:'Europe',i:'French',p:'68 million',g:['Platini','Fontaine','Zidane'],cp:'2 World Cups 🏆',co:'2 Euros'}},
+  {id:'en',n:'Inglaterra',bg:'#012169',fcd:'gb-eng',coords:[53,-1],info:{c:'Europa',i:'Inglés',p:'57 millones',g:['Rooney','Charlton','Lineker'],cp:'1 Mundial 🏆',co:'0 Eurocopas'},info_en:{c:'Europe',i:'English',p:'57 million',g:['Rooney','Charlton','Lineker'],cp:'1 World Cup 🏆',co:'0 Euros'}},
+  {id:'de',n:'Alemania',bg:'#333',fcd:'de',coords:[51,10],info:{c:'Europa',i:'Alemán',p:'84 millones',g:['T.Müller','Klose','Rahn'],cp:'4 Mundiales 🏆',co:'3 Eurocopas'},info_en:{c:'Europe',i:'German',p:'84 million',g:['T.Müller','Klose','Rahn'],cp:'4 World Cups 🏆',co:'3 Euros'}},
+  {id:'jp',n:'Japón',bg:'#bc002d',fcd:'jp',coords:[36,138],info:{c:'Asia',i:'Japonés',p:'125 millones',g:['Nakamura','Ono','Miura'],cp:'0 Mundiales',co:'4 Copas Asia'},info_en:{c:'Asia',i:'Japanese',p:'125 million',g:['Nakamura','Ono','Miura'],cp:'0 World Cups',co:'4 Asian Cups'}},
+  {id:'kr',n:'Corea del Sur',bg:'#c60c30',fcd:'kr',coords:[36,128],info:{c:'Asia',i:'Coreano',p:'52 millones',g:['Cha','Park','Son'],cp:'0 Mundiales',co:'2 Copas Asia'},info_en:{c:'Asia',i:'Korean',p:'52 million',g:['Cha','Park','Son'],cp:'0 World Cups',co:'2 Asian Cups'}},
+  {id:'sn',n:'Senegal',bg:'#00853f',fcd:'sn',coords:[14,-14],info:{c:'África',i:'Francés',p:'17 millones',g:['Mané','Diouf','Ba'],cp:'0 Mundiales',co:'1 Copa África'},info_en:{c:'Africa',i:'French',p:'17 million',g:['Mané','Diouf','Ba'],cp:'0 World Cups',co:'1 Africa Cup'}},
+  {id:'ma',n:'Marruecos',bg:'#c1272d',fcd:'ma',coords:[32,-5],info:{c:'África',i:'Árabe',p:'37 millones',g:['Hakimi','Ziyech','Hadda'],cp:'0 Mundiales',co:'1 Copa África'},info_en:{c:'Africa',i:'Arabic',p:'37 million',g:['Hakimi','Ziyech','Hadda'],cp:'0 World Cups',co:'1 Africa Cup'}},
+  {id:'au',n:'Australia',bg:'#00008b',fcd:'au',coords:[-25,133],info:{c:'Oceanía',i:'Inglés',p:'26 millones',g:['Cahill','Kewell','Viduka'],cp:'0 Mundiales',co:'5 Copas Asia'},info_en:{c:'Oceania',i:'English',p:'26 million',g:['Cahill','Kewell','Viduka'],cp:'0 World Cups',co:'5 Asian Cups'}}
 ];
 
 function flagImg(p,w,h){return`<img src="https://flagcdn.com/w${w||80}/${p.fcd}.png" style="width:100%;height:100%;object-fit:cover" alt="${p.n}" onerror="this.style.display='none'">`;}
@@ -810,7 +903,8 @@ function _parseS(d){
     thoy:d.thoy||'',
     tAciertos:parseInt(d.tAciertos||0),
     asHoy:d.asHoy||'',
-    cvHoy:d.cvHoy||''
+    cvHoy:d.cvHoy||'',
+    pendCount:parseInt(d.pendCount||0)
   };
 }
 function ldS(){
@@ -825,7 +919,8 @@ function ldS(){
     thoy:localStorage.getItem(SK('th'))||'',
     tAciertos:parseInt(localStorage.getItem(SK('ta'))||'0'),
     asHoy:localStorage.getItem(SK('as'))||'',
-    cvHoy:localStorage.getItem(SK('cv'))||''
+    cvHoy:localStorage.getItem(SK('cv'))||'',
+    pendCount:parseInt(localStorage.getItem(SK('pc'))||'0')
   };
 }
 function _cacheS(){
@@ -840,6 +935,7 @@ function _cacheS(){
   localStorage.setItem(SK('ta'),S.tAciertos||0);
   localStorage.setItem(SK('as'),S.asHoy||'');
   localStorage.setItem(SK('cv'),S.cvHoy||'');
+  localStorage.setItem(SK('pc'),S.pendCount||0);
 }
 function svS(){
   _cacheS();
@@ -847,7 +943,7 @@ function svS(){
   fbDB.ref(`albums/${CC}`).set({
     peg:[...S.peg],ap:S.ap,rep:S.rep,
     shoy:S.shoy,fhoy:S.fhoy,ihoy:S.ihoy||'',isem:S.isem||'',
-    thoy:S.thoy||'',tAciertos:S.tAciertos||0,asHoy:S.asHoy||'',cvHoy:S.cvHoy||''
+    thoy:S.thoy||'',tAciertos:S.tAciertos||0,asHoy:S.asHoy||'',cvHoy:S.cvHoy||'',pendCount:S.pendCount||0
   });
 }
 function startSync(){
@@ -861,7 +957,7 @@ function startSync(){
     S.shoy=parseInt(d.shoy||0);
     S.fhoy=d.fhoy||'';S.ihoy=d.ihoy||'';S.isem=d.isem||'';
     S.thoy=d.thoy||'';S.tAciertos=parseInt(d.tAciertos||0);
-    S.asHoy=d.asHoy||'';S.cvHoy=d.cvHoy||'';
+    S.asHoy=d.asHoy||'';S.cvHoy=d.cvHoy||'';S.pendCount=parseInt(d.pendCount||0);
     _cacheS();
     updProg();buildCG();updPaqUI();renderAP();
   });
@@ -908,12 +1004,19 @@ function initApp(){buildCG();buildIS();buildEsp();updProg();updPaqUI();renderAP(
 // SABÍAS QUE
 let _sabIdx=0;
 function startSabias(){
-  _sabIdx=Math.floor(Math.random()*SABIAS.length);
+  _sabIdx=Math.floor(Math.random()*SABIAS_ES.length);
   showSabias();
   setInterval(nextSabias,12000);
 }
-function nextSabias(){_sabIdx=(_sabIdx+1)%SABIAS.length;showSabias();}
-function showSabias(){const el=document.getElementById('sabiastext');if(el)el.textContent='💡 '+SABIAS[_sabIdx];}
+function nextSabias(){_sabIdx=(_sabIdx+1)%SABIAS_ES.length;showSabias();}
+function showSabias(){
+  const el=document.getElementById('sabiastext');if(!el)return;
+  el.classList.add('sab-hidden');
+  setTimeout(()=>{
+    el.textContent='💡 '+getCurrentSabias()[_sabIdx%getCurrentSabias().length];
+    el.classList.remove('sab-hidden');
+  },350);
+}
 
 // NAV
 let CT='album';
@@ -982,6 +1085,7 @@ function renderPg(id){
   const holo=fs.find(f=>f.holo);
   const peg=fs.filter(f=>S.peg.has(f.id)).length;
   const falt=fs.length-peg;
+  const inf=(_lang==='en'&&p.info_en)?p.info_en:p.info;
   document.getElementById('vp').innerHTML=`
     <button class="bbtn" onclick="backC()">← ${tx('btn_volver_paises')}</button>
     <div class="cph" style="background:linear-gradient(135deg,${p.bg}44,rgba(0,0,0,.8));margin-bottom:.6rem;border-radius:10px;padding:.6rem .8rem">
@@ -990,13 +1094,13 @@ function renderPg(id){
         <div class="cphi" style="flex:1">
           <h2 style="font-size:1.05rem;color:var(--dorado);margin-bottom:.2rem">${p.n}</h2>
           <div class="pills">
-            <span class="pill">🌎 ${p.info.c}</span>
-            <span class="pill">🗣️ ${p.info.i}</span>
-            <span class="pill">👥 ${p.info.p}</span>
-            <span class="pill">🏆 ${p.info.cp}</span>
+            <span class="pill">🌎 ${inf.c}</span>
+            <span class="pill">🗣️ ${inf.i}</span>
+            <span class="pill">👥 ${inf.p}</span>
+            <span class="pill">🏆 ${inf.cp}</span>
             <span class="pill">📌 ${tx('pg_faltan')} <b>${falt}</b></span>
           </div>
-          <div class="golea">⚽ <b>${p.info.g.join(' · ')}</b></div>
+          <div class="golea">⚽ <b>${inf.g.join(' · ')}</b></div>
         </div>
       </div>
     </div>
@@ -1129,6 +1233,15 @@ function renderSobresUI(){
   const asDiv=document.getElementById('asist-section');
   const cvDiv=document.getElementById('conv-section');
   if(!tDiv)return;
+  // ABRIR SOBRES button
+  const abrirDiv=document.getElementById('abrir-section');
+  if(abrirDiv){
+    if(S.pendCount>0){
+      abrirDiv.innerHTML=`<button class="pbtn" style="width:100%;margin:.3rem 0 1rem;font-size:1.1rem;background:linear-gradient(135deg,var(--dorado),#c8922a);box-shadow:0 4px 20px rgba(240,192,64,.5);animation:pulse-btn .8s ease-in-out infinite alternate" onclick="abrirSobres()">🎴 ${tx('abrir_sobres')} SOBRES (${S.pendCount})</button>`;
+    } else {
+      abrirDiv.innerHTML='';
+    }
+  }
   // ASISTENCIA
   const asUsed=S.asHoy===hoy;
   asDiv.innerHTML=`
@@ -1154,40 +1267,46 @@ function renderSobresUI(){
     </div>`;
 }
 function darSobreAsist(){
-  if(S.shoy>=5){toast('🚫 Límite diario alcanzado');return;}
+  if(S.shoy>=5){toast(tx('lbl_limite'));return;}
   const hoy=new Date().toDateString();
-  S.asHoy=hoy;S.shoy+=1;svS();updPaqUI();
-  toast('✅ 1 sobre de asistencia otorgado');
-  pend=[genSobre()];cidx=0;openSov();
+  S.asHoy=hoy;S.shoy+=1;S.pendCount++;svS();updPaqUI();
+  toast(tx('toast_asist'));
 }
 function darSobreConv(){
-  if(S.shoy>=5){toast('🚫 Límite diario alcanzado');return;}
+  if(S.shoy>=5){toast(tx('lbl_limite'));return;}
   const hoy=new Date().toDateString();
-  S.cvHoy=hoy;S.shoy+=1;svS();updPaqUI();
-  toast('🤝 1 sobre de convivencia otorgado');
-  pend=[genSobre()];cidx=0;openSov();
+  S.cvHoy=hoy;S.shoy+=1;S.pendCount++;svS();updPaqUI();
+  toast(tx('toast_conv'));
 }
 function iniciarTrivia(){
   if(S.shoy>=5){toast('🚫 Límite diario alcanzado');return;}
   _triviaPregs=getTriviaParaGrado();_triviaIdx=0;_triviaAciertos=0;
   mostrarPreguntaTrivia();
 }
+function getTrivTxt(p){
+  if(_lang==='en'&&TRIVIAS_EN[p.id])return TRIVIAS_EN[p.id];
+  return{q:p.q,ok:p.ok,ops:p.ops};
+}
 function mostrarPreguntaTrivia(){
   const p=_triviaPregs[_triviaIdx];
-  const ops=[p.ok,...p.ops].sort(()=>Math.random()-.5);
-  const catLbl={mundial:'🌍 Mundial','escolar':'📚 Escolar','cultura':'💡 Cultura'}[p.cat]||p.cat;
+  const t=getTrivTxt(p);
+  const ops=[t.ok,...t.ops].sort(()=>Math.random()-.5);
+  const catLbl=_lang==='en'
+    ?{mundial:'🌍 World',escolar:'📚 School',cultura:'💡 Culture'}[p.cat]||p.cat
+    :{mundial:'🌍 Mundial',escolar:'📚 Escolar',cultura:'💡 Cultura'}[p.cat]||p.cat;
+  const progLbl=_lang==='en'?`Question ${_triviaIdx+1} of 3`:`Pregunta ${_triviaIdx+1} de 3`;
   document.getElementById('trivia-overlay').innerHTML=`
     <div class="trivia-card">
-      <div class="trivia-header"><span class="trivia-cat">${catLbl}</span><span class="trivia-prog">Pregunta ${_triviaIdx+1} de 3</span></div>
+      <div class="trivia-header"><span class="trivia-cat">${catLbl}</span><span class="trivia-prog">${progLbl}</span></div>
       <div class="trivia-aciertos">${Array(3).fill(0).map((_,i)=>`<span class="tac ${i<_triviaAciertos?'ok':''}">${i<_triviaAciertos?'⭐':'○'}</span>`).join('')}</div>
-      <div class="trivia-q">${p.q}</div>
-      <div class="trivia-ops">${ops.map(o=>`<button class="trivia-opt" onclick="respTrivia('${o.replace(/'/g,"\\'")}','${p.ok.replace(/'/g,"\\'")}',this)">${o}</button>`).join('')}</div>
+      <div class="trivia-q">${t.q}</div>
+      <div class="trivia-ops">${ops.map(o=>`<button class="trivia-opt" onclick="respTrivia('${o.replace(/'/g,"\\'")}','${t.ok.replace(/'/g,"\\'")}',this)">${o}</button>`).join('')}</div>
     </div>`;
   document.getElementById('trivia-overlay').style.display='flex';
 }
 function respTrivia(sel,ok,btn){
   const btns=document.querySelectorAll('.trivia-opt');
-  btns.forEach(b=>{b.disabled=true;if(b.textContent===ok)b.classList.add('correct');});
+  btns.forEach(b=>{b.disabled=true;if(b.textContent.trim()===ok)b.classList.add('correct');});
   if(sel===ok){btn.classList.add('correct');_triviaAciertos++;}
   else{btn.classList.add('wrong');}
   setTimeout(()=>{
@@ -1201,18 +1320,14 @@ function finTrivia(){
   const hoy=new Date().toDateString();
   S.thoy=hoy;S.tAciertos=_triviaAciertos;
   const sobresGanados=_triviaAciertos;
-  if(sobresGanados>0&&S.shoy+sobresGanados<=5){
-    S.shoy+=sobresGanados;svS();
-    pend=[];for(let i=0;i<sobresGanados;i++)pend.push(genSobre());
-    cidx=0;svS();updPaqUI();openSov();
-    toast(`🎯 ${_triviaAciertos}/3 correctas → ${sobresGanados} sobre${sobresGanados>1?'s':''}!`);
-  } else if(sobresGanados===0){
-    svS();updPaqUI();toast('😅 0/3 correctas, sin sobres esta vez');
+  const posible=Math.min(sobresGanados,5-S.shoy);
+  if(sobresGanados===0){
+    svS();updPaqUI();
+    toast(_lang==='en'?'😅 0/3 correct, no packs this time':'😅 0/3 correctas, sin sobres esta vez');
   } else {
-    const posible=Math.min(sobresGanados,5-S.shoy);
-    S.shoy+=posible;svS();
-    if(posible>0){pend=[];for(let i=0;i<posible;i++)pend.push(genSobre());cidx=0;openSov();}
-    updPaqUI();toast(`🎯 ${_triviaAciertos}/3 correctas → ${posible} sobre${posible>1?'s':''}!`);
+    S.shoy+=posible;S.pendCount+=posible;svS();updPaqUI();
+    const lbl=_lang==='en'?`🎯 ${_triviaAciertos}/3 correct → ${posible} pack${posible>1?'s':''} earned!`:`🎯 ${_triviaAciertos}/3 correctas → ${posible} sobre${posible>1?'s':''} ganado${posible>1?'s':''}!`;
+    toast(lbl);
   }
 }
 function elegir(n){toast('ℹ️ Usá los botones de Asistencia, Trivia o Convivencia');}
@@ -1223,17 +1338,17 @@ function openSov(){
   document.getElementById('frev').style.display='none';
   document.getElementById('revbtns').style.display='none';
   document.getElementById('sobig').classList.remove('flip');
-  document.getElementById('sovtit').textContent='¡TOCÁ EL SOBRE PARA ABRIRLO!';
+  document.getElementById('sovtit').textContent=tx('sov_toca');
   updSovCtr();
 }
-function updSovCtr(){document.getElementById('sovctr').textContent=`Sobre ${cidx+1} de ${pend.length}`;}
+function updSovCtr(){document.getElementById('sovctr').textContent=`${tx('sov_sobre')} ${cidx+1} ${tx('sov_de')} ${pend.length}`;}
 function flipSobre(){
   const el=document.getElementById('sobig');if(el.classList.contains('flip'))return;
   snd('sobre');el.classList.add('flip');
   setTimeout(()=>mostrarFigs(pend[cidx]),700);
 }
 function mostrarFigs(figs){
-  document.getElementById('sovtit').textContent='🌟 ¡TUS FIGURITAS!';
+  document.getElementById('sovtit').textContent=tx('sov_figus');
   const rev=document.getElementById('frev');rev.style.display='grid';rev.innerHTML='';
   figs.forEach((f,i)=>{
     const rep=S.peg.has(f.id)||S.ap.some(x=>x.id===f.id);
@@ -1254,12 +1369,20 @@ function mostrarFigs(figs){
     }
   },figs.length*120+400);
 }
-function nextS(){cidx++;document.getElementById('frev').style.display='none';document.getElementById('revbtns').style.display='none';document.getElementById('sobig').classList.remove('flip');document.getElementById('sovtit').textContent='¡TOCÁ EL SOBRE!';updSovCtr();}
+function nextS(){cidx++;document.getElementById('frev').style.display='none';document.getElementById('revbtns').style.display='none';document.getElementById('sobig').classList.remove('flip');document.getElementById('sovtit').textContent=tx('sov_toca');updSovCtr();}
 function closeSov(){document.getElementById('sovl').classList.remove('active');renderAP();}
 function irPegar(){closeSov();nav('pegar');}
 function genSobre(){
   const pool=[];PAISES.forEach(p=>FPP[p.id].filter(f=>!f.holo).forEach(f=>pool.push(f)));
   return Array(5).fill(0).map(()=>pool[Math.floor(Math.random()*pool.length)]);
+}
+function abrirSobres(){
+  const n=S.pendCount;
+  if(n<=0){toast(tx('abrir_sobres_0'));return;}
+  pend=Array(n).fill(0).map(()=>genSobre());
+  cidx=0;
+  S.pendCount=0;svS();updPaqUI();
+  openSov();
 }
 
 // PEGAR
@@ -1313,8 +1436,7 @@ function doInter(){
   if(S.rep.length<10){toast('⚠️ Necesitás 10 repetidas');return;}
   const sem=getWeekStart();
   if(S.isem===sem){toast(tx('inter_ya'));return;}
-  S.rep.splice(0,10);S.isem=sem;svS();
-  pend=[genSobre()];cidx=0;openSov();
+  S.rep.splice(0,10);S.isem=sem;S.pendCount++;svS();updPaqUI();
   toast(tx('toast_canje'));
   renderI();renderAP();
 }
