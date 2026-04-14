@@ -61,13 +61,13 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
 .hbsalir:hover{background:var(--rojo);color:#fff;}
 
 /* APP */
-#sa{background:#0c1f32;}
+#sa{background:linear-gradient(180deg,#003a5c 0%,#001f38 10%,#0c1f32 30%,#091828 100%);min-height:100vh;}
 .abar{background:linear-gradient(90deg,var(--rojo),var(--azul));padding:.35rem 1rem;text-align:center;font-size:.78rem;letter-spacing:2px;color:rgba(255,255,255,.8);}
 .aheader{background:linear-gradient(180deg,var(--azul) 0%,#001428 100%);padding:.6rem 1rem .55rem;display:flex;align-items:center;gap:.55rem;position:sticky;top:0;z-index:100;box-shadow:0 3px 20px rgba(0,0,0,.6);}
 .hamtog{background:none;border:none;cursor:pointer;padding:.3rem;display:flex;flex-direction:column;gap:5px;flex-shrink:0;}
 .hamtog span{display:block;width:26px;height:2px;background:var(--dorado);border-radius:2px;}
 /* SABIAS QUE - inline entre logo y toggle */
-.hdr-sabias-inline{flex:1;min-width:0;cursor:pointer;}
+.hdr-sabias-inline{flex:1;min-width:0;cursor:pointer;display:flex;justify-content:center;}
 .sab-card{background:linear-gradient(135deg,rgba(240,192,64,.13) 0%,rgba(0,71,108,.3) 60%,rgba(240,192,64,.08) 100%);border:1px solid rgba(240,192,64,.35);border-radius:10px;padding:.38rem .6rem;display:flex;align-items:center;gap:.4rem;box-shadow:0 0 12px rgba(240,192,64,.18),inset 0 1px 0 rgba(255,255,255,.07);animation:sabglow 3s ease-in-out infinite;transition:opacity .35s,transform .35s;}
 .sab-card.sab-hidden{opacity:0;transform:translateY(-6px);}
 .sab-icon{font-size:1rem;animation:sabspin 6s linear infinite;flex-shrink:0;}
@@ -407,7 +407,7 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
   <!-- ALBUM -->
   <div id="tab-album" class="tc active">
     <div id="vc">
-      <p style="color:rgba(255,255,255,.4);font-size:.76rem;margin-bottom:.8rem;text-align:center">Tocá un país para ver sus figuritas ⚽</p>
+      <p id="album-hint" style="color:rgba(255,255,255,.4);font-size:.76rem;margin-bottom:.8rem;text-align:center">Tocá un país para ver sus figuritas ⚽</p>
       <div class="cgrid" id="cgrid"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:.8rem">
         <div class="ccard" onclick="showPage('cole')" style="border-color:rgba(228,5,31,.4)">
@@ -526,13 +526,13 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
     <div class="hni" id="hn-especiales" data-tr="nav_especiales" onclick="nav('especiales')"><span class="ico">⭐</span><span class="hni-txt">Especiales</span></div>
     <div class="hdiv"></div>
     <div class="hprog">
-      <p style="font-size:.72rem;color:rgba(255,255,255,.4)">MI PROGRESO</p>
+      <p style="font-size:.72rem;color:rgba(255,255,255,.4)" id="hprog-lbl">MI PROGRESO</p>
       <div class="hprogbar"><div id="hpf" class="hprogfill" style="width:0%"></div></div>
       <p style="font-size:.7rem;color:rgba(255,255,255,.4)" id="hpt">0/350</p>
     </div>
     <div class="hdiv"></div>
   </div>
-  <button class="hbsalir" onclick="salir()">🚪 Cerrar sesión</button>
+  <button class="hbsalir" id="hbsalir-btn" onclick="salir()">🚪 Cerrar sesión</button>
 </div>
 
 <!-- MODAL -->
@@ -750,6 +750,13 @@ const TR={
   sov_de:{es:'de',en:'of'},
   toast_asist:{es:'✅ 1 sobre ganado · Abrí tus sobres cuando quieras',en:'✅ 1 pack earned · Open your packs whenever you want'},
   toast_conv:{es:'🤝 1 sobre ganado · Abrí tus sobres cuando quieras',en:'🤝 1 pack earned · Open your packs whenever you want'},
+  album_hint:{es:'Tocá un país para ver sus figuritas ⚽',en:'Tap a country to see its stickers ⚽'},
+  phint_txt:{es:'seleccionada · Andá al Álbum o doble click para ir directo',en:'selected · Go to Album or double click to go directly'},
+  pempty_txt:{es:'¡No hay figuritas para pegar!<br>Abrí sobres primero.',en:'No stickers to stick!<br>Open some packs first.'},
+  hprog_lbl:{es:'MI PROGRESO',en:'MY PROGRESS'},
+  salir_btn:{es:'🚪 Cerrar sesión',en:'🚪 Log out'},
+  esp_pag:{es:'Página',en:'Page'},
+  esp_de:{es:'de',en:'of'},
 };
 function tx(k){return(TR[k]||{})[_lang]||TR[k]?.es||k;}
 function getWeekStart(){
@@ -786,11 +793,16 @@ function applyLang(){
   });
   // Sabías que refresh
   showSabias();
+  // Textos estáticos del app
+  const ah=document.getElementById('album-hint');if(ah)ah.textContent=tx('album_hint');
+  const hp=document.getElementById('hprog-lbl');if(hp)hp.textContent=tx('hprog_lbl');
+  const hs=document.getElementById('hbsalir-btn');if(hs)hs.textContent=tx('salir_btn');
   // Re-render dynamic views
   if(CT==='sobres')updPaqUI();
   if(CT==='intercambio')renderI();
   if(CT==='especiales')buildEsp();
-  if(CT==='album')buildCG();
+  if(CT==='album'){buildCG();renderAP();}
+  if(CT==='pegar')renderAP();
   if(CPG){const vpEl=document.getElementById('vp');if(vpEl&&vpEl.style.display!=='none')renderPg(CPG);}
 }
 
@@ -1425,6 +1437,7 @@ function renderAP(){
   const grid=document.getElementById('apgrid');
   const emp=document.getElementById('pempty');
   const hint=document.getElementById('phint');
+  if(emp)emp.innerHTML=`<div style="font-size:3rem">🎴</div><p>${tx('pempty_txt')}</p>`;
   if(!S.ap.length){grid.innerHTML='';emp.style.display='block';hint.style.display='none';return;}
   emp.style.display='none';
   hint.style.display=FSel?'block':'none';
@@ -1441,7 +1454,7 @@ function renderAP(){
     </div>`;
   }).join('');
 }
-function selF(id){snd('click');FSel=id;const f=S.ap.find(x=>x.id===id);document.getElementById('fsnm').textContent=f?f.nm:'';document.getElementById('phint').style.display='block';renderAP();}
+function selF(id){snd('click');FSel=id;const f=S.ap.find(x=>x.id===id);const hint=document.getElementById('phint');if(hint)hint.innerHTML=`✅ <b>${f?f.nm:''}</b> ${tx('phint_txt')}`;hint.style.display='block';renderAP();}
 function irAF(id){const f=S.ap.find(x=>x.id===id);if(!f)return;FSel=id;nav('album');setTimeout(()=>showPage(f.pais||'cole'),100);}
 
 // INTERCAMBIO
@@ -1496,7 +1509,7 @@ function navEsp(dir){
 function renderEspPag(){
   const ep=ESP_PAGES[_espPag];
   document.getElementById('esp-tit').textContent=ep.tit;
-  document.getElementById('esp-sub').textContent=`Página ${_espPag+1} de ${ESP_PAGES.length}`;
+  document.getElementById('esp-sub').textContent=`${tx('esp_pag')} ${_espPag+1} ${tx('esp_de')} ${ESP_PAGES.length}`;
   document.getElementById('esp-prev-btn').disabled=_espPag===0;
   document.getElementById('esp-next-btn').disabled=_espPag===ESP_PAGES.length-1;
   const figs=ep.figs();
