@@ -9,7 +9,13 @@
       "Bash(python -c \"import PyPDF2\")",
       "Bash(pip install:*)",
       "Bash(python:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(del student_data.js)",
+      "Bash(git rm *)",
+      "Bash(git commit *)"
     ]
   }
 }
