@@ -15,7 +15,8 @@
       "Bash(git push *)",
       "Bash(del student_data.js)",
       "Bash(git rm *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(git reset *)"
     ]
   }
 }
