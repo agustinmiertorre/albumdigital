@@ -382,7 +382,6 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
     <button type="submit" class="pbtn" style="width:100%;margin:0">ENTRAR ⚽</button>
     </form>
     <br><button class="bvolver" onclick="go('sp')">← Volver al inicio</button>
-    <p style="color:rgba(255,255,255,.22);font-size:.66rem;margin-top:.8rem">DEMO · contraseña = división + grado<br>Ej: 3° Arrayán → <b>arrayan3</b> (doble r)</p>
   </div>
 </div>
 
@@ -1212,6 +1211,42 @@ const GRADE_TRIVIAS={
   },
 };
 
+const SABIAS_ES=[
+  'Brasil es el único país que jugó TODOS los Mundiales de fútbol de la historia.',
+  'La Copa del Mundo pesa 6.175 kg y está hecha de oro de 18 quilates.',
+  'El Mundial 2026 será el primero con 48 selecciones en lugar de 32.',
+  'El gol más rápido en un Mundial lo marcó Hakan Şükür en 11 segundos (Corea 2002).',
+  'Argentina ganó su tercer Mundial en 2022, venciendo a Francia en la final.',
+  'Japón tiene más de 6.800 islas en su territorio.',
+  'Marruecos fue el primer país africano en semifinales de un Mundial (Qatar 2022).',
+  'El álbum de figuritas del Mundial fue creado por Panini en Italia en 1970.',
+  'México organizará el Mundial 2026 junto con EE.UU. y Canadá.',
+  'Australia clasificó a 5 Mundiales consecutivos entre 2006 y 2022.',
+  'Portugal tiene 10 millones de habitantes, pero más de 250 millones hablan portugués.',
+  'Francia es el país con más jugadores nacidos en el exterior en su selección.',
+  'Senegal ganó su primera Copa de África en 2021 con Sadio Mané como figura.',
+  'La bandera de Uruguay tiene el mismo celeste que Argentina pero con franjas horizontales.',
+  '¡Cada edición del Mundial se venden cientos de millones de figuritas Panini!',
+];
+const SABIAS_EN=[
+  'Brazil is the ONLY country to have played in every single FIFA World Cup in history.',
+  'The World Cup trophy weighs 6.175 kg and is made of 18-karat gold.',
+  'The 2026 World Cup will be the first tournament with 48 teams instead of 32.',
+  'The fastest goal in World Cup history was scored by Hakan Şükür in just 11 seconds (Korea 2002).',
+  'Argentina won its third World Cup in 2022, defeating France in the final.',
+  'Japan has more than 6,800 islands in its territory.',
+  'Morocco became the first African country to reach a World Cup semi-final (Qatar 2022).',
+  'The FIFA World Cup sticker album was created by Panini in Italy in 1970.',
+  'Mexico will co-host the 2026 World Cup alongside the USA and Canada.',
+  'Australia qualified for 5 consecutive World Cups between 2006 and 2022.',
+  'Portugal has 10 million people, but over 250 million speak Portuguese worldwide.',
+  'France has more foreign-born players in its national team than any other country.',
+  'Senegal won its first Africa Cup of Nations in 2021 with Sadio Mané as its star.',
+  'The Uruguay flag has the same light blue as Argentina but with horizontal stripes.',
+  'Hundreds of millions of Panini stickers are sold every single World Cup edition!',
+];
+function getCurrentSabias(){return _lang==='en'?SABIAS_EN:SABIAS_ES;}
+
 // ── IDIOMA ───────────────────────────────────────────────────────
 let _lang='es';
 const TR={
@@ -1518,6 +1553,22 @@ function go(id){document.querySelectorAll('.screen').forEach(e=>e.classList.remo
 // STARS
 (()=>{const c=document.getElementById('stc');for(let i=0;i<55;i++){const s=document.createElement('div');s.className='star';const z=Math.random()*3+1;s.style.cssText=`position:absolute;width:${z}px;height:${z}px;background:rgba(255,255,255,${Math.random()*.7+.2});top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${Math.random()*3+2}s`;c.appendChild(s);}})();
 
+// AUTO-LOGIN: si hay sesión guardada, ingresar automáticamente
+(async()=>{
+  const saved=localStorage.getItem('sc_lastCourse');
+  if(!saved)return;
+  CC=saved;
+  if(fbDB){try{const snap=await fbDB.ref(`albums/${CC}`).get();S=snap.exists()?_parseS(snap.val()):ldS();}catch(e){S=ldS();}}else{S=ldS();}
+  const hoy=new Date().toDateString();
+  if(S.fhoy!==hoy){S.shoy=0;S.fhoy=hoy;S.ihoy='';S.thoy='';S.tAciertos=0;S.asHoy='';S.cvHoy='';svS();}
+  const[g,d]=CC.split('-');
+  const lbl=`${g}° ${DN[d]||d}`;
+  document.getElementById('cdisplay').textContent=lbl.toUpperCase();
+  document.getElementById('hcl').textContent=lbl.toUpperCase();
+  startSync();
+  initApp();go('sa');
+})();
+
 // LOGIN
 async function login(){
   const curso=document.getElementById('lcurso').value;
@@ -1541,10 +1592,11 @@ async function login(){
   const lbl=`${g}° ${DN[d]||d}`;
   document.getElementById('cdisplay').textContent=lbl.toUpperCase();
   document.getElementById('hcl').textContent=lbl.toUpperCase();
+  localStorage.setItem('sc_lastCourse', CC);
   startSync();
   initApp(); go('sa'); snd('click');
 }
-function salir(){toggleHam();go('sp');document.getElementById('lpass').value='';document.getElementById('bnav').classList.remove('vis');}
+function salir(){toggleHam();go('sp');document.getElementById('lpass').value='';document.getElementById('bnav').classList.remove('vis');localStorage.removeItem('sc_lastCourse');}
 
 // INIT
 function initApp(){buildCG();buildIS();buildEsp();updProg();updPaqUI();renderAP();nav('album',true);document.getElementById('bnav').classList.add('vis');startSabias();}
