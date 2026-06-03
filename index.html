@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -325,6 +325,15 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
 .flag-sn{background:linear-gradient(to right,#00853f 33%,#fdef42 33% 67%,#e31b23 67%);}
 .flag-ma{background:#c1272d;}
 .flag-au{background:#00008b;}
+
+/* ZOOM OVERLAY */
+#zoom-ovl{display:none;position:fixed;inset:0;background:rgba(0,0,0,.94);z-index:400;align-items:center;justify-content:center;flex-direction:column;padding:1rem;}
+#zoom-ovl.open{display:flex;}
+#zoom-ovl img{max-width:92vw;max-height:75vh;border-radius:15px;object-fit:contain;box-shadow:0 0 80px rgba(240,192,64,.25);touch-action:manipulation;}
+.zoom-info{margin-top:.8rem;text-align:center;}
+.zoom-close{position:absolute;top:.7rem;right:.7rem;background:rgba(255,255,255,.12);border:none;color:#fff;width:38px;height:38px;border-radius:50%;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.zoom-close:hover{background:rgba(255,255,255,.25);}
+.fig-zoom-ico{position:absolute;bottom:2px;left:50%;transform:translateX(-50%);font-size:.5rem;color:rgba(255,255,255,.5);background:rgba(0,0,0,.4);padding:1px 4px;border-radius:3px;pointer-events:none;}
 </style>
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -344,7 +353,7 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
     <p style="color:rgba(255,255,255,.6);font-size:.85rem;margin-bottom:1.5rem">El álbum de figuritas oficial del cole<br>¡Coleccioná a tus compañeros y recorré el mundo!</p>
     <button class="pbtn" onclick="go('l')">📚 INGRESAR AL ÁLBUM</button>
     <br>
-    <button class="pbtn sec" onclick="go('sv')" style="margin-top:.5rem">👁️ VER ÁLBUMES</button>
+    <button class="pbtn sec" onclick="window.location.href='album_view.html'" style="margin-top:.5rem">👁️ VER ÁLBUMES</button>
     <br>
     <button class="pbtn sec" onclick="go('sadmin')" style="margin-top:.3rem;border-color:var(--rojo);color:var(--rojo);font-size:.85rem">🔧 ADMIN</button>
     <br><br>
@@ -409,14 +418,10 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
     <div id="vc">
       <p id="album-hint" style="color:rgba(255,255,255,.4);font-size:.76rem;margin-bottom:.8rem;text-align:center">Tocá un país para ver sus figuritas ⚽</p>
       <div class="cgrid" id="cgrid"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:.8rem">
+      <div style="display:grid;grid-template-columns:1fr;gap:.8rem;margin-top:.8rem;max-width:200px;margin-left:auto;margin-right:auto">
         <div class="ccard" onclick="showPage('cole')" style="border-color:rgba(228,5,31,.4)">
           <div class="flag-box" style="background:#fff;overflow:hidden;padding:3px"><img src="Logo San Carlos.png" style="width:100%;height:100%;object-fit:contain"></div>
-          <div class="cname">San Carlos</div><div class="cprog" id="pgcole">Especial</div>
-        </div>
-        <div class="ccard" onclick="showPage('mundial')" style="border-color:rgba(240,192,64,.4)">
-          <div class="flag-box" style="background:linear-gradient(135deg,var(--dorado),var(--rojo));overflow:hidden"><img src="Copa del Mundo.png" style="width:100%;height:100%;object-fit:contain;padding:4px"></div>
-          <div class="cname">Mundial</div><div class="cprog" id="pgmundial">Especial</div>
+          <div class="cname">Especiales</div><div class="cprog" id="pgcole">Especial</div>
         </div>
       </div>
     </div>
@@ -579,115 +584,632 @@ function snd(t){
   else if(t==='inter'){[330,440,550].forEach((f,i)=>mk(f,0,'sine',i*.15,.3,.2));}
 }
 
-// TRIVIA DATA (ajustadas por grado)
-const TRIVIAS=[
-  {id:'T001',q:'¿De qué color es el pasto de una cancha de fútbol?',ok:'Verde',ops:['Azul','Rojo','Amarillo'],nmin:1,nmax:2,cat:'cultura'},
-  {id:'T002',q:'¿Cuántos jugadores hay en un equipo de fútbol?',ok:'11',ops:['5','22','10'],nmin:1,nmax:2,cat:'mundial'},
-  {id:'T003',q:'¿Qué forma tiene la pelota de fútbol?',ok:'Redonda',ops:['Cuadrada','Triangular','Ovalada'],nmin:1,nmax:2,cat:'mundial'},
-  {id:'T004',q:'¿Cuánto es 2 + 3?',ok:'5',ops:['4','6','7'],nmin:1,nmax:2,cat:'escolar'},
-  {id:'T005',q:'¿De qué colores es la camiseta de Argentina?',ok:'Azul y blanca',ops:['Roja y negra','Verde y amarilla','Naranja y azul'],nmin:1,nmax:2,cat:'mundial'},
-  {id:'T006',q:'¿Cuántas letras tiene la palabra GATO?',ok:'4',ops:['3','5','2'],nmin:1,nmax:2,cat:'escolar'},
-  {id:'T007',q:'¿Qué obtenés mezclando azul y amarillo?',ok:'Verde',ops:['Naranja','Violeta','Marrón'],nmin:1,nmax:2,cat:'escolar'},
-  {id:'T008',q:'¿En qué continente está Argentina?',ok:'América',ops:['Europa','Asia','África'],nmin:1,nmax:2,cat:'mundial'},
-  {id:'T009',q:'¿Cuántos dedos tiene una mano?',ok:'5',ops:['4','6','10'],nmin:1,nmax:2,cat:'escolar'},
-  {id:'T010',q:'¿Cuál es el animal más grande del mundo?',ok:'Ballena azul',ops:['Elefante','Jirafa','Tiburón'],nmin:1,nmax:2,cat:'cultura'},
-  {id:'T011',q:'¿Cuántos países participan en el Mundial 2026?',ok:'48',ops:['32','24','64'],nmin:3,nmax:4,cat:'mundial'},
-  {id:'T012',q:'¿En qué país nació Lionel Messi?',ok:'Argentina',ops:['Brasil','Uruguay','España'],nmin:3,nmax:4,cat:'cultura'},
-  {id:'T013',q:'¿Quién ganó el Mundial de fútbol 2022?',ok:'Argentina',ops:['Francia','Brasil','Alemania'],nmin:3,nmax:4,cat:'mundial'},
-  {id:'T014',q:'¿Cuál es la capital de Brasil?',ok:'Brasilia',ops:['Río de Janeiro','São Paulo','Buenos Aires'],nmin:3,nmax:4,cat:'mundial'},
-  {id:'T015',q:'¿En qué continente está Marruecos?',ok:'África',ops:['Asia','América','Europa'],nmin:3,nmax:4,cat:'mundial'},
-  {id:'T016',q:'¿Cuánto es 7 × 8?',ok:'56',ops:['48','64','54'],nmin:3,nmax:4,cat:'escolar'},
-  {id:'T017',q:'¿Cuántos días tiene un año no bisiesto?',ok:'365',ops:['360','366','364'],nmin:3,nmax:4,cat:'escolar'},
-  {id:'T018',q:'¿Cuánto es 100 ÷ 4?',ok:'25',ops:['20','30','40'],nmin:3,nmax:4,cat:'escolar'},
-  {id:'T019',q:'¿Cuál es el idioma oficial de Francia?',ok:'Francés',ops:['Inglés','Español','Alemán'],nmin:3,nmax:4,cat:'mundial'},
-  {id:'T020',q:'¿Cuántos lados tiene un hexágono?',ok:'6',ops:['5','7','8'],nmin:3,nmax:4,cat:'escolar'},
-  {id:'T021',q:'¿Qué planeta es el más cercano al Sol?',ok:'Mercurio',ops:['Venus','La Tierra','Marte'],nmin:3,nmax:4,cat:'escolar'},
-  {id:'T022',q:'¿En qué continente está Japón?',ok:'Asia',ops:['América','Europa','Oceanía'],nmin:3,nmax:4,cat:'mundial'},
-  {id:'T023',q:'¿Cuántos colores tiene el arcoíris?',ok:'7',ops:['5','6','8'],nmin:3,nmax:4,cat:'cultura'},
-  {id:'T024',q:'¿En qué año se jugó el primer Mundial de fútbol?',ok:'1930',ops:['1920','1950','1910'],nmin:5,nmax:6,cat:'mundial'},
-  {id:'T025',q:'¿Qué país ganó más Mundiales de fútbol?',ok:'Brasil (5)',ops:['Alemania (4)','Italia (4)','Argentina (3)'],nmin:5,nmax:6,cat:'mundial'},
-  {id:'T026',q:'¿Cuántos títulos mundiales tiene Alemania?',ok:'4',ops:['3','5','2'],nmin:5,nmax:6,cat:'mundial'},
-  {id:'T027',q:'¿Cuál es la moneda oficial de Japón?',ok:'Yen',ops:['Yuan','Won','Dólar'],nmin:5,nmax:6,cat:'mundial'},
-  {id:'T028',q:'¿Cuánto es el 15% de 200?',ok:'30',ops:['25','20','40'],nmin:5,nmax:6,cat:'escolar'},
-  {id:'T029',q:'¿Cuál es el perímetro de un cuadrado de lado 5 cm?',ok:'20 cm',ops:['25 cm','10 cm','15 cm'],nmin:5,nmax:6,cat:'escolar'},
-  {id:'T030',q:'¿Quién escribió Don Quijote de la Mancha?',ok:'Miguel de Cervantes',ops:['Shakespeare','Borges','García Márquez'],nmin:5,nmax:6,cat:'escolar'},
-  {id:'T031',q:'¿Cuántos países tiene América del Sur?',ok:'12',ops:['10','14','8'],nmin:5,nmax:6,cat:'cultura'},
-  {id:'T032',q:'¿En qué año Argentina ganó su segundo Mundial?',ok:'1986',ops:['1978','1990','1982'],nmin:5,nmax:6,cat:'mundial'},
-  {id:'T033',q:'¿Cuál es la fórmula del área de un triángulo?',ok:'Base × Altura ÷ 2',ops:['Base × Altura','Base + Altura','2 × Base + Altura'],nmin:5,nmax:6,cat:'escolar'},
-  {id:'T034',q:'¿Qué gas necesitan los seres vivos para respirar?',ok:'Oxígeno',ops:['Nitrógeno','Dióxido de carbono','Hidrógeno'],nmin:5,nmax:6,cat:'escolar'},
-  {id:'T035',q:'¿Cuántas selecciones clasifica Europa al Mundial 2026?',ok:'16',ops:['12','10','8'],nmin:5,nmax:6,cat:'mundial'},
-];
-const SABIAS_ES=[
-  'Brasil es el único país que jugó TODOS los Mundiales de fútbol de la historia.',
-  'La Copa del Mundo pesa 6.175 kg y está hecha de oro de 18 quilates.',
-  'El Mundial 2026 será el primero con 48 selecciones en lugar de 32.',
-  'El gol más rápido en un Mundial lo marcó Hakan Şükür en 11 segundos (Corea 2002).',
-  'Argentina ganó su tercer Mundial en 2022, venciendo a Francia en la final.',
-  'Japón tiene más de 6.800 islas en su territorio.',
-  'Marruecos fue el primer país africano en semifinales de un Mundial (Qatar 2022).',
-  'El álbum de figuritas del Mundial fue creado por Panini en Italia en 1970.',
-  'México organizará el Mundial 2026 junto con EE.UU. y Canadá.',
-  'Australia clasificó a 5 Mundiales consecutivos entre 2006 y 2022.',
-  'Portugal tiene 10 millones de habitantes, pero más de 250 millones hablan portugués.',
-  'Francia es el país con más jugadores nacidos en el exterior en su selección.',
-  'Senegal ganó su primera Copa de África en 2021 con Sadio Mané como figura.',
-  'La bandera de Uruguay tiene el mismo celeste que Argentina pero con franjas horizontales.',
-  '¡Cada edición del Mundial se venden cientos de millones de figuritas Panini!',
-];
-const SABIAS_EN=[
-  'Brazil is the ONLY country to have played in every single FIFA World Cup in history.',
-  'The World Cup trophy weighs 6.175 kg and is made of 18-karat gold.',
-  'The 2026 World Cup will be the first tournament with 48 teams instead of 32.',
-  'The fastest goal in World Cup history was scored by Hakan Şükür in just 11 seconds (Korea 2002).',
-  'Argentina won its third World Cup in 2022, defeating France in the final.',
-  'Japan has more than 6,800 islands in its territory.',
-  'Morocco became the first African country to reach a World Cup semi-final (Qatar 2022).',
-  'The FIFA World Cup sticker album was created by Panini in Italy in 1970.',
-  'Mexico will co-host the 2026 World Cup alongside the USA and Canada.',
-  'Australia qualified for 5 consecutive World Cups between 2006 and 2022.',
-  'Portugal has 10 million people, but over 250 million speak Portuguese worldwide.',
-  'France has more foreign-born players in its national team than any other country.',
-  'Senegal won its first Africa Cup of Nations in 2021 with Sadio Mané as its star.',
-  'The Uruguay flag has the same light blue as Argentina but with horizontal stripes.',
-  'Hundreds of millions of Panini stickers are sold every single World Cup edition!',
-];
-function getCurrentSabias(){return _lang==='en'?SABIAS_EN:SABIAS_ES;}
-const TRIVIAS_EN={
-  T001:{q:'What color is the grass on a football pitch?',ok:'Green',ops:['Blue','Red','Yellow']},
-  T002:{q:'How many players are on a football team?',ok:'11',ops:['5','22','10']},
-  T003:{q:'What shape is a football?',ok:'Round',ops:['Square','Triangular','Oval']},
-  T004:{q:'How much is 2 + 3?',ok:'5',ops:['4','6','7']},
-  T005:{q:"What colors are Argentina's jersey?",ok:'Blue and white',ops:['Red and black','Green and yellow','Orange and blue']},
-  T006:{q:'How many letters does the word MOON have?',ok:'4',ops:['3','5','2']},
-  T007:{q:'What color do you get mixing blue and yellow?',ok:'Green',ops:['Orange','Violet','Brown']},
-  T008:{q:'On which continent is Argentina?',ok:'America',ops:['Europe','Asia','Africa']},
-  T009:{q:'How many fingers does a hand have?',ok:'5',ops:['4','6','10']},
-  T010:{q:'What is the largest animal in the world?',ok:'Blue whale',ops:['Elephant','Giraffe','Shark']},
-  T011:{q:'How many countries participate in the 2026 World Cup?',ok:'48',ops:['32','24','64']},
-  T012:{q:'In which country was Lionel Messi born?',ok:'Argentina',ops:['Brazil','Uruguay','Spain']},
-  T013:{q:'Who won the 2022 Football World Cup?',ok:'Argentina',ops:['France','Brazil','Germany']},
-  T014:{q:'What is the capital of Brazil?',ok:'Brasília',ops:['Rio de Janeiro','São Paulo','Buenos Aires']},
-  T015:{q:'On which continent is Morocco?',ok:'Africa',ops:['Asia','America','Europe']},
-  T016:{q:'How much is 7 × 8?',ok:'56',ops:['48','64','54']},
-  T017:{q:'How many days does a non-leap year have?',ok:'365',ops:['360','366','364']},
-  T018:{q:'How much is 100 ÷ 4?',ok:'25',ops:['20','30','40']},
-  T019:{q:'What is the official language of France?',ok:'French',ops:['English','Spanish','German']},
-  T020:{q:'How many sides does a hexagon have?',ok:'6',ops:['5','7','8']},
-  T021:{q:'Which planet is closest to the Sun?',ok:'Mercury',ops:['Venus','Earth','Mars']},
-  T022:{q:'On which continent is Japan?',ok:'Asia',ops:['America','Europe','Oceania']},
-  T023:{q:'How many colors does a rainbow have?',ok:'7',ops:['5','6','8']},
-  T024:{q:'In what year was the first Football World Cup played?',ok:'1930',ops:['1920','1950','1910']},
-  T025:{q:'Which country has won the most World Cups?',ok:'Brazil (5)',ops:['Germany (4)','Italy (4)','Argentina (3)']},
-  T026:{q:'How many World Cup titles does Germany have?',ok:'4',ops:['3','5','2']},
-  T027:{q:'What is the official currency of Japan?',ok:'Yen',ops:['Yuan','Won','Dollar']},
-  T028:{q:'How much is 15% of 200?',ok:'30',ops:['25','20','40']},
-  T029:{q:'What is the perimeter of a square with side 5 cm?',ok:'20 cm',ops:['25 cm','10 cm','15 cm']},
-  T030:{q:'Who wrote Don Quixote?',ok:'Miguel de Cervantes',ops:['Shakespeare','Borges','García Márquez']},
-  T031:{q:'How many countries does South America have?',ok:'12',ops:['10','14','8']},
-  T032:{q:"In what year did Argentina win its second World Cup?",ok:'1986',ops:['1978','1990','1982']},
-  T033:{q:'What is the formula for the area of a triangle?',ok:'Base × Height ÷ 2',ops:['Base × Height','Base + Height','2 × Base + Height']},
-  T034:{q:'What gas do living beings need to breathe?',ok:'Oxygen',ops:['Nitrogen','Carbon dioxide','Hydrogen']},
-  T035:{q:'How many teams does Europe qualify to the 2026 World Cup?',ok:'16',ops:['12','10','8']},
+// TRIVIA DATA — cargada desde preguntas_trivia.xlsx (50 ES + 50 EN por grado)
+let _nextTriviaIdx=0;
+
+const GRADE_TRIVIAS={
+  '1':{
+    es:[
+      {q:'¿Cuánto es 2 + 3?',ok:'5',ops:['4','6','3']},
+      {q:'¿De qué color es el césped de una cancha de fútbol?',ok:'Verde',ops:['Azul','Amarillo','Rojo']},
+      {q:'¿Qué animal ladra y es la mascota más común?',ok:'El perro',ops:['El gato','El caballo','El pájaro']},
+      {q:'¿Quién es el famoso capitán de la selección argentina?',ok:'Lionel Messi',ops:['Cristiano Ronaldo','Neymar','Kylian Mbappé']},
+      {q:'¿Qué vocal falta en la palabra "G_TO"?',ok:'A',ops:['E','O','I']},
+      {q:'¿Qué forma tiene la pelota que se usa en el Mundial de fútbol?',ok:'Esfera (redonda)',ops:['Cubo (cuadrada)','Triángulo','Rectángulo']},
+      {q:'Si tengo 5 caramelos y me como 2, ¿cuántos me quedan?',ok:'3',ops:['4','2','5']},
+      {q:'¿Cuál es el color del sol?',ok:'Amarillo',ops:['Morado','Negro','Verde']},
+      {q:'¿Qué objeto usamos para escribir y borrar en el cuaderno?',ok:'Lápiz',ops:['Cuchara','Tenedor','Cepillo']},
+      {q:'¿Cómo se llama el trofeo que gana el mejor país en el Mundial?',ok:'La Copa del Mundo',ops:['La Medalla de Oro','El Cinturón','El Plato de Oro']},
+      {q:'¿Qué letra va después de la "A" en el abecedario?',ok:'B',ops:['C','D','Z']},
+      {q:'¿Cuál de estos animales puede volar alto en el cielo?',ok:'El águila',ops:['El elefante','El perro','El pez']},
+      {q:'¿Qué número va antes del 10?',ok:'9',ops:['11','8','7']},
+      {q:'¿Cuáles son los colores de la selección Argentina?',ok:'Celeste y blanco',ops:['Azul y amarillo','Rojo y blanco','Gris y violeta']},
+      {q:'¿Qué usamos en los pies para poder jugar al fútbol sin lastimarnos?',ok:'Zapatillas o botines',ops:['Guantes','Gorros','Bufandas']},
+      {q:'¿Cómo se llama el lugar donde vamos a aprender y a jugar con los amigos?',ok:'La escuela',ops:['El hospital','El supermercado','La comisaría']},
+      {q:'¿Cuál es el animal más alto del mundo que tiene un cuello larguísimo?',ok:'La jirafa',ops:['El ratón','El hipopótamo','El gato']},
+      {q:'Si sumamos 5 + 5, ¿cuál es el resultado?',ok:'10',ops:['9','11','5']},
+      {q:'¿Qué fruta es roja por fuera y blanca por dentro?',ok:'La manzana',ops:['El plátano','la naranja','El limón']},
+      {q:'¿Cuántos tiempos tiene un partido de fútbol?',ok:'2',ops:['4','3','1']},
+      {q:'¿Con qué sentido podemos escuchar nuestra música favorita?',ok:'El oído',ops:['La vista','El gusto','El tacto']},
+      {q:'¿Qué palabra rima con "CASA"?',ok:'Masa',ops:['Pelo','Sol','Perro']},
+      {q:'¿Cuántos días tiene una semana?',ok:'7',ops:['5','10','6']},
+      {q:'¿Qué hace el arquero en un partido de fútbol?',ok:'Atajar la pelota',ops:['Meter los goles','Cobrar las faltas','Correr por toda la cancha']},
+      {q:'¿Cuál es el número que representa "nada" o ninguna cosa?',ok:'0',ops:['1','2','10']},
+      {q:'¿Qué estación del año es la más fría y a veces cae nieve?',ok:'Invierno',ops:['Verano','Primavera','Otoño']},
+      {q:'¿Cuál es el océano donde viven las ballenas y los tiburones?',ok:'El mar',ops:['El río','La pileta','El lago']},
+      {q:'¿Qué país ganó el Mundial de Qatar 2022?',ok:'Argentina',ops:['Francia','Brasil','Alemania']},
+      {q:'¿Cómo se llama el satélite que vemos en el cielo por las noches?',ok:'La Luna',ops:['El Sol','Marte','Júpiter']},
+      {q:'¿Qué letra es la primera de la palabra "MAMÁ"?',ok:'M',ops:['P','L','S']},
+      {q:'¿Cuál es el número que sigue después del 19?',ok:'20',ops:['18','21','30']},
+      {q:'¿Qué objeto usa el árbitro para detener el partido de fútbol?',ok:'Un silbato',ops:['Una guitarra','Una tarjeta de felicitación','Un micrófono']},
+      {q:'¿Qué animal vive en el agua y respira por branquias?',ok:'El pez',ops:['El conejo','El oso','El pájaro']},
+      {q:'¿De qué color es la manzana madura más común?',ok:'Roja',ops:['Azul','Negra','Morada']},
+      {q:'¿Cuántas patas tiene una araña?',ok:'8',ops:['4','6','2']},
+      {q:'¿Qué tarjeta saca el árbitro para expulsar a un jugador del partido?',ok:'Tarjeta roja',ops:['Tarjeta amarilla','Tarjeta azul','Tarjeta verde']},
+      {q:'¿Cómo llamamos al agua que cae del cielo cuando se nubla?',ok:'Lluvia',ops:['Nieve','Viento','Trueno']},
+      {q:'Si tienes 3 manzanas y tu mamá te regala 3 más, ¿cuántas tienes?',ok:'6',ops:['5','7','3']},
+      {q:'¿Cuál de estos juguetes se eleva en el aire con el viento?',ok:'Barrilete',ops:['El auto de juguete','La pelota','El peluche']},
+      {q:'¿Cada cuántos años se juega un Mundial de fútbol?',ok:'4 años',ops:['Cada año','2 años','10 años']},
+      {q:'¿Qué parte del cuerpo usamos para pensar?',ok:'El cerebro',ops:['El pie','La mano','El estómago']},
+      {q:'¿Cuál es la última letra del abecedario?',ok:'Z',ops:['A','X','Y']},
+      {q:'¿Qué medio de transporte va por las vías y hace "chucu-chucu"?',ok:'El tren',ops:['El avión','El coche','El barco']},
+      {q:'¿Cómo se llama cuando la pelota entra en el arco?',ok:'Gol',ops:['Falta','Corner','Out']},
+      {q:'¿Cuál de estos animales es un reptil que se arrastra por el suelo?',ok:'La serpiente',ops:['El loro','El caballo','El perro']},
+      {q:'¿Qué número es mayor: el 5 o el 8?',ok:'El 8',ops:['El 5','Son iguales','El 2']},
+      {q:'¿De qué color es la nieve?',ok:'Blanca',ops:['Amarilla','Verde','Marrón']},
+      {q:'¿Qué animal nos da leche y dice "muuu"?',ok:'La vaca',ops:['El cerdo','El pato','La oveja']},
+      {q:'¿Qué ropa nos ponemos en las manos cuando hace mucho frío?',ok:'Guantes',ops:['Calcetines','Gorro','Bufanda']},
+      {q:'¿Quiénes son las personas que se sientan en las tribunas a alentar a su equipo?',ok:'Los hinchas',ops:['Los cocineros','Los bomberos','Los doctores']},
+    ],
+    en:[
+      {q:'What is 2 + 3?',ok:'5',ops:['4','6','3']},
+      {q:'What color is the grass on a soccer field?',ok:'Green',ops:['Blue','Yellow','Red']},
+      {q:'Which animal barks and is the most common pet?',ok:'Dog',ops:['Cat','Horse','Bird']},
+      {q:'Who is the famous captain of the Argentine national team who wears the number 10 shirt?',ok:'Lionel Messi',ops:['Cristiano Ronaldo','Neymar','Kylian Mbappé']},
+      {q:'What vowel is missing in the word "C_T"?',ok:'A',ops:['E','O','I']},
+      {q:'What shape is the ball used in the soccer World Cup?',ok:'Sphere (round)',ops:['Cube (square)','Triangle','Rectangle']},
+      {q:'If I have 5 candies and I eat 2, how many do I have left?',ok:'3',ops:['4','2','5']},
+      {q:'What color is the sun?',ok:'Yellow',ops:['Purple','Black','Green']},
+      {q:'What object do we use to write and erase in a notebook?',ok:'Pencil',ops:['Spoon','Fork','Brush']},
+      {q:'What is the trophy won by the best country in the World Cup called?',ok:'The World Cup',ops:['The Gold Medal','The Belt','The Gold Plate']},
+      {q:'What letter comes after "A" in the alphabet?',ok:'B',ops:['C','D','Z']},
+      {q:'Which of these animals can fly high in the sky?',ok:'Eagle',ops:['Elephant','Dog','Fish']},
+      {q:'What number comes before 10?',ok:'9',ops:['11','8','7']},
+      {q:'What are the colors of the Argentine flag?',ok:'Light blue and white',ops:['Blue and yellow','Red and white','Gray and purple']},
+      {q:'What do we wear on our feet to play soccer without getting hurt?',ok:'Sneakers or cleats',ops:['Gloves','Hats','Scarves']},
+      {q:'What is the place where we go to learn and play with friends called?',ok:'School',ops:['Hospital','Supermarket','Police station']},
+      {q:'What is the tallest animal in the world that has a very long neck?',ok:'Giraffe',ops:['Mouse','Hippopotamus','Cat']},
+      {q:'If we add 5 + 5, what is the result?',ok:'10',ops:['9','11','5']},
+      {q:'Which fruit is red on the outside and white on the inside?',ok:'Apple',ops:['Banana','Orange','Lemon']},
+      {q:'How many halves (periods) are there in a soccer match?',ok:'2',ops:['4','3','1']},
+      {q:'With which sense can we listen to our favorite music?',ok:'Hearing',ops:['Sight','Taste','Touch']},
+      {q:'What word rhymes with "HOUSE"?',ok:'Mouse',ops:['Hair','Sun','Dog']},
+      {q:'How many days are in a week?',ok:'7',ops:['5','10','6']},
+      {q:'What does the goalkeeper do in a soccer match?',ok:'Catch the ball',ops:['Score goals','Call fouls','Run all over the field']},
+      {q:'What number represents "nothing" or no items?',ok:'0',ops:['1','2','10']},
+      {q:'Which season of the year is the coldest and sometimes has snow?',ok:'Winter',ops:['Summer','Spring','Autumn']},
+      {q:'What is the ocean where whales and sharks live?',ok:'The sea',ops:['The river','The pool','The lake']},
+      {q:'Which country won the Qatar 2022 World Cup?',ok:'Argentina',ops:['France','Brasil','Germany']},
+      {q:'What is the satellite that shines in the sky at night called?',ok:'The Moon',ops:['The Sun','Mars','Jupiter']},
+      {q:'What is the first letter of the word "MOM"?',ok:'M',ops:['P','L','S']},
+      {q:'What number comes next after 19?',ok:'20',ops:['18','21','30']},
+      {q:'What object does the referee use to stop a soccer match?',ok:'A whistle',ops:['A guitar','A greeting card','A microphone']},
+      {q:'Which animal lives in the water and breathes through gills?',ok:'Fish',ops:['Rabbit','Bear','Bird']},
+      {q:'What color is the most common ripe apple?',ok:'Red',ops:['Blue','Black','Purple']},
+      {q:'How many legs does a spider have?',ok:'8',ops:['4','6','2']},
+      {q:'Which card does the referee show to send a player off the field?',ok:'Red card',ops:['Yellow card','Blue card','Green card']},
+      {q:'What do we call the water that falls from the sky when it gets cloudy?',ok:'Rain',ops:['Snow','Wind','Thunder']},
+      {q:'If you have 3 apples and your mom gives you 3 more, how many do you have?',ok:'6',ops:['5','7','3']},
+      {q:'Every how many years is a soccer World Cup played?',ok:'4 years',ops:['Every year','2 years','10 years']},
+      {q:'Which part of the body do we use to think?',ok:'Brain',ops:['Foot','Hand','Stomach']},
+      {q:'What is the last letter of the alphabet?',ok:'Z',ops:['A','X','Y']},
+      {q:'Which means of transportation goes on tracks and goes "choo-choo"?',ok:'Train',ops:['Airplane','Car','Boat']},
+      {q:'What is it called when the ball goes completely into the opponent\'s goal?',ok:'Goal',ops:['Foul','Corner','Out']},
+      {q:'Which of these animals is a reptile that crawls on the ground?',ok:'Snake',ops:['Parrot','Horse','Dog']},
+      {q:'Which number is bigger: 5 or 8?',ok:'8',ops:['5','They are equal','2']},
+      {q:'What color is snow?',ok:'White',ops:['Yellow','Green','Brown']},
+      {q:'Which animal gives us milk and says "moo"?',ok:'Cow',ops:['Pig','Duck','Sheep']},
+      {q:'What clothes do we put on our hands when it is very cold?',ok:'Gloves',ops:['Socks','Hat','Scarf']},
+      {q:'Who are the people who sit in the stands to cheer for their team?',ok:'Fans',ops:['Cooks','Firefighters','Doctors']},
+    ],
+  },
+  '2':{
+    es:[
+      {q:'¿Cuánto es 12 + 5?',ok:'17',ops:['15','16','18']},
+      {q:'¿Qué país es famoso por tener cinco estrellas en su escudo y haber ganado 5 Mundiales?',ok:'Brasil',ops:['Argentina','Francia','España']},
+      {q:'¿Cuál es el resultado de restar 20 menos 7?',ok:'13',ops:['14','12','15']},
+      {q:'¿Qué signo usamos para sumar dos cantidades?',ok:'+ (Más)',ops:['- (Menos)','x (Por)','="= (Igual)"']},
+      {q:'¿Qué animal es conocido como el "Rey de la selva"?',ok:'El león',ops:['El tigre','El elefante','El oso']},
+      {q:'¿Cómo se llama el jugador que puede usar las manos dentro del área en el fútbol?',ok:'El arquero',ops:['El delantero','El defensor','El árbitro']},
+      {q:'¿Qué planeta es conocido como el "Planeta Azul" porque tiene mucha agua?',ok:'La Tierra',ops:['Marte','Júpiter','Saturno']},
+      {q:'¿Cuál de estas palabras es un nombre propio y debe ir con mayúscula?',ok:'Mateo',ops:['pelota','estadio','camiseta']},
+      {q:'¿Cuántos minutos dura un partido de fútbol completo (sin contar el entretiempo)?',ok:'90 minutos',ops:['60 minutos','45 minutos','80 minutos']},
+      {q:'¿Qué número se forma con 3 decenas y 5 unidades?',ok:'35',ops:['53','305','8']},
+      {q:'Si una pelota cuesta $10 y compras dos, ¿cuánto dinero gastas?',ok:'20',ops:['15','30','12']},
+      {q:'¿Quién es el director técnico que dirigió a Argentina cuando ganaron el Mundial de Qatar?',ok:'Lionel Scaloni',ops:['Diego Maradona','Pep Guardiola','Lionel Messi']},
+      {q:'¿Cuál es el abecedario correcto de las primeras cuatro letras?',ok:'A - B - C - D',ops:['A - C - B - D','A - B - D - C','Z - Y - X - W']},
+      {q:'¿Qué órgano de nuestro cuerpo late todo el tiempo para bombear la sangre?',ok:'El corazón',ops:['Los pulmones','El estómago','El cerebro']},
+      {q:'¿Qué país europeo llegó a la final contra Argentina en 2022?',ok:'Francia',ops:['Italia','Alemania','España']},
+      {q:'¿Cómo se llama el triángulo que tiene tres lados iguales?',ok:'Equilátero',ops:['Isósceles','Escaleno','Cuadrado']},
+      {q:'¿Qué letra falta para completar la palabra "CO_A DEL MUNDO"?',ok:'P',ops:['B','M','T']},
+      {q:'¿Cuál es el animal que vive en el agua, es enorme y no es un pez sino un mamífero?',ok:'La ballena',ops:['El tiburón','El pulpo','El cangrejo']},
+      {q:'¿Cuántos jugadores de un mismo equipo entran a la cancha a jugar un partido de fútbol?',ok:'11',ops:['10','7','12']},
+      {q:'¿Qué estación del año viene después del invierno y está llena de flores?',ok:'Primavera',ops:['Verano','Otoño','Tormenta']},
+      {q:'¿Cuál es el doble de 8?',ok:'16',ops:['10','12','14']},
+      {q:'¿De qué país es la selección conocida como "La Roja"?',ok:'España',ops:['Brasil','Argentina','Francia']},
+      {q:'¿Qué palabra significa lo contrario de "RÁPIDO"?',ok:'Lento',ops:['Veloz','Correr','Alto']},
+      {q:'Si el partido empieza a las 4 en punto y dura dos horas, ¿a qué hora termina?',ok:'A las 6',ops:['A las 5','A las 7','A las 4 y media']},
+      {q:'¿Qué figura geométrica tiene 4 lados exactamente iguales?',ok:'El cuadrado',ops:['El triángulo','El rectángulo','El círculo']},
+      {q:'¿Dónde se celebra el mundial de Fútbol de 2026?',ok:'Estados Unidos, México y Canadá',ops:['Brasil','Qatar','España y Portugal']},
+      {q:'¿Qué elemento de la naturaleza necesitan las plantas para respirar y fabricar su alimento?',ok:'Aire y luz del sol',ops:['Chocolate','Juguetes','Arena fina']},
+      {q:'¿Qué palabra está bien escrita?',ok:'Fútbol',ops:['Fútvol','Fubol','Vutbol']},
+      {q:'¿Cuántos días tiene un año normal?',ok:'365 días',ops:['100 días','30 días','24 días']},
+      {q:'¿Qué tarjeta muestra el árbitro para dar una advertencia o "piso de atención" a un jugador?',ok:'Tarjeta amarilla',ops:['Tarjeta roja','Tarjeta verde','Tarjeta azul']},
+      {q:'¿Cuánto es 50 + 50?',ok:'100',ops:['90','80','110']},
+      {q:'¿Qué animalito se transforma en mariposa después de estar en un capullo?',ok:'La oruga',ops:['El gusano de tierra','La hormiga','La abeja']},
+      {q:'¿En qué continente queda el país de Brasil?',ok:'América',ops:['Europa','Asia','África']},
+      {q:'¿Qué tipo de palabra es "correr", "saltar" y "patear"?',ok:'Verbos (acciones)',ops:['Nombres','Colores','Números']},
+      {q:'¿Cuántas horas tiene un día entero?',ok:'24 horas',ops:['12 horas','60 horas','10 horas']},
+      {q:'¿Cómo se llama el estadio flotante o los lugares gigantes donde se juegan los partidos del Mundial?',ok:'Estadios',ops:['Parques','Pistas','Gimnasios']},
+      {q:'¿Cuál es el resultado de 3 x 2?',ok:'6',ops:['5','9','4']},
+      {q:'¿Qué gas del aire respiramos los seres humanos para poder vivir?',ok:'Oxígeno',ops:['Humo','Agua','Gas carbónico']},
+      {q:'¿Cómo se le llama al gol que un jugador mete sin querer en el arco de su propio equipo?',ok:'Gol en contra (Autogol)',ops:['Golazo','Penalti','Corner']},
+      {q:'¿Qué letra mayúscula se usa siempre después de un punto seguido?',ok:'Mayúscula',ops:['Minúscula','Cursiva','Imprenta chica']},
+      {q:'Si tienes 15 figuritas del Mundial y le regalas 5 a tu mejor amigo, ¿cuántas te quedan?',ok:'10',ops:['12','5','20']},
+      {q:'¿Cuál es el metal brillante del que está hecha la medalla del primer lugar?',ok:'Oro',ops:['Plata','Bronce','Cobre']},
+      {q:'¿Qué animal tiene rayas negras y blancas y se parece a un caballo?',ok:'La cebra',ops:['El tigre','El leopardo','El burro']},
+      {q:'¿Cómo se llama la línea blanca que divide la cancha de fútbol exactamente a la mitad?',ok:'Línea media',ops:['Línea de fondo','Área chica','Línea de gol']},
+      {q:'¿Cuál es el número más grande: 89 o 98?',ok:'98',ops:['89','Son iguales','90']},
+      {q:'¿Qué instrumento usan los astrónomos para mirar las estrellas y planetas desde la Tierra?',ok:'Telescopio',ops:['Microscopio','Lupa','Gafas de sol']},
+      {q:'¿En qué parte del cuerpo se pone la cinta del "Capitán" de un equipo de fútbol?',ok:'En el brazo',ops:['En la pierna','En la cabeza','En la cintura']},
+      {q:'¿Cuál de estos alimentos pertenece al grupo de los lácteos?',ok:'El queso',ops:['El pan','La carne','La manzana']},
+      {q:'¿Cuántas unidades hay en una docena de huevos?',ok:'12',ops:['10','6','24']},
+      {q:'¿Qué gritan todos los jugadores y la hinchada cuando la pelota entra por completo al arco?',ok:'¡Gol!',ops:['¡Falta!','¡Fuera!','¡Tiempo!']},
+    ],
+    en:[
+      {q:'What is 12 + 5?',ok:'17',ops:['15','16','18']},
+      {q:'Which country is famous for having five stars on its crest and winning 5 World Cups?',ok:'Brazil',ops:['Argentina','France','Spain']},
+      {q:'What is the result of subtracting 20 minus 7?',ok:'13',ops:['14','12','15']},
+      {q:'What sign do we use to add two quantities together?',ok:'+ (Plus)',ops:['- (Minus)','x (Times)','= "= (Equals)"']},
+      {q:'Which animal is known as the "King of the jungle"?',ok:'Lion',ops:['Tiger','Elephant','Bear']},
+      {q:'What is the player who can use their hands inside the penalty area called?',ok:'Goalkeeper',ops:['Forward','Defender','Referee']},
+      {q:'Which planet is known as the "Blue Planet" because it has so much water?',ok:'Earth',ops:['Mars','Jupiter','Saturno']},
+      {q:'Which of these words is a proper noun and must start with a capital letter?',ok:'Mateo',ops:['ball','stadium','jersey']},
+      {q:'How many minutes does a full soccer match last (without counting halftime)?',ok:'90 minutes',ops:['60 minutes','45 minutes','80 minutes']},
+      {q:'What number is made of 3 tens and 5 ones?',ok:'35',ops:['53','305','8']},
+      {q:'If a ball costs $10 and you buy two, how much money do you spend?',ok:'="$20"',ops:['15','30','12']},
+      {q:'Who is the head coach who managed Argentina when they won the World Cup in Qatar?',ok:'Lionel Scaloni',ops:['Diego Maradona','Pep Guardiola','Lionel Messi']},
+      {q:'What is the correct alphabetical order for the first four letters?',ok:'A - B - C - D',ops:['A - C - B - D','A - B - D - C','Z - Y - X - W']},
+      {q:'Which organ in our body beats all the time to pump blood?',ok:'Heart',ops:['Lungs','Stomach','Brain']},
+      {q:'Which European country reached the final against Argentina in 2022?',ok:'France',ops:['Italy','Germany','Spain']},
+      {q:'What is a triangle that has three equal sides called?',ok:'Equilateral',ops:['Isosceles','Scalene','Square']},
+      {q:'What letter is missing to complete the word "W_RLD CUP"?',ok:'O',ops:['B','M','T']},
+      {q:'Which animal lives in the water, is huge, and is a mammal instead of a fish?',ok:'Whale',ops:['Shark','Octopus','Crab']},
+      {q:'How many players from the same team enter the field to play a soccer match?',ok:'11',ops:['10','7','12']},
+      {q:'Which season comes after winter and is full of flowers?',ok:'Spring',ops:['Summer','Autumn','Storm']},
+      {q:'What is double of 8?',ok:'16',ops:['10','12','14']},
+      {q:'Which country\'s national team is known as "La Roja"?',ok:'Spain',ops:['Brazil','Argentina','France']},
+      {q:'What word means the opposite of "FAST"?',ok:'Slow',ops:['Quick','Run','Tall']},
+      {q:'If the match starts at 4 o\'clock and lasts two hours, what time does it end?',ok:'At 6 o\'clock',ops:['At 5 o\'clock','At 7 o\'clock','At half past 4']},
+      {q:'Which geometric shape has 4 exactly equal sides?',ok:'Square',ops:['Triangle','Rectangle','Circle']},
+      {q:'Where will the 2026 Soccer World Cup be hosted?',ok:'United States, Mexico, and Canada',ops:['Brazil','Qatar','Spain and Portugal']},
+      {q:'What natural element do plants need to breathe and make their own food?',ok:'Air and sunlight',ops:['Chocolate','Toys','Fine sand']},
+      {q:'Which word is spelled correctly?',ok:'Soccer',ops:['Soser','Socer','Zoccer']},
+      {q:'How many days does a normal year have?',ok:'365 days',ops:['100 days','30 days','24 days']},
+      {q:'What object does the referee show to give a warning to a player?',ok:'Yellow card',ops:['Red card','Green card','Blue card']},
+      {q:'What is 50 + 50?',ok:'100',ops:['90','80','110']},
+      {q:'Which little creature transforms into a butterfly after being in a cocoon?',ok:'Caterpillar',ops:['Earthworm','Ant','Bee']},
+      {q:'In which continent is the country of Brazil located?',ok:'America',ops:['Europe','Asia','Africa']},
+      {q:'What type of words are "run", "jump", and "think"?',ok:'Verbs (actions)',ops:['Nouns','Colors','Numbers']},
+      {q:'How many hours are in a whole day?',ok:'24 hours',ops:['12 hours','50 hours','10 hours']},
+      {q:'What are the huge places where World Cup matches are played called?',ok:'Stadiums',ops:['Parks','Tracks','Gyms']},
+      {q:'What is the result of 3 x 2?',ok:'6',ops:['5','9','4']},
+      {q:'Which gas from the air do humans breathe in order to live?',ok:'Oxygen',ops:['Smoke','Water','Carbon dioxide']},
+      {q:'What is it called when a player accidentally scores a goal in their own team\'s net?',ok:'Own goal',ops:['Great goal','Penalty','Corner']},
+      {q:'What kind of letter is always used right after a period?',ok:'Capital letter',ops:['Lowercase letter','Cursive','Small print']},
+      {q:'If you have 15 World Cup stickers and give 5 to your best friend, how many do you have left?',ok:'10',ops:['12','5','20']},
+      {q:'What shiny metal is the first-place medal made of?',ok:'Gold',ops:['Silver','Bronze','Copper']},
+      {q:'Which animal has black and white stripes and looks like a horse?',ok:'Zebra',ops:['Tiger','Leopard','Donkey']},
+      {q:'What is the white line that divides the soccer field exactly in half called?',ok:'Center line',ops:['Endline','Penalty area','Goal line']},
+      {q:'Which number is bigger: 89 or 98?',ok:'98',ops:['89','They are equal','90']},
+      {q:'What instrument do astronomers use to look at stars and planets from Earth?',ok:'Telescope',ops:['Microscope','Magnifying glass','Sunglasses']},
+      {q:'Where on the body is the "Captain\'s" armband placed in a soccer team?',ok:'On the arm',ops:['On the leg','On the head','On the waist']},
+      {q:'Which of these foods belongs to the dairy group?',ok:'Cheese',ops:['Bread','Meat','Apple']},
+      {q:'How many units are in a dozen eggs?',ok:'12',ops:['10','6','24']},
+      {q:'What do all the players and fans shout when the ball goes completely into the net?',ok:'Goal!',ops:['Foul!','Out!','Time!']},
+    ],
+  },
+  '3':{
+    es:[
+      {q:'¿Cuál es el resultado de multiplicar 4 x 8?',ok:'32',ops:['36','28','40']},
+      {q:'¿En qué país de Norteamérica se jugará la final del próximo Mundial?',ok:'Estados Unidos',ops:['México','Canadá','Brasil']},
+      {q:'¿Qué palabra es el sinónimo de "feliz"?',ok:'Contento',ops:['Enojado','Triste','Aburrido']},
+      {q:'¿Cómo se llama el triángulo que tiene sus tres lados de longitudes diferentes?',ok:'Escaleno',ops:['Equilátero','Isósceles','Rectángulo']},
+      {q:'¿Qué famoso jugador portugués es conocido en todo el mundo como "CR7"?',ok:'Cristiano Ronaldo',ops:['Luis Figo','Bernardo Silva','Bruno Fernandes']},
+      {q:'¿Cuántos años hay en un siglo?',ok:'100 años',ops:['10 años','1000 años','50 años']},
+      {q:'¿Qué tipo de palabra es "rápidamente"?',ok:'Adverbio',ops:['Sustantivo','Verbo','Adjetivo']},
+      {q:'Si un partido de fútbol tiene dos tiempos de 45 minutos, ¿cuánto suma el tiempo reglamentario total?',ok:'90 minutos',ops:['80 minutos','100 minutos','60 minutos']},
+      {q:'¿Qué número se obtiene si sumamos 150 + 250?',ok:'400',ops:['300','350','500']},
+      {q:'¿Cuál es el río más largo y caudaloso del mundo, ubicado en América del Sur?',ok:'Amazonas',ops:['Nilo','Misisipi','Paraná']},
+      {q:'¿Qué selección del mundo tiene el récord de haber ganado más copas del mundo en la historia?',ok:'Brasil',ops:['Alemania','Italia','Argentina']},
+      {q:'¿Cuántas sílabas tiene la palabra "mariposa"?',ok:'4',ops:['3','5','2']},
+      {q:'¿Qué línea imaginaria divide a la Tierra en el Hemisferio Norte y el Hemisferio Sur?',ok:'El Ecuador',ops:['El Meridiano de Greenwich','El Trópico de Cáncer','El Eje Polar']},
+      {q:'¿Qué país organizó y ganó el primer Mundial de fútbol de la historia en 1930?',ok:'Uruguay',ops:['Argentina','Brasil','Italia']},
+      {q:'Si compro 3 paquetes de figuritas y cada uno trae 5, ¿cuántas figuritas tengo en total?',ok:'15',ops:['12','18','20']},
+      {q:'¿Qué estado de la materia tiene el agua cuando se convierte en hielo?',ok:'Sólido',ops:['Líquido','Gaseoso','Plasma']},
+      {q:'¿Cuál es la capital de Argentina, el país campeón en Qatar 2022?',ok:'Buenos Aires',ops:['Córdoba','Rosario','Madrid']},
+      {q:'¿Cómo se escribe el número 4 en números romanos?',ok:'IV',ops:['IIII','VI','V']},
+      {q:'¿Qué jugador argentino anotó el famoso gol histórico conocido como "La Mano de Dios" en 1986?',ok:'Diego Maradona',ops:['Lionel Messi','Mario Kempes','Gabriel Batistuta']},
+      {q:'En la oración "El perro negro corre", ¿cuál es el adjetivo calificativo?',ok:'Negro',ops:['Perro','Corre','El']},
+      {q:'¿Cuántos gramos hay en un kilo?',ok:'1000 gramos',ops:['100 gramos','500 gramos','10 gramos']},
+      {q:'¿Cómo se llama la jugada donde un futbolista patea la pelota en el aire de espaldas al arco?',ok:'Chilena',ops:['Palomita','Taquito','Rabona']},
+      {q:'¿Cuál es el planeta más grande de nuestro sistema solar?',ok:'Júpiter',ops:['Saturno','La Tierra','Marte']},
+      {q:'¿Cuál de estas palabras lleva tilde porque es aguda terminada en vocal?',ok:'Jugó',ops:['Fútbol','Cancha','Pelota']},
+      {q:'¿Qué parte de la planta absorbe el agua y los nutrientes del suelo?',ok:'La raíz',ops:['Las hojas','El tallo','La flor']},
+      {q:'¿Qué jugada se cobra cuando un defensor comete una falta adentro de su propia área?',ok:'Penal',ops:['Tiro libre directo','Córner','Lateral']},
+      {q:'¿Cuánto es la mitad de 150?',ok:'75',ops:['50','60','85']},
+      {q:'¿Qué país tiene forma de bota en el mapa de Europa y ha ganado 4 Mundiales?',ok:'Italia',ops:['Francia','España','Alemania']},
+      {q:'¿Qué tipo de animal es la ballena según su nacimiento?',ok:'Mamífero vivíparo',ops:['Ave ovípara','Reptil','Anfibio']},
+      {q:'¿Qué letra va siempre antes de la \'P\' y la \'B\' en palabras como "campo" o "tambor"?',ok:'M',ops:['N','S','L']},
+      {q:'Si un partido va 2 a 2 y se juegan 30 minutos extras para desempatar, ¿cómo se llama ese tiempo?',ok:'Tiempo suplementario',ops:['Penales','Entretiempo','Descuento']},
+      {q:'¿Qué hueso largo tenemos en el muslo y es el más largo del cuerpo humano?',ok:'Fémur',ops:['Costilla','Cráneo','Radio']},
+      {q:'¿Cuánto da la operación matemática 100 - 35?',ok:'65',ops:['75','55','60']},
+      {q:'¿Qué selección africana hizo historia al llegar por primera vez a las semifinales en Qatar 2022?',ok:'Marruecos',ops:['Senegal','Camerún','Ghana']},
+      {q:'¿Cómo se les llama a los animales que comen tanto plantas como carne?',ok:'Omnívoros',ops:['Herbívoros','Carnívoros','Insectívoros']},
+      {q:'¿Cuál es el resultado de dividir 24 entre 6?',ok:'4',ops:['3','6','5']},
+      {q:'¿Qué ciudad del mundo es famosa por tener la Torre Eiffel?',ok:'París',ops:['Londres','Roma','Madrid']},
+      {q:'¿Cómo se llama el torneo donde juegan los mejores clubes de Europa, diferente al Mundial?',ok:'Champions League',ops:['Copa América','Copa del Mundo','Copa Libertadores']},
+      {q:'¿Qué sistema de nuestro cuerpo nos permite movernos y sostiene nuestros músculos?',ok:'Sistema óseo',ops:['Sistema digestivo','Sistema respiratorio','Sistema circulatorio']},
+      {q:'¿Qué palabra es el antónimo de "construir"?',ok:'Destruir',ops:['Hacer','Crear','Pintar']},
+      {q:'Si un atleta corre 2 kilómetros, ¿cuántos metros recorrió en total?',ok:'2000 metros',ops:['200 metros','20 metros','5000 metros']},
+      {q:'¿Quién es el jugador francés que anotó tres goles en la final del Mundial 2022?',ok:'Kylian Mbappé',ops:['Antoine Griezmann','Karim Benzema','Olivier Giroud']},
+      {q:'¿Cuál de los siguientes cuerpos geométricos no tiene esquinas ni caras planas?',ok:'Esfera',ops:['Cubo','Prisma','Pirámide']},
+      {q:'¿Cuál es el idioma oficial que se habla en Brasil?',ok:'Portugués',ops:['Español','Inglés','Francés']},
+      {q:'¿Qué herramienta tecnológica ayuda hoy a los árbitros revisando las jugadas con cámaras de televisión?',ok:'VAR',ops:['GPS','Wifi','Radar']},
+      {q:'¿Cuántos meses tiene un año entero?',ok:'12',ops:['10','6','24']},
+      {q:'En el cuento de Caperucita Roja, ¿quién es el personaje que se disfraza de la abuela?',ok:'El lobo feroz',ops:['El cazador','El leñador','El príncipe']},
+      {q:'¿Qué color resulta de mezclar pintura azul y pintura amarilla?',ok:'Verde',ops:['Morado','Naranja','Marrón']},
+      {q:'¿Cómo se le llama al jugador que se sitúa justo detrás de los delanteros para armar el juego?',ok:'Mediocampista (o volante)',ops:['Arquero','Defensor central','Lateral']},
+      {q:'¿Cuántos minutos extras dura cada uno de los dos tiempos que se juegan en una prórroga?',ok:'15 minutos',ops:['45 minutos','10 minutos','5 minutos']},
+    ],
+    en:[
+      {q:'What is the result of multiplying 4 x 8?',ok:'32',ops:['36','28','40']},
+      {q:'In which country of North America will the final of the next men\'s soccer World Cup be played?',ok:'United States',ops:['Mexico','Canada','Brazil']},
+      {q:'What word is a synonym for "happy"?',ok:'Content',ops:['Angry','Sad','Bored']},
+      {q:'What is a triangle that has all its sides of different lengths called?',ok:'Scalene',ops:['Equilateral','Isosceles','Rectangle']},
+      {q:'Which famous Portuguese player is known worldwide as "CR7"?',ok:'Cristiano Ronaldo',ops:['Luis Figo','Bernardo Silva','Bruno Fernandes']},
+      {q:'How many years are in a century?',ok:'100 years',ops:['10 years','1000 years','50 years']},
+      {q:'What type of word is "rápidamente" (quickly)?',ok:'Adverb',ops:['Noun','Verb','Adjective']},
+      {q:'If a soccer match has two halves of 45 minutes, what is the total regular regulation time?',ok:'90 minutes',ops:['80 minutes','100 minutes','60 minutes']},
+      {q:'What number do we get if we add 150 + 250?',ok:'400',ops:['300','350','500']},
+      {q:'Which is the longest and widest river in the world, located in South America?',ok:'Amazon',ops:['Nile','Mississippi','Paraná']},
+      {q:'Which national team in the world holds the record for winning the most World Cups in history?',ok:'Brazil',ops:['Germany','Italy','Argentina']},
+      {q:'How many syllables does the word "mariposa" have?',ok:'4',ops:['3','5','2']},
+      {q:'What imaginary line divides the Earth into the Northern Hemisphere and Southern Hemisphere?',ok:'The Equator',ops:['The Greenwich Meridian','The Tropic of Cancer','The Polar Axis']},
+      {q:'Which country hosted and won the first soccer World Cup in history in 1930?',ok:'Uruguay',ops:['Argentina','Brazil','Italy']},
+      {q:'If I buy 3 packs of stickers and each one has 5, how many stickers do I have in total?',ok:'15',ops:['12','18','20']},
+      {q:'What state of matter is water in when it turns into ice?',ok:'Solid',ops:['Liquid','Gaseoso','Plasma']},
+      {q:'What is the capital of Argentina, the champion country of Qatar 2022?',ok:'Buenos Aires',ops:['Córdoba','Rosario','Madrid']},
+      {q:'How do you write the number 4 in Roman numerals?',ok:'IV',ops:['IIII','VI','V']},
+      {q:'Which Argentine player scored the famous historic goal known as "The Hand of God" in 1986?',ok:'Diego Maradona',ops:['Lionel Messi','Mario Kempes','Gabriel Batistuta']},
+      {q:'In the sentence "El perro negro corre" (The black dog runs), which word is the descriptive adjective?',ok:'Negro (Black)',ops:['Perro (Dog)','Corre (Runs)','El (The)']},
+      {q:'How many grams are in a kilo?',ok:'1000 grams',ops:['100 grams','500 grams','10 grams']},
+      {q:'What is the move called where a soccer player kicks the ball in the air with their back to the goal?',ok:'Bicycle kick',ops:['Palomita (Diving header)','Taquito (Heel kick)','Rabona']},
+      {q:'Which is the largest planet in our solar system?',ok:'Jupiter',ops:['Saturn','Earth','Mars']},
+      {q:'Which of these words has an accent mark because it is an acute word ending in a vowel?',ok:'Jugó',ops:['Fútbol','Cancha','Pelota']},
+      {q:'Which part of the plant absorbs water and nutrients from the soil?',ok:'Root',ops:['Leaves','Stem','Flower']},
+      {q:'What play is awarded when a defender commits a foul inside their own penalty area?',ok:'Penalty kick',ops:['Direct free kick','Corner kick','Throw-in']},
+      {q:'What is half of 150?',ok:'75',ops:['50','60','85']},
+      {q:'Which country is shaped like a boot on the map of Europe and has won 4 World Cups?',ok:'Italy',ops:['France','Spain','Germany']},
+      {q:'What type of animal is a whale based on how it is born?',ok:'Viviparous mammal',ops:['Oviparous bird','Reptile','Amphibian']},
+      {q:'What letter always goes before \'P\' and \'B\' in Spanish words like "campo" or "tambor"?',ok:'M',ops:['N','S','L']},
+      {q:'If a match is tied 2-2 and 30 extra minutes are played to break the tie, what is that time called?',ok:'Extra time (or overtime)',ops:['Penalty shootout','Halftime','Injury time']},
+      {q:'Which long bone do we have in our thigh, which is also the longest bone in the human body?',ok:'Femur',ops:['Rib','Skull','Radius']},
+      {q:'What is the result of the mathematical operation 100 - 35?',ok:'65',ops:['75','55','60']},
+      {q:'Which African team made history by reaching the semifinals for the first time in Qatar 2022?',ok:'Morocco',ops:['Senegal','Cameroon','Ghana']},
+      {q:'What are animals that eat both plants and meat called?',ok:'Omnivores',ops:['Herbivores','Carnivores','Insectivores']},
+      {q:'What is the result of dividing 24 by 6?',ok:'4',ops:['3','6','5']},
+      {q:'Which city in the world is famous for having the Eiffel Tower?',ok:'Paris',ops:['London','Rome','Madrid']},
+      {q:'What is the tournament where the best clubs in Europe play, which is different from the World Cup?',ok:'Champions League',ops:['Copa América','World Cup','Copa Libertadores']},
+      {q:'Which system in our body allows us to move and supports our muscles?',ok:'Skeletal system',ops:['Digestive system','Respiratory system','Circulatory system']},
+      {q:'What word is the antonym of "build"?',ok:'Destroy',ops:['Make','Create','Paint']},
+      {q:'If an athlete runs 2 kilometers, how many meters did they run in total?',ok:'2000 meters',ops:['200 meters','20 meters','5000 meters']},
+      {q:'Which French player scored three goals in the final of the 2022 World Cup?',ok:'Kylian Mbappé',ops:['Antoine Griezmann','Karim Benzema','Olivier Giroud']},
+      {q:'Which of the following geometric shapes has no corners or flat faces?',ok:'Sphere',ops:['Cube','Prism','Pyramid']},
+      {q:'What is the official language spoken in Brazil?',ok:'Portuguese',ops:['Spanish','English','French']},
+      {q:'What technological tool now helps referees by reviewing plays with television cameras?',ok:'VAR',ops:['GPS','Wifi','Radar']},
+      {q:'How many months are in a whole year?',ok:'12',ops:['10','6','24']},
+      {q:'In the story of Little Red Riding Hood, who is the character that disguises themselves as the grandmother?',ok:'The big bad wolf',ops:['The hunter','The woodcutter','The prince']},
+      {q:'What color results from mixing blue paint and yellow paint?',ok:'Green',ops:['Purple','Orange','Brown']},
+      {q:'What is a player who positions themselves just behind the forwards to organize the play called?',ok:'Midfielder',ops:['Goalkeeper','Center back','Fullback']},
+      {q:'How many extra minutes does each of the two periods played in extra time last?',ok:'15 minutes',ops:['45 minutes','10 minutes','5 minutes']},
+    ],
+  },
+  '4':{
+    es:[
+      {q:'¿Cuál es el resultado de multiplicar 12 x 5?',ok:'60',ops:['50','55','65']},
+      {q:'¿Qué país tiene el récord de haber jugado todas las ediciones de los Mundiales de la historia?',ok:'Brasil',ops:['Alemania','Italia','Argentina']},
+      {q:'¿Qué tipo de palabra es "teléfono" según su acentuación?',ok:'Esdrújula',ops:['Aguda','Grave','Sobreesdrújula']},
+      {q:'¿Qué fracción representa la mitad de una pizza?',ok:'="1/2"',ops:['="1/4"','="1/8"','="1"']},
+      {q:'¿Cuál es el mayor goleador histórico en la historia de los Mundiales masculinos de fútbol?',ok:'Miroslav Klose',ops:['Pelé','Lionel Messi','Ronaldo Nazário']},
+      {q:'¿Qué movimiento de la Tierra tarda 365 días y da origen a las cuatro estaciones?',ok:'Traslación',ops:['Rotación','Nutación','Precesión']},
+      {q:'¿Cuál es el resultado de dividir 100 entre 4?',ok:'25',ops:['20','50','30']},
+      {q:'¿En qué continente se encuentra el desierto del Sahara?',ok:'África',ops:['Asia','América','Oceanía']},
+      {q:'¿Qué selección nacional eliminó por penales a los Países Bajos en los cuartos de final de Qatar 2022?',ok:'Argentina',ops:['Brasil','Francia','Croacia']},
+      {q:'¿Cómo se llama el proceso por el cual las plantas fabrican su propio alimento?',ok:'Fotosíntesis',ops:['Respiración','Transpiración','Digestión']},
+      {q:'¿Qué número romano representa el número 50?',ok:'L',ops:['C','D','X']},
+      {q:'¿Cuál de estas palabras es un sustantivo colectivo?',ok:'Jauría',ops:['Perro','Lobos','Animales']},
+      {q:'¿En qué año se fundó la FIFA, la organización que gobierna el fútbol mundial?',ok:'1904',ops:['1930','1950','1982']},
+      {q:'Si un ángulo mide exactamente 90 grados, ¿cómo se le llama?',ok:'Recto',ops:['Agudo','Obtuso','Llano']},
+      {q:'¿Qué gas es indispensable para que los seres humanos podamos respirar?',ok:'Oxígeno',ops:['Dióxido de carbono','Nitrógeno','Hidrógeno']},
+      {q:'¿Cuál es la capital de España, país campeón del mundo en 2010?',ok:'Madrid',ops:['Barcelona','Sevilla','Valencia']},
+      {q:'¿Cuántos años transcurren en una década?',ok:'10 años',ops:['100 años','5 años','50 años']},
+      {q:'¿Qué famosa copa de clubes enfrenta anualmente a los mejores equipos de Sudamérica?',ok:'Copa Libertadores',ops:['Champions League','Copa América','Europa League']},
+      {q:'¿Cuál es el resultado de la operación 350 + 450 - 200?',ok:'600',ops:['800','700','500']},
+      {q:'¿Cómo se llama el líquido espeso y rojo que viaja por nuestras arterias y venas?',ok:'Sangre',ops:['Saliva','Agua','Plasma']},
+      {q:'¿Qué jugador es conocido como "O Rei" (El Rey) y ganó tres Mundiales con Brasil?',ok:'Pelé',ops:['Neymar','Ronaldinho','Ronaldo']},
+      {q:'¿Cuál de los siguientes verbos está en tiempo pasado?',ok:'Escribió',ops:['Escribe','Escribirá','Escribir']},
+      {q:'¿Cuál es el planeta más cercano al Sol en nuestro sistema solar?',ok:'Mercurio',ops:['Venus','Tierra','Marte']},
+      {q:'¿Qué país sudamericano organizó el Mundial de fútbol en el año 2014?',ok:'Brasil',ops:['Argentina','Chile','Colombia']},
+      {q:'¿Cuánto es 1.500 metros expresado en kilómetros?',ok:'1,5 km',ops:['15 km','0,15 km','150 km']},
+      {q:'¿Qué cordillera, la más larga del mundo, pasa por el oeste de América del Sur?',ok:'Cordillera de los Andes',ops:['Los Alpes','El Himalaya','Los Pirineos']},
+      {q:'¿Cómo se llama la infracción que ocurre cuando un delantero recibe la pelota por delante del último defensor contrario?',ok:'Fuera de juego (Offside)',ops:['Falta técnica','Lateral','Saque de arco']},
+      {q:'¿Cuál es el abecedario correcto de los tres estados principales de la materia?',ok:'Sólido, líquido y gaseoso',ops:['Agua, tierra y aire','Calor, frío y templado','Oro, plata y bronce']},
+      {q:'¿Cuántos lados tiene un cuerpo geométrico llamado hexágono?',ok:'6',ops:['5','8','7']},
+      {q:'¿Qué regla ortográfica nos dice cuándo usar la "b" o la "v" en la palabra "cambio"?',ok:'Antes de \'b\' y \'p\' se escribe \'m\'',ops:['Se escribe \'v\' después de \'n\'','Las palabras con \'b\' llevan tilde','Siempre va \'b\' al final']},
+      {q:'¿En qué Mundial se utilizó por primera vez la tecnología del VAR?',ok:'Rusia 2018',ops:['Brasil 2014','Qatar 2022','Sudáfrica 2010']},
+      {q:'Si el perímetro de un cuadrado mide 20 cm, ¿cuánto mide cada uno de sus lados?',ok:'5 cm',ops:['10 cm','4 cm','2 cm']},
+      {q:'¿Qué animal invertebrado produce la miel que consumimos?',ok:'La abeja',ops:['La hormiga','La mariposa','La avispa']},
+      {q:'¿Qué selección europea usa una camiseta naranja y es conocida como "La Naranja Mecánica"?',ok:'Países Bajos (Holanda)',ops:['Alemania','Bélgica','Italia']},
+      {q:'En la oración "Ellos juegan muy bien", ¿cuál es el pronombre personal?',ok:'Ellos',ops:['Juegan','Muy','Bien']},
+      {q:'¿Cuál es el órgano principal del sistema nervioso que controla todo el cuerpo?',ok:'El cerebro',ops:['El corazón','El estómago','El hígado']},
+      {q:'¿Qué país organizó el Mundial de 1994, donde el fútbol empezó a ser muy popular en Norteamérica?',ok:'Estados Unidos',ops:['México','Canadá','Costa Rica']},
+      {q:'¿Cuánto da la multiplicación de 9 x 7?',ok:'63',ops:['72','56','64']},
+      {q:'¿Qué océano separa al continente americano del continente europeo y africano?',ok:'Océano Atlántico',ops:['Océano Pacífico','Océano Índico','Océano Ártico']},
+      {q:'¿Qué jugador inglés es famoso por sus tiros libres y por haber jugado en el Real Madrid y Manchester United?',ok:'David Beckham',ops:['Harry Kane','Wayne Rooney','Steven Gerrard']},
+      {q:'¿Qué tipo de mezcla es el agua con sal si no se pueden distinguir sus componentes a simple vista?',ok:'Homogénea',ops:['Heterogénea','Química','Pura']},
+      {q:'¿Cuál es el triple del número 15?',ok:'45',ops:['30','60','50']},
+      {q:'¿Qué parte de la flor se encarga de atraer a los insectos polinizadores gracias a sus colores?',ok:'Los pétalos',ops:['La raíz','El tallo','Las hojas']},
+      {q:'¿Cómo se le llama al partido amistoso que juegan las selecciones antes de empezar el Mundial?',ok:'Partido de preparación',ops:['Final','Eliminatoria','Prórroga']},
+      {q:'¿Cuál es el resultado de sumar 3/4 + 1/4?',ok:'1 entero',ops:['2 enteros','1/2','3/4']},
+      {q:'¿Qué país asiático se convirtió en el primero de su continente en organizar un Mundial junto a Japón en 2002?',ok:'Corea del Sur',ops:['China','Arabia Saudita','Qatar']},
+      {q:'¿Cuál es el sujeto en la oración "El árbitro cobró un penal histórico"?',ok:'El árbitro',ops:['Cobró','Un penal','Histórico']},
+      {q:'¿Qué sistema del cuerpo se encarga de transformar los alimentos en nutrientes?',ok:'Sistema digestivo',ops:['Sistema circulatorio','Sistema respiratorio','Sistema óseo']},
+      {q:'¿Cuántos segundos tiene un minuto completo?',ok:'60',ops:['100','12','30']},
+      {q:'¿Cómo se llama el premio individual que se entrega cada año al mejor futbolista del mundo?',ok:'Balón de Oro',ops:['Bota de Oro','Copa del Mundo','Guante de Oro']},
+    ],
+    en:[
+      {q:'What is the result of multiplying 12 x 5?',ok:'60',ops:['50','55','65']},
+      {q:'Which country holds the record for playing in every single edition of the World Cup in history?',ok:'Brazil',ops:['Germany','Italy','Argentina']},
+      {q:'Who is the all-time top scorer in the history of the men\'s soccer World Cup?',ok:'Miroslav Klose',ops:['Pelé','Lionel Messi','Ronaldo Nazário']},
+      {q:'Which movement of the Earth takes 365 days and gives rise to the four seasons?',ok:'Translation',ops:['Rotation','Nutation','Precession']},
+      {q:'What is the result of dividing 100 by 4?',ok:'25',ops:['20','50','30']},
+      {q:'On which continent is the Sahara Desert located?',ok:'Africa',ops:['Asia','America','Oceania']},
+      {q:'Which national team eliminated the Netherlands on penalties in the quarterfinals of Qatar 2022?',ok:'Argentina',ops:['Brazil','France','Croatia']},
+      {q:'What is the process called by which plants make their own food?',ok:'Photosynthesis',ops:['Respiration','Transpiration','Digestion']},
+      {q:'What Roman numeral represents the number 50?',ok:'L',ops:['C','D','X']},
+      {q:'Which of these words is a collective noun?',ok:'Pack (Jauría)',ops:['Dog','Wolves','Animals']},
+      {q:'In what year was FIFA, the governing body of world soccer, founded?',ok:'1904',ops:['1930','1950','1982']},
+      {q:'If an angle measures exactly 90 degrees, what is it called?',ok:'Right angle',ops:['Acute angle','Obtuse angle','Straight angle']},
+      {q:'Which gas is essential for humans to breathe?',ok:'Oxygen',ops:['Carbon dioxide','Nitrogen','Hydrogen']},
+      {q:'What is the capital of Spain, the country that became world champion in 2010?',ok:'Madrid',ops:['Barcelona','Seville','Valencia']},
+      {q:'How many years are in a decade?',ok:'10 years',ops:['100 years','5 years','50 years']},
+      {q:'Which famous club cup features the best teams in South America competing every year?',ok:'Copa Libertadores',ops:['Champions League','Copa América','Europa League']},
+      {q:'What is the result of the operation 350 + 450 - 200?',ok:'600',ops:['800','700','500']},
+      {q:'What is the thick, red liquid that travels through our arteries and veins called?',ok:'Blood',ops:['Saliva','Water','Plasma']},
+      {q:'Which player is known as "O Rei" (The King) and won three World Cups with Brazil?',ok:'Pelé',ops:['Neymar','Ronaldinho','Ronaldo']},
+      {q:'Which of the following verbs is in the past tense?',ok:'Escribió (Wrote)',ops:['Escribe (Writes)','Escribirá (Will write)','Escribir (To write)']},
+      {q:'Which planet is closest to the Sun in our solar system?',ok:'Mercury',ops:['Venus','Earth','Mars']},
+      {q:'Which South American country hosted the soccer World Cup in the year 2014?',ok:'Brazil',ops:['Argentina','Chile','Colombia']},
+      {q:'What is 1,500 meters expressed in kilometers?',ok:'1.5 km',ops:['15 km','0.15 km','150 km']},
+      {q:'Which mountain range, the longest in the world, passes through the west of South America?',ok:'Andes Mountains',ops:['The Alps','The Himalayas','The Pyrenees']},
+      {q:'What is the infraction called when a forward receives the ball ahead of the last opponent defender?',ok:'Offside',ops:['Technical foul','Throw-in','Goal kick']},
+      {q:'What is the correct combination of the three main states of matter?',ok:'Solid, liquid, and gas',ops:['Water, earth, and air','Heat, cold, and mild','Gold, silver, and bronze']},
+      {q:'How many sides does a geometric shape called a hexagon have?',ok:'6',ops:['5','8','7']},
+      {q:'Which spelling rule tells us when to use \'b\' or \'v\' in the Spanish word "cambio"?',ok:'Before \'b\' and \'p\' we write \'m\'',ops:['We write \'v\' after \'n\'','Words with \'b\' have an accent','\'b\' always goes at the end']},
+      {q:'In which World Cup was the VAR technology used for the very first time?',ok:'Russia 2018',ops:['Brazil 2014','Qatar 2022','South Africa 2010']},
+      {q:'If the perimeter of a square measures 20 cm, how long is each of its sides?',ok:'5 cm',ops:['10 cm','4 cm','2 cm']},
+      {q:'Which invertebrate animal produces the honey we consume?',ok:'Bee',ops:['Ant','Butterfly','Wasp']},
+      {q:'Which European team wears an orange jersey and is historically known as the "Clockwork Orange"?',ok:'Netherlands (Holland)',ops:['Germany','Belgium','Italy']},
+      {q:'In the sentence "Ellos juegan muy bien" (They play very well), which is the personal pronoun?',ok:'Ellos (They)',ops:['Juegan (Play)','Muy (Very)','Bien (Well)']},
+      {q:'Which is the main organ of the nervous system that controls the entire body?',ok:'Brain',ops:['Heart','Stomach','Liver']},
+      {q:'Which country hosted the 1994 World Cup, where soccer began to become very popular in North America?',ok:'United States',ops:['Mexico','Canada','Costa Rica']},
+      {q:'What is the result of multiplying 9 x 7?',ok:'63',ops:['72','56','64']},
+      {q:'Which ocean separates the American continent from the European and African continents?',ok:'Atlantic Ocean',ops:['Pacific Ocean','Indian Ocean','Arctic Ocean']},
+      {q:'Which English player is famous for his free kicks and for playing for Real Madrid and Manchester United?',ok:'David Beckham',ops:['Harry Kane','Wayne Rooney','Steven Gerrard']},
+      {q:'What type of mixture is water with salt if you cannot tell its components apart at first glance?',ok:'Homogeneous',ops:['Heterogeneous','Chemical','Pure']},
+      {q:'What is triple the number 15?',ok:'45',ops:['30','60','50']},
+      {q:'Which part of the flower is responsible for attracting pollinating insects thanks to its colors?',ok:'Petals',ops:['Root','Stem','Leaves']},
+      {q:'What is a friendly match played by national teams before starting the World Cup called?',ok:'Warm-up match',ops:['Final','Qualifier','Extra time']},
+      {q:'Which Asian country became the first on its continent to host a World Cup alongside Japan in 2002?',ok:'South Korea',ops:['China','Saudi Arabia','Qatar']},
+      {q:'Which system of the body is responsible for turning food into nutrients?',ok:'Digestive system',ops:['Circulatory system','Respiratory system','Skeletal system']},
+      {q:'How many seconds are in a full minute?',ok:'60',ops:['100','12','30']},
+      {q:'What is the individual award given every year to the best soccer player in the world called?',ok:'Ballon d\'Or',ops:['Golden Boot','World Cup','Golden Glove']},
+    ],
+  },
+  '5':{
+    es:[
+      {q:'¿Cuál es el resultado de multiplicar 25 x 4?',ok:'100',ops:['75','125','90']},
+      {q:'¿Qué país africano hizo historia al convertirse en el primero de su continente en organizar un Mundial en el año 2010?',ok:'Sudáfrica',ops:['Nigeria','Camerún','Egipto']},
+      {q:'¿Qué tipo de palabra es "brújula" según la posición de su sílaba tónica?',ok:'Esdrújula',ops:['Aguda','Grave','Sobreesdrújula']},
+      {q:'¿Qué jugador ostenta el récord de haber ganado más Copas del Mundo (3 en total) como futbolista?',ok:'Pelé',ops:['Diego Maradona','Lionel Messi','Zinedine Zidane']},
+      {q:'¿Cómo se llama el proceso por el cual el agua líquida se transforma en vapor debido al calor del sol?',ok:'Evaporación',ops:['Condensación','Solidificación','Filtración']},
+      {q:'¿Cuál es el resultado de dividir 144 entre 12?',ok:'12',ops:['14','10','11']},
+      {q:'¿Qué cordillera asiática alberga las montañas más altas del planeta, incluido el monte Everest?',ok:'El Himalaya',ops:['Los Andes','Los Alpes','Los Pirineos']},
+      {q:'¿Qué selección nacional eliminó a Brasil en los cuartos de final del Mundial de Qatar 2022?',ok:'Croacia',ops:['Marruecos','Francia','Países Bajos']},
+      {q:'¿Qué sistema del cuerpo humano se encarga de defenderlo contra bacterias y virus?',ok:'Sistema inmunológico',ops:['Sistema digestivo','Sistema endocrino','Sistema nervioso']},
+      {q:'¿Cómo se escribe el número 99 en números romanos?',ok:'XCIX',ops:['IC','LXXXXIX','CIX']},
+      {q:'En la oración "La casa es extremadamente grande", ¿qué tipo de palabra es "extremadamente"?',ok:'Adverbio de cantidad',ops:['Adjetivo calificativo','Sustantivo propio','Verbo']},
+      {q:'¿En qué Mundial masculino se implementó el uso del VAR?',ok:'2018',ops:['2014','2022','2010']},
+      {q:'¿Cómo se llama el ángulo que mide más de 90 grados pero menos de 180 grados?',ok:'Obtuso',ops:['Agudo','Recto','Llano']},
+      {q:'¿Qué capa de la atmósfera terrestre nos protege de los peligrosos rayos ultravioleta del sol?',ok:'Capa de ozono',ops:['Troposfera','Termosfera','Magnetosfera']},
+      {q:'¿Cuál es la capital de Italia, país que ha ganado cuatro Copas del Mundo?',ok:'Roma',ops:['Milán','París','Madrid']},
+      {q:'¿Cuántos años transcurren exactamente en un milenio?',ok:'1000 años',ops:['100 años','10 años','500 años']},
+      {q:'¿Cómo se llama el torneo de clubes de fútbol más importante de Sudamérica que clasifica al Mundial de Clubes?',ok:'Copa Libertadores',ops:['Copa Sudamericana','Champions League','Copa América']},
+      {q:'¿Cuál es el resultado de la operación $500 - (150 + 50)$?',ok:'300',ops:['400','350','200']},
+      {q:'¿Qué vaso sanguíneo se encarga de llevar la sangre oxigenada desde el corazón hacia el resto del cuerpo?',ok:'Arteria',ops:['Vena','Capilar','Nervio']},
+      {q:'¿Quién es el máximo goleador histórico de la selección argentina en partidos de los Mundiales?',ok:'Lionel Messi',ops:['Gabriel Batistuta','Diego Maradona','Mario Kempes']},
+      {q:'¿Cuál de los siguientes verbos se encuentra conjugado en tiempo futuro?',ok:'Cantará',ops:['Cantó','Canta','Cantando']},
+      {q:'¿Cuál es el planeta más grande y con más masa de nuestro sistema solar?',ok:'Júpiter',ops:['Saturno','Neptuno','Tierra']},
+      {q:'¿En qué país asiático se celebró el Mundial de fútbol del año 2002, el primero organizado por dos naciones juntas?',ok:'Corea del Sur y Japón',ops:['China y Vietnam','Qatar y Omán','Arabia Saudita']},
+      {q:'¿Cuántos metros cuadrados tiene un terreno rectangular que mide 20 metros de largo por 10 metros de ancho?',ok:'200 metros cuadrados',ops:['30 metros cuadrados','60 metros cuadrados','100 metros cuadrados']},
+      {q:'¿Qué río cruza la ciudad de El Cairo en Egipto y es uno de los más largos de la historia?',ok:'Río Nilo',ops:['Río Amazonas','Río Ganges','Río Misisipi']},
+      {q:'¿Cuántos cambios de jugadores por equipo están permitidos realizar durante los 90 minutos regulares según las reglas actuales?',ok:'5 cambios',ops:['3 cambios','4 cambios','6 cambios']},
+      {q:'¿Qué propiedad de la materia mide la cantidad de espacio que ocupa un cuerpo?',ok:'Volumen',ops:['Masa','Densidad','Peso']},
+      {q:'¿Cómo se llama el polígono regular que tiene exactamente ocho lados?',ok:'Octógono',ops:['Hexágono','Heptágono','Decágono']},
+      {q:'¿Cuál de las siguientes palabras está escrita de forma correcta según las reglas ortográficas?',ok:'Exagerar',ops:['Exajerar','Esagerar','Esajerar']},
+      {q:'¿Qué país europeo se consagró campeón del mundo en el Mundial de Sudáfrica 2010?',ok:'España',ops:['Países Bajos','Alemania','Italia']},
+      {q:'Si el área de un cuadrado es de 36 centímetros cuadrados, ¿cuánto mide cada uno de sus lados?',ok:'6 cm',ops:['9 cm','4 cm','12 cm']},
+      {q:'¿Qué tipo de seres vivos producen su propio alimento a través de la fotosíntesis y se consideran productores?',ok:'Las plantas',ops:['Los hongos','Los animales','Las bacterias']},
+      {q:'¿Qué selección europea es conocida históricamente en el fútbol como "La Azzurra"?',ok:'Italia',ops:['Francia','Alemania','España']},
+      {q:'En la oración "Los jugadores suplentes entrenaron duro", ¿cuál es el núcleo del sujeto?',ok:'Jugadores',ops:['Los','Suplentes','Entrenaron']},
+      {q:'¿Qué órgano del cuerpo humano se encarga principalmente de purificar la sangre y producir la orina?',ok:'Los riñones',ops:['El hígado','El estómago','El páncreas']},
+      {q:'¿Qué país de Europa organizó el Mundial de 1998, donde su selección se coronó campeona por primera vez en su historia?',ok:'Francia',ops:['Italia','Alemania','Inglaterra']},
+      {q:'¿Cuál es el resultado de multiplicar $9 \\times 8$?',ok:'72',ops:['81','64','73']},
+      {q:'¿Qué océano es el más grande y profundo de todo el planeta Tierra?',ok:'Océano Pacífico',ops:['Océano Atlántico','Océano Índico','Océano Ártico']},
+      {q:'¿Qué histórico jugador francés, famoso por usar la camiseta 10, fue elegido el mejor del Mundial de Alemania 2006?',ok:'Zinedine Zidane',ops:['Thierry Henry','Kylian Mbappé','Michel Platini']},
+      {q:'¿Qué tipo de mezcla se forma cuando unimos agua y aceite, ya que sus fases se pueden ver claramente a simple vista?',ok:'Heterogénea',ops:['Homogénea','Pura','Disolución']},
+      {q:'¿Cuál es el resultado de sumar $1,5 + 2,75$?',ok:'4.25',ops:['3.8','4.5','3.25']},
+      {q:'¿Qué parte de la célula vegetal contiene la clorofila y se encarga de captar la luz del sol?',ok:'Cloroplasto',ops:['Núcleo','Mitocondria','Vacuola']},
+      {q:'¿Cómo se llama la fase previa de los Mundiales donde las selecciones juegan partidos en su continente para poder clasificar?',ok:'Eliminatorias',ops:['Fase de grupos','Octavos de final','Repechaje']},
+      {q:'¿Cuánto da la fracción de tres cuartos (3/4) expresada en número decimal?',ok:'0.75',ops:['0.5','0.34','0.25']},
+      {q:'¿Qué país sudamericano fue el anfitrión del Mundial de fútbol celebrado en el año 1962?',ok:'Chile',ops:['Argentina','Uruguay','Brasil']},
+      {q:'¿Cuál es el predicado en la oración "El director técnico planificó la estrategia táctica"?',ok:'planificó la estrategia táctica',ops:['El director técnico','El director','la estrategia táctica']},
+      {q:'¿Qué sistema del cuerpo se encarga de romper los alimentos para absorber sus nutrientes y energía?',ok:'Sistema digestivo',ops:['Sistema respiratorio','Sistema óseo','Sistema excretor']},
+      {q:'¿Cuántos minutos tiene una hora y media de reloj?',ok:'90 minutos',ops:['60 minutos','100 minutos','80 minutos']},
+      {q:'¿Cómo se llama el trofeo individual que recibe el jugador que anota más goles durante todo un Mundial?',ok:'Bota de Oro',ops:['Balón de Oro','Guante de Oro','Premio The Best']},
+    ],
+    en:[
+      {q:'What is the result of multiplying  25 x 4?',ok:'100',ops:['75','125','90']},
+      {q:'Which African country made history by becoming the first on its continent to host a World Cup in the year 2010?',ok:'South Africa',ops:['Nigeria','Cameroon','Egypt']},
+      {q:'What type of word is "brújula" (compass) according to the position of its stressed syllable?',ok:'Proparoxytone (Esdrújula)',ops:['Oxytone (Aguda)','Paroxytone (Grave)','Preproparoxytone (Sobreesdrújula)']},
+      {q:'Which player holds the record for winning the most World Cups (3 in total) as a footballer?',ok:'Pelé',ops:['Diego Maradona','Lionel Messi','Zinedine Zidane']},
+      {q:'What is the process called by which liquid water turns into vapor due to the sun\'s heat?',ok:'Evaporation',ops:['Condensation','Solidification','Filtration']},
+      {q:'What is the result of dividing 144 by 12?',ok:'12',ops:['14','10','11']},
+      {q:'Which Asian mountain range is home to the highest mountains on the planet, including Mount Everest?',ok:'The Himalayas',ops:['The Andes','The Alps','The Pyrenees']},
+      {q:'Which national team eliminated Brazil in the quarterfinals of the Qatar 2022 World Cup?',ok:'Croatia',ops:['Morocco','France','Netherlands']},
+      {q:'Which system of the human body is responsible for defending it against bacteria and viruses?',ok:'Immune system',ops:['Digestive system','Endocrine system','Nervous system']},
+      {q:'How do you write the number 99 in Roman numerals?',ok:'XCIX',ops:['IC','LXXXXIX','CIX']},
+      {q:'In the sentence "La casa es extremadamente grande" (The house is extremely big), what type of word is "extremadamente"?',ok:'Adverb of quantity',ops:['Descriptive adjective','Proper noun','Verb']},
+      {q:'In which men\'s World Cup was the official use of yellow and red cards introduced for the first time?',ok:'Mexico 1970',ops:['England 1966','Germany 1974','Argentina 1978']},
+      {q:'What do you call an angle that measures more than 90 degrees but less than 180 degrees?',ok:'Obtuse',ops:['Acute','Right','Straight']},
+      {q:'Which layer of the Earth\'s atmosphere protects us from the sun\'s dangerous ultraviolet rays?',ok:'Ozone layer',ops:['Troposphere','Thermosphere','Magnetosphere']},
+      {q:'What is the capital of Italy, a country that has won four World Cups?',ok:'Rome',ops:['Milan','Paris','Madrid']},
+      {q:'How many years pass exactly in a millennium?',ok:'1000 years',ops:['100 years','10 years','500 years']},
+      {q:'What is the name of the most important South American club soccer tournament that qualifies teams for the Club World Cup?',ok:'Copa Libertadores',ops:['Copa Sudamericana','Champions League','Copa América']},
+      {q:'What is the result of the operation $500 - (150 + 50)$?',ok:'300',ops:['400','350','200']},
+      {q:'Which blood vessel is responsible for carrying oxygenated blood from the heart to the rest of the body?',ok:'Artery',ops:['Vein','Capillary','Nerve']},
+      {q:'Who is the all-time top scorer for the Argentine national team in World Cup matches?',ok:'Lionel Messi',ops:['Gabriel Batistuta','Diego Maradona','Mario Kempes']},
+      {q:'Which of the following verbs is conjugated in the future tense?',ok:'Cantará (Will sing)',ops:['Cantó (Sang)','Canta (Sings)','Cantando (Singing)']},
+      {q:'Which is the largest and most massive planet in our solar system?',ok:'Jupiter',ops:['Saturn','Neptune','Earth']},
+      {q:'In which Asian country was the 2002 soccer World Cup held, the first one to be co-hosted by two nations?',ok:'South Korea and Japan',ops:['China and Vietnam','Qatar and Oman','Saudi Arabia']},
+      {q:'How many square meters does a rectangular plot of land have if it measures 20 meters long by 10 meters wide?',ok:'200 square meters',ops:['30 square meters','60 square meters','100 square meters']},
+      {q:'Which river crosses the city of Cairo in Egypt and is one of the longest in history?',ok:'Nile River',ops:['Amazon River','Ganges River','Mississippi River']},
+      {q:'How many player substitutions per team are currently allowed during regular 90 minutes according to official rules?',ok:'5 substitutions',ops:['3 substitutions','4 substitutions','6 substitutions']},
+      {q:'Which property of matter measures the amount of space an object occupies?',ok:'Volume',ops:['Mass','Density','Weight']},
+      {q:'What is a regular polygon with exactly eight equal sides called?',ok:'Octagon',ops:['Hexagon','Heptagon','Decagon']},
+      {q:'Which of the following words is spelled correctly according to Spanish grammatical rules?',ok:'Exagerar',ops:['Exajerar','Esagerar','Esajerar']},
+      {q:'Which European country became the world champion at the 2010 World Cup in South Africa?',ok:'Spain',ops:['Netherlands','Germany','Italy']},
+      {q:'If the area of a square is 36 square centimeters, how long is each of its sides?',ok:'6 cm',ops:['9 cm','4 cm','12 cm']},
+      {q:'Which living things produce their own food through photosynthesis and are considered producers?',ok:'Plants',ops:['Fungi','Animals','Bacteria']},
+      {q:'Which European national team is historically nicknamed "La Azzurra" in soccer?',ok:'Italy',ops:['France','Germany','Spain']},
+      {q:'In the sentence "Los jugadores suplentes entrenaron duro" (The substitute players trained hard), what is the core of the subject?',ok:'Jugadores (Players)',ops:['Los (The)','Suplentes (Substitutes)','Entrenaron (Trained)']},
+      {q:'Which organ of the human body is mainly responsible for filtering blood and producing urine?',ok:'Kidneys',ops:['Liver','Stomach','Pancreas']},
+      {q:'Which European country hosted the 1998 World Cup, where its national team was crowned champion for the first time in history?',ok:'France',ops:['Italy','Germany','England']},
+      {q:'What is the result of multiplying $9 \\times 8$?',ok:'72',ops:['81','64','73']},
+      {q:'Which ocean is the largest and deepest on the entire planet Earth?',ok:'Pacific Ocean',ops:['Atlantic Ocean','Indian Ocean','Arctic Ocean']},
+      {q:'Which historic French player, famous for wearing the number 10 jersey, was chosen as the best player of the 2006 World Cup in Germany?',ok:'Zinedine Zidane',ops:['Thierry Henry','Kylian Mbappé','Michel Platini']},
+      {q:'What type of mixture is formed when we combine water and oil, since their separate phases can be clearly seen at first glance?',ok:'Heterogeneous',ops:['Homogeneous','Pure substance','Solution']},
+      {q:'What is the result of adding $1.5 + 2.75$?',ok:'4.25',ops:['3.80','4.50','3.25']},
+      {q:'Which part of the plant cell contains chlorophyll and is responsible for capturing sunlight?',ok:'Chloroplast',ops:['Nucleus','Mitochondria','Vacuole']},
+      {q:'What is the preliminary phase of the World Cup called where national teams play matches within their continent to qualify?',ok:'Qualifiers (Eliminatorias)',ops:['Group stage','Round of 16','Play-offs (Repechaje)']},
+      {q:'What is the fraction three-fourths (3/4) expressed as a decimal number?',ok:'0.75',ops:['0.50','0.34','0.25']},
+      {q:'Which South American country was the host of the soccer World Cup held in the year 1962?',ok:'Chile',ops:['Argentina','Uruguay','Brazil']},
+      {q:'Which body system is responsible for breaking down food to absorb its nutrients and energy?',ok:'Digestive system',ops:['Respiratory system','Skeletal system','Excretory system']},
+      {q:'How many minutes are in an hour and a half on the clock?',ok:'90 minutes',ops:['60 minutes','100 minutes','80 minutes']},
+      {q:'What is the individual trophy awarded to the player who scores the most goals during an entire World Cup called?',ok:'Golden Boot',ops:['Ballon d\'Or','Golden Glove','The Best Award']},
+    ],
+  },
+  '6':{
+    es:[
+      {q:'¿Cuánto es la mitad de 10?',ok:'5',ops:['1','50','2']},
+      {q:'¿Qué país ganó el primer Mundial de la historia en 1930?',ok:'Uruguay',ops:['Argentina','Brasil','Francia']},
+      {q:'¿Qué tipo de palabra es "música" según su acentuación?',ok:'Esdrújula',ops:['Aguda','Grave','Sobreesdrújula']},
+      {q:'Si una remera del Mundial cuesta $100 y tiene el 10% de descuento, ¿cuánto dinero te descuentan?',ok:'10',ops:['1','5','11']},
+      {q:'¿Quién es el máximo goleador de la historia de los Mundiales (metió 16 goles)?',ok:'Miroslav Klose (Alemania)',ops:['Pelé (Brasil)','Messi (Argentina)','Ronaldo (Brasil)']},
+      {q:'¿Qué movimiento de la Tierra tarda 24 horas y hace que tengamos el día y la noche?',ok:'Rotación',ops:['Traslación','Balanceo','Órbita']},
+      {q:'Si dividimos una pizza en 4 partes iguales y nos comemos 2, ¿qué fracción de la pizza nos queda?',ok:'2/4 (o la mitad)',ops:['="1/8"','="1/9"','="2"']},
+      {q:'¿Cuál es el país más grande de todo el mundo?',ok:'Rusia',ops:['China','Estados Unidos','Canadá']},
+      {q:'¿Contra qué país jugó Argentina la final del Mundial de Qatar 2022?',ok:'Francia',ops:['Alemania','Holanda','Brasil']},
+      {q:'¿Cómo se llama el centro de la célula donde se guarda la información genética?',ok:'Núcleo',ops:['Membrana','Citoplasma','Cloroplasto']},
+      {q:'¿Qué número romano representa al número 50?',ok:'L',ops:['C','D','X']},
+      {q:'En la frase "Los jugadores corren rápido", ¿cuál es el verbo?',ok:'Corren',ops:['Los','Jugadores','Rápido']},
+      {q:'¿En qué país europeo se jugó el Mundial de 2006 que ganó Italia?',ok:'Alemania',ops:['Francia','España','Inglaterra']},
+      {q:'¿Cómo se llama el ángulo que mide exactamente 90 grados?',ok:'Recto',ops:['Agudo','Obtuso','Llano']},
+      {q:'¿Cuál es la capa de aire que rodea a la Tierra y nos permite respirar?',ok:'Atmósfera',ops:['Corteza','Manto','Gravedad']},
+      {q:'¿Cuál es la capital de los Países Bajos (también conocida como Holanda)?',ok:'Ámsterdam',ops:['París','Londres','Madrid']},
+      {q:'¿Cuántos años hay en un siglo?',ok:'100 años',ops:['10 años','1.000 años','50 años']},
+      {q:'¿Cómo se llama la copa donde juegan las selecciones de América del Sur?',ok:'Copa América',ops:['Champions League','Copa del Mundo','Eurocopa']},
+      {q:'¿Cuál es el resultado de $5 + 3 \\times 2$? (Recuerda resolver primero la multiplicación)',ok:'11',ops:['16','10','13']},
+      {q:'¿Quién era el técnico de Argentina cuando salimos campeones en el Mundial de 1986?',ok:'Carlos Bilardo',ops:['Diego Maradona','Lionel Scaloni','César Menotti']},
+      {q:'¿Qué palabra es el sinónimo de "veloz"?',ok:'Rápido',ops:['Lento','Alto','Fuerte']},
+      {q:'¿Cuál es la estrella más grande de nuestro sistema solar y nos da calor todos los días?',ok:'El Sol',ops:['La Luna','Marte','Júpiter']},
+      {q:'¿Qué país de África sorprendió a todos llegando a las semifinales en Qatar 2022?',ok:'Marruecos',ops:['Senegal','Camerún','Sudáfrica']},
+      {q:'¿Cómo se calcula el área de un rectángulo?',ok:'Base por altura',ops:['Lado más lado','Base más altura','Dividiendo por dos']},
+      {q:'¿Qué famosa cordillera de montañas cruza toda la Argentina de norte a sur?',ok:'Cordillera de los Andes',ops:['Los Alpes','El Himalaya','Los Pirineos']},
+      {q:'¿Qué significan las siglas del VAR en el fútbol?',ok:'Árbitro asistente de video',ops:['Video de asistencia rápida','Árbitro visual remoto','Validación de arco real']},
+      {q:'¿Qué propiedad mide la cantidad de materia que tiene un cuerpo?',ok:'Masa',ops:['Volumen','Color','Temperatura']},
+      {q:'¿Cuántos lados tiene una figura geométrica llamada hexágono?',ok:'6',ops:['5','8','4']},
+      {q:'¿Cuál de estas palabras está bien escrita?',ok:'Convivencia',ops:['Conbibencia','Combinvencia','Conbivencia']},
+      {q:'¿Qué selección del mundo tiene más copas mundiales ganadas (5 en total)?',ok:'Brasil',ops:['Alemania','Italia','Argentina']},
+      {q:'Si el radio de un círculo mide 4 cm, ¿cuánto mide su diámetro entero?',ok:'8 cm',ops:['4 cm','2 cm','16 cm']},
+      {q:'¿Qué seres vivos se encargan de producir su propio alimento con la luz del sol?',ok:'Las plantas',ops:['Los animales','Los hongos','Los insectos']},
+      {q:'¿Cómo le dicen a la selección de Uruguay por el color de su camiseta?',ok:'La Celeste',ops:['La Albiceleste','La Verdeamarela','La Roja']},
+      {q:'En la oración "El arquero atajó el penal", ¿cuál es el sujeto?',ok:'El arquero',ops:['Atajó','El penal','Atajó el penal']},
+      {q:'¿Qué órgano de nuestro cuerpo se encarga de bombear la sangre a todos lados?',ok:'El corazón',ops:['El cerebro','Los pulmones','El estómago']},
+      {q:'¿En qué país de Asia se jugó el Mundial del año 2022?',ok:'Qatar',ops:['Japón','China','Arabia Saudita']},
+      {q:'¿Cuál es la raíz cuadrada de 100?',ok:'10',ops:['50','5','20']},
+      {q:'¿Cuál es el océano más grande del planeta Tierra?',ok:'Océano Pacífico',ops:['Océano Atlántico','Océano Índico','Océano Ártico']},
+      {q:'¿Quién es el jugador número 10 y capitán actual de la selección de Croacia?',ok:'Luka Modrić',ops:['Ivan Rakitić','Mario Mandžukić','Mateo Kovačić']},
+      {q:'¿Qué tipo de energía obtenemos gracias a la fuerza del viento?',ok:'Energía eólica',ops:['Energía solar','Energía química','Energía térmica']},
+      {q:'¿Con qué órgano de nuestro cuerpo podemos ver los colores y las formas?',ok:'Los ojos',ops:['Los oídos','La piel','La nariz']},
+      {q:'¿Cómo se llama la etapa del Mundial donde juegan los mejores 16 equipos después de los grupos?',ok:'Octavos de final',ops:['Cuartos de final','Semifinal','La gran final']},
+      {q:'¿Cómo se escribe el número "un medio" (1/2) en forma de número decimal?',ok:'0.5',ops:['0.2','0.1','1.2']},
+      {q:'¿En qué año se jugó el Mundial en Argentina donde salimos campeones por primera vez?',ok:'1978',ops:['1986','2022','1994']},
+      {q:'¿Cuál es la palabra que describe una acción en una oración?',ok:'Verbo',ops:['Sustantivo','Adjetivo','Pronombre']},
+      {q:'¿Qué sistema de nuestro cuerpo se encarga de la respiración?',ok:'Sistema respiratorio',ops:['Sistema digestivo','Sistema circulatorio','Sistema nervioso']},
+      {q:'¿Cuántos minutos dura el tiempo extra de un partido si van a la prórroga (dos tiempos)?',ok:'30 minutos',ops:['15 minutos','45 minutos','10 minutos']},
+      {q:'¿Cómo se llama el premio que le dan al arquero más destacado de todo un Mundial?',ok:'Guante de Oro',ops:['Balón de Oro','Bota de Oro','Premio al Goleador']},
+    ],
+    en:[
+      {q:'What is $10 \\times 0.5$ (half of 10)?',ok:'5',ops:['1','50','2']},
+      {q:'Which country won the first World Cup in history in 1930?',ok:'Uruguay',ops:['Argentina','Brazil','France']},
+      {q:'Who is the all-time top scorer in World Cup history (with 16 goals)?',ok:'Miroslav Klose (Germany)',ops:['Pelé (Brazil)','Messi (Argentina)','Ronaldo (Brazil)']},
+      {q:'Which movement of the Earth takes 24 hours and causes day and night?',ok:'Rotation',ops:['Translation','Tilted axis','Orbit']},
+      {q:'Which is the largest country in the entire world?',ok:'Russia',ops:['China','United States','Canada']},
+      {q:'Which country did Argentina play against in the final of the Qatar 2022 World Cup?',ok:'France',ops:['Germany','Netherlands','Brazil']},
+      {q:'What is the center of the cell where genetic information is stored called?',ok:'Nucleus',ops:['Membrane','Cytoplasm','Chloroplast']},
+      {q:'What Roman numeral represents the number 50?',ok:'L',ops:['C','D','X']},
+      {q:'In the phrase "Los jugadores corren rápido" (The players run fast), which word is the verb?',ok:'Corren (Run)',ops:['Los (The)','Jugadores (Players)','Rápido (Fast)']},
+      {q:'In which European country was the 2006 World Cup played, which was won by Italy?',ok:'Germany',ops:['France','Spain','England']},
+      {q:'What is an angle that measures exactly 90 degrees called?',ok:'Right angle',ops:['Acute angle','Obtuse angle','Straight angle']},
+      {q:'What is the layer of air that surrounds the Earth and allows us to breathe called?',ok:'Atmosphere',ops:['Crust','Manto','Gravity']},
+      {q:'What is the capital of the Netherlands (also known as Holland)?',ok:'Amsterdam',ops:['Paris','London','Madrid']},
+      {q:'How many years are in a century?',ok:'100 years',ops:['10 years','1,000 years','50 years']},
+      {q:'What is the cup where the national teams of South America play called?',ok:'Copa América',ops:['Champions League','World Cup','Eurocopa']},
+      {q:'What is the result of $5 + 3 \\times 2$? (Remember to solve the multiplication first)',ok:'11',ops:['16','10','13']},
+      {q:'Which components of the blood defend us from viruses and bacteria?',ok:'White blood cells',ops:['Red blood cells','Platelets','Plasma']},
+      {q:'Who was the coach of Argentina when we became champions in the 1986 World Cup?',ok:'Carlos Bilardo',ops:['Diego Maradona','Lionel Scaloni','César Menotti']},
+      {q:'Which is the largest star in our solar system that gives us heat every day?',ok:'The Sun',ops:['The Moon','Mars','Jupiter']},
+      {q:'Which country from Africa surprised everyone by reaching the semifinals in Qatar 2022?',ok:'Morocco',ops:['Senegal','Cameroon','South Africa']},
+      {q:'How do you calculate the area of a rectangle?',ok:'Base times height',ops:['Side plus side','Base plus height','Dividing by two']},
+      {q:'Which famous mountain range crosses all of Argentina from north to south?',ok:'Andes Mountains',ops:['The Alps','The Himalayas','The Pyrenees']},
+      {q:'What do the initials VAR stand for in soccer?',ok:'Video Assistant Referee',ops:['Video Assistance Rapid','Visual Agent Remote','Validation of Arch Real']},
+      {q:'Which property measures the amount of matter an object has?',ok:'Mass',ops:['Volume','Color','Temperature']},
+      {q:'How many sides does a geometric shape called a hexagon have?',ok:'6',ops:['5','8','4']},
+      {q:'Which of these words is spelled correctly in Spanish?',ok:'Convivencia',ops:['Conbibencia','Combinvencia','Conbivencia']},
+      {q:'Which national team in the world has won the most World Cups (5 in total)?',ok:'Brazil',ops:['Germany','Italy','Argentina']},
+      {q:'If the radius of a circle measures 4 cm, how long is its entire diameter?',ok:'8 cm',ops:['4 cm','2 cm','16 cm']},
+      {q:'Which living things are responsible for making their own food with sunlight?',ok:'Plants',ops:['Animals','Fungi','Insects']},
+      {q:'What do people call the Uruguayan national team because of the color of their jersey?',ok:'La Celeste',ops:['La Albiceleste','La Verdeamarela','La Roja']},
+      {q:'In the sentence "El arquero atajó el penal" (The goalkeeper saved the penalty), which is the subject?',ok:'El arquero (The goalkeeper)',ops:['Atajó (Saved)','El penal (The penalty)','Atajó el penal']},
+      {q:'Which organ of our body is responsible for pumping blood everywhere?',ok:'Heart',ops:['Brain','Lungs','Stomach']},
+      {q:'In which country in Asia was the 2022 World Cup played?',ok:'Qatar',ops:['Japan','China','Saudi Arabia']},
+      {q:'What is the square root of 100?',ok:'10',ops:['50','5','20']},
+      {q:'Which is the largest ocean on planet Earth?',ok:'Pacific Ocean',ops:['Atlantic Ocean','Indian Ocean','Arctic Ocean']},
+      {q:'Who is the number 10 player and current captain of the Croatia national team?',ok:'Luka Modrić',ops:['Ivan Rakitić','Mario Mandžukić','Mateo Kovačić']},
+      {q:'What type of energy do we get thanks to the power of the wind?',ok:'Wind energy (Eólica)',ops:['Solar energy','Chemical energy','Thermal energy']},
+      {q:'How much is 1/4 + 1/4?',ok:'2/4 (or half)',ops:['3/4','1/8','1 whole']},
+      {q:'With which organ of our body can we see colors and shapes?',ok:'Eyes',ops:['Ears','Skin','Nose']},
+      {q:'What is the stage of the World Cup called where the best 16 teams play after the groups?',ok:'Round of 16',ops:['Quarterfinals','Semifinals','The grand final']},
+      {q:'How do you write the fraction "one half" (1/2) as a decimal number?',ok:'0.5',ops:['0.2','0.1','1.2']},
+      {q:'In what year was the World Cup played in Argentina where we became champions for the first time?',ok:'1978',ops:['1986','2022','1994']},
+      {q:'Which word describes an action in a sentence?',ok:'Verb',ops:['Noun','Adjective','Pronoun']},
+      {q:'Which system of our body is responsible for breathing?',ok:'Respiratory system',ops:['Digestive system','Circulatory system','Nervous system']},
+      {q:'How many minutes does extra time last in a match if they go to overtime (two periods)?',ok:'30 minutes',ops:['15 minutes','45 minutes','10 minutes']},
+      {q:'What is the award given to the most outstanding goalkeeper of an entire World Cup called?',ok:'Golden Glove',ops:['Ballon d\'Or','Golden Boot','Top Scorer Award']},
+    ],
+  },
 };
 
 // ── IDIOMA ───────────────────────────────────────────────────────
@@ -827,33 +1349,26 @@ const PAISES=[
 
 function flagImg(p,w,h){return`<img src="https://flagcdn.com/w${w||80}/${p.fcd}.png" style="width:100%;height:100%;object-fit:cover" alt="${p.n}" onerror="this.style.display='none'">`;}
 const ECOLE=[
-  {id:'sc01',nombre:'Equipo de Dirección',desc:'Nuestros directivos',e:'👨‍💼',holo:false},
-  {id:'sc02',nombre:'Seños Juntas',desc:'Todo el plantel docente',e:'👩‍🏫',holo:false},
-  {id:'sc03',nombre:'Aula Tech',desc:'Tecnología en el cole',e:'💻',holo:false},
-  {id:'sc04',nombre:'Rincón Literario',desc:'Nuestra biblioteca',e:'📚',holo:false},
-  {id:'sc05',nombre:'La Canchita',desc:'Patio deportivo',e:'⚽',holo:false},
-  {id:'sc06',nombre:'Logo San Carlos',desc:'FIGURITA HOLOGRÁFICA ✨',e:'⭐',holo:true,img:'Logo San Carlos.png'},
-  {id:'sc07',nombre:'Sala de Arte',desc:'Creatividad y expresión',e:'🎨',holo:false},
-  {id:'sc08',nombre:'Laboratorio',desc:'Ciencia y experimentos',e:'🔬',holo:false},
-  {id:'sc09',nombre:'Música y Ritmo',desc:'Coro e instrumentos',e:'🎵',holo:false},
-  {id:'sc10',nombre:'El Comedor',desc:'Rico menú del cole',e:'🍽️',holo:false},
-  {id:'sc11',nombre:'Jardín del Cole',desc:'Naturaleza y plantas',e:'🌿',holo:false},
-  {id:'sc12',nombre:'Copa San Carlos',desc:'HOLOGRÁFICA ESPECIAL ✨',e:'🏅',holo:true},
+  {id:'sc01',nombre:'Argentina en los Mundiales',desc:'Figurita Especial',e:'🏆',holo:false,img:'Figuritas/especial1.png'},
+  {id:'sc02',nombre:'Mascotas del Mundial',desc:'Figurita Especial',e:'🦁',holo:false,img:'Figuritas/especial2.png'},
+  {id:'sc03',nombre:'Copa del Mundo',desc:'El trofeo más codiciado',e:'🏆',holo:false,img:'Figuritas/especial3.png'},
+  {id:'sc04',nombre:'San Carlos',desc:'Nuestro colegio',e:'🏫',holo:false,img:'Figuritas/especial4.png'},
+  {id:'sc05',nombre:'Estadios 2026',desc:'USA · México · Canadá',e:'🏟️',holo:false,img:'Figuritas/especial5.png'},
+  {id:'sc06',nombre:'Trionda',desc:'Pelota oficial Adidas 2026',e:'⚽',holo:false,img:'Figuritas/especial6.png'},
+  {id:'sc07',nombre:'Aula Tech',desc:'Tecnología en el cole',e:'💻',holo:false,img:'Figuritas/especial7.png'},
+  {id:'sc08',nombre:'Música y Laboratorio',desc:'Arte y ciencia',e:'🎵',holo:false,img:'Figuritas/especial8.png'},
+  {id:'sc09',nombre:'Canchita',desc:'Patio deportivo',e:'⚽',holo:false,img:'Figuritas/especial9.png'},
+  {id:'sc10',nombre:'Directoras',desc:'Nuestra dirección',e:'👩‍💼',holo:false,img:'Figuritas/especial10.png'},
+  {id:'sc11',nombre:'Panini #00',desc:'FIGURITA HOLOGRÁFICA ✨',e:'⭐',holo:true,img:'Figuritas/especial11.png'},
+  {id:'sc12',nombre:'Tres Estrellas',desc:'HOLOGRÁFICA ESPECIAL ✨',e:'🌟',holo:true,img:'Figuritas/especial12.png'},
 ];
-const EMUNDIAL=[
-  {id:'mw01',nombre:'La Copa del Mundo',desc:'El trofeo más codiciado',e:'🏆',holo:false,img:'Copa del Mundo.png'},
-  {id:'mw02',nombre:'Logo FIFA 2026',desc:'Organismo mundial del fútbol',e:'⚽',holo:false,img:'logoFifa.png'},
-  {id:'mw03',nombre:'La Trionda',desc:'Pelota oficial Adidas 2026',e:'🔴',holo:false,img:'Trionda.png'},
-  {id:'mw04',nombre:'Francia 2018',desc:'Campeón del Mundo',e:'🇫🇷',holo:false},
-  {id:'mw05',nombre:'Argentina 2022',desc:'Campeón del Mundo',e:'🇦🇷',holo:false},
-  {id:'mw06',nombre:'Estadios 2026',desc:'USA · México · Canadá',e:'🏟️',holo:false},
-  {id:'mw07',nombre:'Sede Nueva York',desc:'MetLife Stadium · USA',e:'🗽',holo:false},
-  {id:'mw08',nombre:'Sede Ciudad de México',desc:'Estadio Azteca · México',e:'🏔️',holo:false},
-  {id:'mw09',nombre:'Mascota 2026',desc:'El símbolo del torneo',e:'🦁',holo:false},
-  {id:'mw10',nombre:'Balón de Oro 2026',desc:'El mejor jugador del mundo',e:'🌟',holo:false},
-  {id:'mw11',nombre:'Gol del Siglo',desc:'Maradona vs Inglaterra 1986',e:'💫',holo:true},
-  {id:'mw12',nombre:'La Final Épica',desc:'Argentina vs Francia 2022',e:'🔥',holo:false},
-];
+const COUNTRY_HOLO_IMG={
+  ar:'Figuritas/ARG1.png',br:'Figuritas/BRA1.png',uy:'Figuritas/URU1.png',
+  us:'Figuritas/USA1.png',mx:'Figuritas/MEX1.png',es:'Figuritas/ESP1.png',
+  pt:'Figuritas/POR1.png',fr:'Figuritas/FRA1.png',en:'Figuritas/ING1.png',
+  de:'Figuritas/ALE1.png',jp:'Figuritas/JAP1.png',kr:'Figuritas/COR1.png',
+  sn:'Figuritas/SEN1.png',ma:'Figuritas/MAR1.png',au:'Figuritas/AUS1.png'
+};
 const NMS=['Sofía','Valentina','Lucía','Emma','Camila','Florencia','Martina','Isabella','Santiago','Mateo','Tomás','Benjamín','Lucas','Facundo','Nicolás','Agustín','Joaquín','Thiago','Mia','Bruno'];
 const GRS=['1°A','1°J','1°C','2°A','2°J','2°C','3°A','3°J','3°C','4°A','4°J','4°C','5°A','5°J','5°C','6°A','6°J','6°C'];
 const EMJS=['😊','😄','😎','🤩','🥳','😏','😜','🤓','😇','🤑','😋','🥸','😤','🦁','🐯'];
@@ -885,18 +1400,17 @@ PAISES.forEach(p=>{
     em:EMJS[i%EMJS.length],pos:'Alumno/a',hab:'🏫 San Carlos',
     pais:p.id,holo:false,img:s.img
   }));
-  a.push({id:`${p.id}-holo`,num:'★',nm:'Escudo Holográfico',gr:'ESPECIAL',em:'🛡️',pos:'Especial',hab:'✨ Holográfica',pais:p.id,holo:true});
+  a.push({id:`${p.id}-holo`,num:'★',nm:'Escudo Holográfico',gr:'ESPECIAL',em:'🛡️',pos:'Especial',hab:'✨ Holográfica',pais:p.id,holo:true,img:COUNTRY_HOLO_IMG[p.id]||null});
   FPP[p.id]=a;
 });
 function allFigs(){
   const a=[];
   PAISES.forEach(p=>FPP[p.id].forEach(f=>a.push(f)));
   ECOLE.forEach(f=>a.push({...f,num:f.id,pais:'cole',pos:'Especial',hab:'🏫 San Carlos'}));
-  EMUNDIAL.forEach(f=>a.push({...f,num:f.id,pais:'mundial',pos:'Especial',hab:'⚽ Mundial'}));
   return a;
 }
-const TOTAL=332;
-const PAGE_ORDER=PAISES.map(p=>p.id).concat(['cole','mundial']);
+const TOTAL=320;
+const PAGE_ORDER=PAISES.map(p=>p.id).concat(['cole']);
 const DN={arayan:'Arrayán',jacaranda:'Jacarandá',ceibo:'Ceibo'};
 
 // ── FIREBASE CONFIG ──────────────────────────────────────────────
@@ -935,7 +1449,8 @@ function _parseS(d){
     tAciertos:parseInt(d.tAciertos||0),
     asHoy:d.asHoy||'',
     cvHoy:d.cvHoy||'',
-    pendCount:parseInt(d.pendCount||0)
+    pendCount:parseInt(d.pendCount||0),
+    triviaIdx:parseInt(d.triviaIdx||0)
   };
 }
 function ldS(){
@@ -951,7 +1466,8 @@ function ldS(){
     tAciertos:parseInt(localStorage.getItem(SK('ta'))||'0'),
     asHoy:localStorage.getItem(SK('as'))||'',
     cvHoy:localStorage.getItem(SK('cv'))||'',
-    pendCount:parseInt(localStorage.getItem(SK('pc'))||'0')
+    pendCount:parseInt(localStorage.getItem(SK('pc'))||'0'),
+    triviaIdx:parseInt(localStorage.getItem(SK('ti'))||'0')
   };
 }
 function _cacheS(){
@@ -967,6 +1483,7 @@ function _cacheS(){
   localStorage.setItem(SK('as'),S.asHoy||'');
   localStorage.setItem(SK('cv'),S.cvHoy||'');
   localStorage.setItem(SK('pc'),S.pendCount||0);
+  localStorage.setItem(SK('ti'),S.triviaIdx||0);
 }
 function svS(){
   _cacheS();
@@ -974,7 +1491,7 @@ function svS(){
   fbDB.ref(`albums/${CC}`).set({
     peg:[...S.peg],ap:S.ap,rep:S.rep,
     shoy:S.shoy,fhoy:S.fhoy,ihoy:S.ihoy||'',isem:S.isem||'',
-    thoy:S.thoy||'',tAciertos:S.tAciertos||0,asHoy:S.asHoy||'',cvHoy:S.cvHoy||'',pendCount:S.pendCount||0
+    thoy:S.thoy||'',tAciertos:S.tAciertos||0,asHoy:S.asHoy||'',cvHoy:S.cvHoy||'',pendCount:S.pendCount||0,triviaIdx:S.triviaIdx||0
   });
 }
 function startSync(){
@@ -1093,9 +1610,7 @@ function buildCG(){
     </div>`;
   }).join('');
   const cp=ECOLE.filter(f=>S.peg.has(f.id)).length;
-  const mp=EMUNDIAL.filter(f=>S.peg.has(f.id)).length;
   const ce=document.getElementById('pgcole');if(ce)ce.textContent=`${cp}/${ECOLE.length}`;
-  const me=document.getElementById('pgmundial');if(me)me.textContent=`${mp}/${EMUNDIAL.length}`;
 }
 
 // PAGE NAV
@@ -1112,7 +1627,7 @@ function renderPg(id){
   const idx=PAGE_ORDER.indexOf(id);
   const prev=idx>0?PAGE_ORDER[idx-1]:null;
   const next=idx<PAGE_ORDER.length-1?PAGE_ORDER[idx+1]:null;
-  if(id==='cole'||id==='mundial'){renderSPg(id,prev,next);return;}
+  if(id==='cole'){renderSPg(id,prev,next);return;}
   const p=PAISES.find(x=>x.id===id);
   const fs=FPP[id]||[];
   const norm=fs.filter(f=>!f.holo);
@@ -1149,7 +1664,7 @@ function renderPg(id){
 }
 
 function renderSPg(id,prev,next){
-  const figs=id==='cole'?ECOLE:EMUNDIAL;
+  const figs=ECOLE;
   const peg=figs.filter(f=>S.peg.has(f.id)).length;
   const falt=figs.length-peg;
   const tit=id==='cole'?'🏫 Colegio San Carlos':'🏆 Mundial 2026';
@@ -1183,18 +1698,16 @@ function renderSPg(id,prev,next){
 function rfig(f){
   const pg=S.peg.has(f.id);const av=S.ap.some(x=>x.id===f.id);
   const cls=`fig ${pg?'peg':''} ${av&&!pg?'avail':''} ${f.holo?'holo':''}`;
-  const ck=pg?`openMod('${f.id}')`:av?`pegFig('${f.id}')`:';';
+  const ck=pg?(f.img?`openZoom('${f.id}')`:`openMod('${f.id}')`):av?`pegFig('${f.id}')`:';';
   let avContent;
   const numBadge=`<div style="position:absolute;top:2px;left:2px;background:rgba(0,71,108,.9);color:var(--dorado);font-size:.38rem;font-weight:900;padding:1px 3px;border-radius:2px;z-index:2">#${f.num}</div>`;
   if(pg){
-    // Pegada: mostrar imagen real
     if(f.img){
-      avContent=`<img src="${f.img}" style="width:100%;height:100%;object-fit:cover">`;
+      avContent=`<img src="${f.img}" style="width:100%;height:100%;object-fit:cover" loading="lazy">`;
     } else {
       avContent=`<div style="font-size:1.2rem">${f.em||f.e||'⭐'}</div>`;
     }
   } else {
-    // No pegada (libre o disponible): mostrar placeholder con info
     avContent=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.1rem;padding:.2rem;text-align:center;width:100%;height:100%">
       <div style="font-size:.48rem;font-weight:900;color:rgba(255,255,255,.7);line-height:1.2">${f.nm||f.nombre||'?'}</div>
       <div style="font-size:.4rem;color:rgba(255,255,255,.4)">${f.gr||'Especial'}</div>
@@ -1204,6 +1717,7 @@ function rfig(f){
   return`<div class="${cls}" onclick="${ck}" id="fig-${f.id}">
     <div class="fav">${avContent}</div>
     ${numBadge}
+    ${pg&&f.img?`<div class="fig-zoom-ico">🔍</div>`:''}
     ${pg?`<div style="position:absolute;top:2px;right:2px;background:rgba(240,192,64,.9);color:#000;font-size:.38rem;font-weight:900;padding:1px 3px;border-radius:2px;z-index:2">✓</div>`:''}
     ${av&&!pg?`<div style="position:absolute;bottom:0;left:0;right:0;background:rgba(228,5,31,.85);color:#fff;font-size:.42rem;font-weight:900;text-align:center;padding:1px">${tx('pg_pegar_lbl')}</div>`:''}
   </div>`;
@@ -1234,22 +1748,22 @@ function pegFig(id){
   // check complete
   const fig=allFigs().find(f=>f.id===id);
   if(fig){
-    const arr=fig.pais==='cole'?ECOLE:fig.pais==='mundial'?EMUNDIAL:FPP[fig.pais];
+    const arr=fig.pais==='cole'?ECOLE:FPP[fig.pais];
     if(arr&&arr.every(f=>S.peg.has(f.id))){snd('completo');toast(tx('toast_completo'));}
   }
 }
 
 // SOBRES
 function getTriviaParaGrado(){
-  const g=parseInt((CC||'1').split('-')[0])||3;
-  const aptas=TRIVIAS.filter(t=>g>=t.nmin&&g<=t.nmax);
-  if(aptas.length<3){
-    const resto=TRIVIAS.filter(t=>!aptas.find(a=>a.id===t.id));
-    const falta=3-aptas.length;
-    for(let i=0;i<falta&&i<resto.length;i++) aptas.push(resto[i]);
-  }
-  const mezc=[...aptas].sort(()=>Math.random()-.5);
-  return mezc.slice(0,3);
+  const g=Math.min(Math.max(parseInt((CC||'1').split('-')[0])||3,1),6);
+  const gData=GRADE_TRIVIAS[String(g)]||GRADE_TRIVIAS['3'];
+  const qs=_lang==='en'?(gData.en.length?gData.en:gData.es):gData.es;
+  const total=qs.length;
+  const idx=S.triviaIdx||0;
+  const result=[];
+  for(let i=0;i<3;i++) result.push(qs[(idx+i)%total]);
+  _nextTriviaIdx=(idx+3)%total;
+  return result;
 }
 let _triviaHecha=false;let _triviaPregs=[];let _triviaIdx=0;let _triviaAciertos=0;
 function updPaqUI(){
@@ -1317,27 +1831,21 @@ function iniciarTrivia(){
   _triviaPregs=getTriviaParaGrado();_triviaIdx=0;_triviaAciertos=0;
   mostrarPreguntaTrivia();
 }
-function getTrivTxt(p){
-  if(_lang==='en'&&TRIVIAS_EN[p.id])return TRIVIAS_EN[p.id];
-  return{q:p.q,ok:p.ok,ops:p.ops};
-}
+let _triviaOps=[];
 function mostrarPreguntaTrivia(){
   const p=_triviaPregs[_triviaIdx];
-  const t=getTrivTxt(p);
-  const ops=[t.ok,...t.ops].sort(()=>Math.random()-.5);
-  const catLbl=_lang==='en'
-    ?{mundial:'🌍 World',escolar:'📚 School',cultura:'💡 Culture'}[p.cat]||p.cat
-    :{mundial:'🌍 Mundial',escolar:'📚 Escolar',cultura:'💡 Cultura'}[p.cat]||p.cat;
+  _triviaOps=[p.ok,...p.ops].sort(()=>Math.random()-.5);
   const progLbl=_lang==='en'?`Question ${_triviaIdx+1} of 3`:`Pregunta ${_triviaIdx+1} de 3`;
   document.getElementById('trivia-overlay').innerHTML=`
     <div class="trivia-card">
-      <div class="trivia-header"><span class="trivia-cat">${catLbl}</span><span class="trivia-prog">${progLbl}</span></div>
+      <div class="trivia-header"><span class="trivia-cat">⚽ Mundial 2026</span><span class="trivia-prog">${progLbl}</span></div>
       <div class="trivia-aciertos">${Array(3).fill(0).map((_,i)=>`<span class="tac ${i<_triviaAciertos?'ok':''}">${i<_triviaAciertos?'⭐':'○'}</span>`).join('')}</div>
-      <div class="trivia-q">${t.q}</div>
-      <div class="trivia-ops">${ops.map(o=>`<button class="trivia-opt" onclick="respTrivia('${o.replace(/'/g,"\\'")}','${t.ok.replace(/'/g,"\\'")}',this)">${o}</button>`).join('')}</div>
+      <div class="trivia-q">${p.q}</div>
+      <div class="trivia-ops">${_triviaOps.map((o,i)=>`<button class="trivia-opt" onclick="respTriviaOpt(${i})">${o}</button>`).join('')}</div>
     </div>`;
   document.getElementById('trivia-overlay').style.display='flex';
 }
+function respTriviaOpt(i){respTrivia(_triviaOps[i],_triviaPregs[_triviaIdx].ok,document.querySelectorAll('.trivia-opt')[i]);}
 function respTrivia(sel,ok,btn){
   const btns=document.querySelectorAll('.trivia-opt');
   btns.forEach(b=>{b.disabled=true;if(b.textContent.trim()===ok)b.classList.add('correct');});
@@ -1352,7 +1860,7 @@ function respTrivia(sel,ok,btn){
 function finTrivia(){
   document.getElementById('trivia-overlay').style.display='none';
   const hoy=new Date().toDateString();
-  S.thoy=hoy;S.tAciertos=_triviaAciertos;
+  S.thoy=hoy;S.tAciertos=_triviaAciertos;S.triviaIdx=_nextTriviaIdx;
   const sobresGanados=_triviaAciertos;
   const posible=Math.min(sobresGanados,5-S.shoy);
   if(sobresGanados===0){
@@ -1391,7 +1899,7 @@ function mostrarFigs(figs){
     if(rep)S.rep.push(f);else S.ap.push(f);
     const d=document.createElement('div');
     d.className=`frc ${rep?'rep':''}`;
-    d.innerHTML=`${f.img?`<img class="frc-img" src="${f.img}">`:`<div class="frc-ico">${f.em}</div>`}<div class="frc-info"><div style="font-size:.6rem;font-weight:900;line-height:1.2;color:#fff">${f.nm}</div><div style="font-size:.5rem;color:rgba(255,255,255,.45)">#${f.num}</div>${rep?'<span class="repbdg">REP</span>':''}</div>`;
+    d.innerHTML=`${f.img?`<img class="frc-img" src="${f.img}" loading="lazy">`:`<div class="frc-ico">${f.em||f.e||'⭐'}</div>`}<div class="frc-info"><div style="font-size:.6rem;font-weight:900;line-height:1.2;color:#fff">${f.nm||f.nombre||'?'}</div><div style="font-size:.5rem;color:rgba(255,255,255,.45)">#${f.num||f.id}</div>${rep?'<span class="repbdg">REP</span>':''}</div>`;
     rev.appendChild(d);
     setTimeout(()=>d.classList.add('show'),i*120+100);
   });
@@ -1418,8 +1926,20 @@ function nextS(){
 function closeSov(){document.getElementById('sovl').classList.remove('active');renderAP();}
 function irPegar(){closeSov();nav('pegar');}
 function genSobre(){
-  const pool=[];PAISES.forEach(p=>FPP[p.id].filter(f=>!f.holo).forEach(f=>pool.push(f)));
-  return Array(5).fill(0).map(()=>pool[Math.floor(Math.random()*pool.length)]);
+  const pool=[];
+  PAISES.forEach(p=>FPP[p.id].filter(f=>!f.holo).forEach(f=>pool.push(f)));
+  // Especiales con menor frecuencia (~2x cada una)
+  ECOLE.forEach(f=>{pool.push({...f,num:f.id,pais:'cole',pos:'Especial',hab:'🏫 San Carlos'});pool.push({...f,num:f.id,pais:'cole',pos:'Especial',hab:'🏫 San Carlos'});});
+  const figs=Array(5).fill(0).map(()=>pool[Math.floor(Math.random()*pool.length)]);
+  // Forzar ~1 repetida cada 2 sobres (50% de probabilidad por sobre)
+  if(Math.random()<0.5){
+    const haveIds=new Set([...S.peg,...S.ap.map(x=>x.id)]);
+    if(haveIds.size>0){
+      const owned=pool.filter(f=>haveIds.has(f.id));
+      if(owned.length>0) figs[Math.floor(Math.random()*5)]=owned[Math.floor(Math.random()*owned.length)];
+    }
+  }
+  return figs;
 }
 function abrirSobres(){
   const n=S.pendCount;
@@ -1444,7 +1964,7 @@ function renderAP(){
     const p=PAISES.find(x=>x.id===f.pais);
     const imgSrc = f.img || 'Figuritas/lote1 (1).png';
     return`<div class="pfig ${FSel===f.id?'sel':''}" onclick="selF('${f.id}')" ondblclick="irAF('${f.id}')" id="pf-${f.id}" title="${f.nm} · Doble click para ir al álbum">
-      <img src="${imgSrc}" style="width:100%;aspect-ratio:3/4;object-fit:cover;display:block;border-radius:10px">
+      <img src="${imgSrc}" style="width:100%;aspect-ratio:3/4;object-fit:cover;display:block;border-radius:10px" loading="lazy">
       <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.85));border-radius:0 0 10px 10px;padding:.3rem .3rem .25rem;text-align:center">
         <div style="font-size:.55rem;font-weight:900;color:#fff;line-height:1.2">${f.nm}</div>
         <div style="font-size:.48rem;color:rgba(255,255,255,.5)">#${f.num}</div>
@@ -1490,8 +2010,7 @@ function doInter(){
 // ESPECIALES
 let _espPag=0;
 const ESP_PAGES=[
-  {tit:'🏫 Colegio San Carlos',figs:()=>ECOLE},
-  {tit:'🏆 Mundial 2026',figs:()=>EMUNDIAL},
+  {tit:'⭐ Figuritas Especiales',figs:()=>ECOLE},
 ];
 function buildEsp(){renderEspPag();}
 function navEsp(dir){
@@ -1515,21 +2034,35 @@ function renderEspPag(){
   document.getElementById('esp-page').innerHTML=`<div class="espg" style="grid-template-columns:repeat(6,1fr);gap:.6rem">${figs.map(f=>rfig(f)).join('')}</div>`;
 }
 
+// ZOOM
+function openZoom(id){
+  const f=allFigs().find(x=>x.id===id);
+  if(!f||!f.img){openMod(id);return;}
+  openZoomImg(f.img,f.nm||f.nombre,id);
+}
+function openZoomImg(src,nombre,modId){
+  document.getElementById('zoom-img').src=src;
+  document.getElementById('zoom-info').innerHTML=`<div style="color:var(--dorado);font-weight:900;font-size:1rem">${nombre||''}</div>${modId?`<button onclick="event.stopPropagation();closeZoom();openMod('${modId}')" style="margin-top:.5rem;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;padding:.4rem .9rem;border-radius:10px;cursor:pointer;font-size:.8rem">ℹ️ Info</button>`:''}`;
+  document.getElementById('zoom-ovl').classList.add('open');
+}
+function closeZoom(){document.getElementById('zoom-ovl').classList.remove('open');}
+
 // MODAL
 function openMod(id){
   const f=allFigs().find(x=>x.id===id);if(!f)return;
   const p=PAISES.find(x=>x.id===f.pais);
+  const paisNombre=p?p.n:(f.pais==='cole'?'San Carlos':'Especial');
   document.getElementById('mcont').innerHTML=`
     <div class="mfc ${f.holo?'holo':''}">
-      <div class="mav">${f.img?`<img src="${f.img}" style="width:70px;height:70px;object-fit:contain;border-radius:8px">`:(f.em||f.e)}</div>
+      <div class="mav">${f.img?`<img src="${f.img}" style="width:70px;height:70px;object-fit:contain;border-radius:8px" loading="lazy">`:(f.em||f.e||'⭐')}</div>
       <h4 style="color:var(--dorado);font-size:1.2rem">${f.nm||f.nombre}</h4>
-      <p style="font-size:.72rem;color:rgba(255,255,255,.5)">#${f.num||f.id} · ${p?p.n:(f.pais==='cole'?'San Carlos':'Mundial')} ${p?p.e:''}</p>
+      <p style="font-size:.72rem;color:rgba(255,255,255,.5)">#${f.num||f.id} · ${paisNombre}</p>
     </div>
     <div class="mstats">
       <div class="msi"><div class="msl">Grado</div><div class="msv" style="font-size:.82rem">${f.gr||'-'}</div></div>
       <div class="msi"><div class="msl">Posición</div><div class="msv" style="font-size:.78rem">${f.pos||'-'}</div></div>
       <div class="msi"><div class="msl">Habilidad</div><div class="msv" style="font-size:.68rem">${f.hab||'-'}</div></div>
-      <div class="msi"><div class="msl">País</div><div class="msv">${p?p.e:'⭐'}</div></div>
+      <div class="msi"><div class="msl">País</div><div class="msv">${p?flagImg(p,20):'⭐'}</div></div>
     </div>
     ${f.holo?'<p style="text-align:center;color:var(--dorado);font-size:.78rem;margin-top:.5rem">✨ HOLOGRÁFICA ESPECIAL ✨</p>':''}
   `;
@@ -1584,9 +2117,17 @@ async function cargarVista(){
 function rfigRO(f){
   const pg=VPEG.has(f.id);
   const cls=`fig ${pg?'peg':''} ${f.holo?'holo':''}`;
-  return`<div class="${cls}" style="cursor:default">
-    <div class="fav">${!pg?`<div class="fvac">❓</div>`:f.em}</div>
-    <div class="ftxt"><div class="fnum">#${f.num}</div><div class="fnm">${f.nm}</div><div class="fgr">${f.gr}</div></div>
+  let avContent;
+  if(!pg){
+    avContent=`<div class="fvac">❓</div>`;
+  } else if(f.img){
+    avContent=`<img src="${f.img}" style="width:100%;height:100%;object-fit:cover" loading="lazy" onclick="openZoomImg('${f.img}','${(f.nm||f.nombre||'').replace(/'/g,'\\\'')}')" style="cursor:pointer">`;
+  } else {
+    avContent=`<div style="font-size:1.2rem">${f.em||f.e||'⭐'}</div>`;
+  }
+  return`<div class="${cls}" style="cursor:${pg&&f.img?'pointer':'default'}" ${pg&&f.img?`onclick="openZoomImg('${f.img}','${(f.nm||f.nombre||'').replace(/'/g,'\\\'')}')"`:''}>
+    <div class="fav">${avContent}</div>
+    <div class="ftxt"><div class="fnum">#${f.num}</div><div class="fnm">${f.nm||f.nombre}</div></div>
   </div>`;
 }
 function verVistaPais(id){
@@ -1717,5 +2258,12 @@ document.addEventListener('keydown',e=>{
     </div>
   </div>
 </div>
+<!-- ZOOM OVERLAY -->
+<div id="zoom-ovl" onclick="closeZoom()">
+  <button class="zoom-close" onclick="event.stopPropagation();closeZoom()">✕</button>
+  <img id="zoom-img" src="" alt="" onclick="event.stopPropagation()">
+  <div class="zoom-info" id="zoom-info" onclick="event.stopPropagation()"></div>
+</div>
+
 </body>
 </html>
