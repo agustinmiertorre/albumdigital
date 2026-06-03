@@ -16,7 +16,12 @@
       "Bash(del student_data.js)",
       "Bash(git rm *)",
       "Bash(git commit *)",
-      "Bash(git reset *)"
+      "Bash(git reset *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\" -Recurse)",
+      "Bash(Select-Object -First 50)",
+      "Bash(Format-Table FullName)",
+      "PowerShell(\\(Get-Content \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" | Measure-Object -Line\\).Lines)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\" -Recurse | Where-Object {-not $_.PSIsContainer} | Select-Object Name, Length | Format-Table -AutoSize)"
     ]
   }
 }
