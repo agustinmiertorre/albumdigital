@@ -1474,7 +1474,7 @@ try{firebase.initializeApp(FB);fbDB=firebase.database();}catch(e){console.warn('
 
 // STATE
 let CC=''; // curso code
-let _syncOff=null;
+let _syncRef=null;let _syncCb=null;
 function SK(k){return`sc_${CC}_${k}`;}
 
 function _parseS(d){
@@ -1536,9 +1536,10 @@ function svS(){
   });
 }
 function startSync(){
-  if(_syncOff)_syncOff();
+  if(_syncRef&&_syncCb){_syncRef.off('value',_syncCb);_syncRef=null;_syncCb=null;}
   if(!fbDB)return;
-  _syncOff=fbDB.ref(`albums/${CC}`).on('value',snap=>{
+  _syncRef=fbDB.ref(`albums/${CC}`);
+  _syncCb=snap=>{
     if(!snap.exists())return;
     const d=snap.val();
     S.peg=new Set(d.peg||[]);
@@ -1549,7 +1550,8 @@ function startSync(){
     S.asHoy=d.asHoy||'';S.cvHoy=d.cvHoy||'';S.pendCount=parseInt(d.pendCount||0);
     _cacheS();
     updProg();buildCG();updPaqUI();renderAP();
-  });
+  };
+  _syncRef.on('value',_syncCb);
 }
 let S={};
 
@@ -1997,8 +1999,10 @@ function closeSov(){
 }
 function irPegar(){closeSov();nav('pegar');}
 // CÓDIGOS PROMOCIONALES
+// multi:true → ilimitado por curso  |  hasta:'YYYY-MM-DD' → expira al final del día
 const PROMO_CODES={
-  // Agregá los códigos acá: 'CODIGO':'activo'
+  'AULATECH':{multi:true, hasta:'2026-06-04'},
+  // Agregá más acá: 'CODIGO':{multi:false}
 };
 function getUsedCodes(){try{return new Set(JSON.parse(localStorage.getItem(SK('uc'))||'[]'));}catch(e){return new Set();}}
 function addUsedCode(c){const u=getUsedCodes();u.add(c);localStorage.setItem(SK('uc'),JSON.stringify([...u]));}
@@ -2008,13 +2012,16 @@ function usarCodigo(){
   const code=(inp.value||'').trim().toUpperCase();
   msg.style.display='none';
   if(!code)return;
-  if(getUsedCodes().has(code)){
+  const def=PROMO_CODES[code];
+  if(!def){msg.style.cssText='display:block;color:var(--rojo)';msg.textContent='❌ Código inválido.';return;}
+  if(def.hasta&&new Date().toISOString().slice(0,10)>def.hasta){
+    msg.style.cssText='display:block;color:var(--rojo)';msg.textContent='❌ Este código ya expiró.';return;
+  }
+  if(!def.multi&&getUsedCodes().has(code)){
     msg.style.cssText='display:block;color:var(--rojo)';msg.textContent='❌ Este código ya fue usado en tu curso.';return;
   }
-  if(!PROMO_CODES[code]){
-    msg.style.cssText='display:block;color:var(--rojo)';msg.textContent='❌ Código inválido.';return;
-  }
-  addUsedCode(code);inp.value='';
+  if(!def.multi)addUsedCode(code);
+  inp.value='';
   S.pendCount++;svS();updPaqUI();
   msg.style.cssText='display:block;color:var(--dorado)';msg.textContent='🎉 ¡Código válido! Ganaste 1 sobre.';
   setTimeout(()=>{msg.style.display='none';},3500);
