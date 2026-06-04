@@ -302,6 +302,33 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
 .rep-card img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;}
 .rep-card .rep-lbl{font-size:.43rem;color:rgba(255,255,255,.45);padding:2px 3px;line-height:1.2;}
 
+/* EPIC ANIM */
+#epic-ovl{position:fixed;inset:0;z-index:400;display:none;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;}
+#epic-ovl.show{display:flex;}
+.epic-bg{position:absolute;inset:0;animation:epicbg 1.8s ease-in-out infinite alternate;}
+@keyframes epicbg{0%{opacity:.8}100%{opacity:1}}
+.epic-rays{position:absolute;inset:0;background:conic-gradient(from 0deg at 50% 50%,rgba(255,215,0,.18) 0deg,rgba(255,0,200,.12) 60deg,rgba(0,220,255,.15) 120deg,rgba(0,255,120,.1) 180deg,rgba(255,215,0,.18) 240deg,rgba(180,0,255,.14) 300deg,rgba(255,215,0,.18) 360deg);animation:epicrays 4s linear infinite;}
+@keyframes epicrays{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+.epic-shimmer{position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 12px,rgba(255,255,255,.03) 12px,rgba(255,255,255,.03) 24px);animation:epicshim .7s linear infinite;}
+@keyframes epicshim{0%{background-position:0 0}100%{background-position:34px 34px}}
+.epic-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.epic-p{position:absolute;border-radius:50%;animation:epicfall linear forwards;}
+@keyframes epicfall{0%{transform:translateY(-10px) rotate(0) scale(1);opacity:1}80%{opacity:.8}100%{transform:translateY(105vh) rotate(900deg) scale(.3);opacity:0}}
+.epic-card{position:relative;z-index:2;text-align:center;padding:1.5rem;animation:epicpop .55s cubic-bezier(.34,1.56,.64,1) forwards;}
+@keyframes epicpop{0%{transform:scale(0) rotate(-12deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+.epic-img-wrap{position:relative;display:inline-block;margin-bottom:.8rem;}
+.epic-img{width:min(190px,52vw);border-radius:18px;display:block;}
+.epic-img.holo-anim{animation:epicholo 1.6s linear infinite;box-shadow:0 0 50px rgba(255,215,0,.9),0 0 100px rgba(200,0,255,.5),0 0 160px rgba(0,200,255,.3);}
+@keyframes epicholo{0%{filter:hue-rotate(0deg) brightness(1.3) saturate(1.5)}50%{filter:hue-rotate(180deg) brightness(1.6) saturate(2)}100%{filter:hue-rotate(360deg) brightness(1.3) saturate(1.5)}}
+.epic-img.spec-anim{animation:epicspecglow 1s ease-in-out infinite alternate;box-shadow:0 0 40px rgba(240,192,64,.8),0 0 80px rgba(228,5,31,.4);}
+@keyframes epicspecglow{0%{filter:brightness(1.1) saturate(1.2)}100%{filter:brightness(1.4) saturate(1.5)}}
+.epic-ring{position:absolute;inset:-12px;border-radius:24px;animation:epicring 1.2s ease-in-out infinite alternate;}
+@keyframes epicring{0%{box-shadow:0 0 0 3px rgba(255,215,0,.6),0 0 30px rgba(255,215,0,.3)}100%{box-shadow:0 0 0 6px rgba(255,215,0,1),0 0 60px rgba(255,215,0,.7)}}
+.epic-title{font-size:clamp(1.3rem,6vw,2.2rem);font-weight:900;letter-spacing:2px;margin:.4rem 0 .2rem;animation:epictitglow 1s ease-in-out infinite alternate;}
+@keyframes epictitglow{0%{text-shadow:0 0 20px currentColor}100%{text-shadow:0 0 50px currentColor,0 0 90px currentColor}}
+.epic-sub{font-size:.95rem;color:rgba(255,255,255,.85);font-weight:700;}
+.epic-tap{font-size:.65rem;color:rgba(255,255,255,.4);margin-top:.9rem;letter-spacing:1px;}
+
 /* ACCIONES SOBRES */
 .sobre-accion-card{display:flex;align-items:center;gap:.8rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:.9rem 1rem;margin-bottom:.5rem;}
 .sac-ico{font-size:1.8rem;flex-shrink:0;}
@@ -1490,10 +1517,11 @@ let fbDB=null;
 try{firebase.initializeApp(FB);fbDB=firebase.database();}catch(e){console.warn('Firebase no configurado, modo local');}
 // Carga settings de admin desde Firebase (códigos, contraseña, max packs, trivia extra)
 (async()=>{if(!fbDB)return;try{
-  const[cs,st,tr]=await Promise.all([fbDB.ref('admin/codes').once('value'),fbDB.ref('admin/settings').once('value'),fbDB.ref('admin/trivia').once('value')]);
+  const[cs,st,tr,th]=await Promise.all([fbDB.ref('admin/codes').once('value'),fbDB.ref('admin/settings').once('value'),fbDB.ref('admin/trivia').once('value'),fbDB.ref('admin/trivia-hidden').once('value')]);
   if(cs.exists())Object.assign(PROMO_CODES,cs.val()||{});
   if(st.exists()){const s=st.val();if(s.pass)ADMIN_PASS=s.pass;if(s.maxPacks)MAX_PACKS_DIA=parseInt(s.maxPacks)||5;}
   if(tr.exists()){const tv=tr.val();Object.keys(tv).forEach(key=>{const[g,lang]=key.split('-');if(GRADE_TRIVIAS[g]&&GRADE_TRIVIAS[g][lang])(tv[key]||[]).forEach(q=>GRADE_TRIVIAS[g][lang].push(q));});}
+  if(th.exists()){const tv=th.val();Object.keys(tv).forEach(key=>{TRIVIA_HIDDEN[key]=tv[key]||[];});}
 }catch(e){}})();
 // ─────────────────────────────────────────────────────────────────
 
@@ -1559,6 +1587,12 @@ function svS(){
     shoy:S.shoy,fhoy:S.fhoy,ihoy:S.ihoy||'',isem:S.isem||'',
     thoy:S.thoy||'',tAciertos:S.tAciertos||0,asHoy:S.asHoy||'',cvHoy:S.cvHoy||'',pendCount:S.pendCount||0,triviaIdx:S.triviaIdx||0
   });
+  // Guardar startDate si hay actividad y no está registrado
+  if(S.peg.size>0){
+    fbDB.ref(`albums/${CC}/startDate`).once('value').then(snap=>{
+      if(!snap.exists())fbDB.ref(`albums/${CC}/startDate`).set(new Date().toISOString().slice(0,10));
+    }).catch(()=>{});
+  }
 }
 function startSync(){
   if(_syncRef&&_syncCb){_syncRef.off('value',_syncCb);_syncRef=null;_syncCb=null;}
@@ -1840,14 +1874,61 @@ function pegFig(id){
     const arr=fig.pais==='cole'?ECOLE:FPP[fig.pais];
     if(arr&&arr.every(f=>S.peg.has(f.id))){snd('completo');toast(tx('toast_completo'));}
   }
+  // epic animation for holos and especiales
+  if(fig&&(fig.holo||fig.pais==='cole'))setTimeout(()=>showEpicAnim(fig),180);
+}
+let _epicTimer=null;
+function showEpicAnim(fig){
+  const ovl=document.getElementById('epic-ovl');
+  const img=document.getElementById('epic-img');
+  const title=document.getElementById('epic-title');
+  const sub=document.getElementById('epic-sub');
+  const bg=document.getElementById('epic-bg');
+  const pts=document.getElementById('epic-pts');
+  img.src=fig.img||'';
+  img.className='epic-img';
+  if(fig.holo){
+    img.classList.add('holo-anim');
+    if(fig.pais&&fig.pais!=='cole'){title.textContent='🛡️ ¡ESCUDO HOLOGRÁFICO!';title.style.color='#a0f0ff';}
+    else{title.textContent='✨ ¡FIGURITA HOLOGRÁFICA!';title.style.color='#e0aaff';}
+    bg.style.background='radial-gradient(ellipse at 50% 40%,rgba(0,0,0,.92) 30%,rgba(80,0,120,.6) 70%,rgba(0,40,80,.5) 100%)';
+  }else{
+    img.classList.add('spec-anim');
+    title.textContent='⭐ ¡FIGURITA ESPECIAL!';title.style.color='var(--dorado)';
+    bg.style.background='radial-gradient(ellipse at 50% 40%,rgba(0,0,0,.92) 30%,rgba(80,20,0,.55) 70%,rgba(0,20,50,.5) 100%)';
+  }
+  sub.textContent=fig.nm||fig.nombre||'Especial San Carlos';
+  // particles
+  pts.innerHTML='';
+  const cols=fig.holo?['#ff0','#f0f','#0ff','#0f0','#fa0','#fff','#f88','#8ff']:['#f0c040','#e4051f','#fff','#ffa500','#ffdd77'];
+  const shapes=['50%','4px','2px'];
+  for(let i=0;i<40;i++){
+    const p=document.createElement('div');
+    p.className='epic-p';
+    const sz=4+Math.random()*10;
+    p.style.cssText=`left:${Math.random()*100}%;top:${-20-Math.random()*30}px;background:${cols[i%cols.length]};width:${sz}px;height:${sz}px;border-radius:${shapes[i%3]};animation-duration:${1.2+Math.random()*2.2}s;animation-delay:${Math.random()*.9}s`;
+    pts.appendChild(p);
+  }
+  ovl.classList.add('show');
+  if(_epicTimer)clearTimeout(_epicTimer);
+  _epicTimer=setTimeout(closeEpic,3200);
+}
+function closeEpic(){
+  const ovl=document.getElementById('epic-ovl');
+  ovl.classList.remove('show');
+  document.getElementById('epic-pts').innerHTML='';
+  if(_epicTimer)clearTimeout(_epicTimer);_epicTimer=null;
 }
 
 // SOBRES
 function getTriviaParaGrado(){
   const g=Math.min(Math.max(parseInt((CC||'1').split('-')[0])||3,1),6);
   const gData=GRADE_TRIVIAS[String(g)]||GRADE_TRIVIAS['3'];
-  const qs=_lang==='en'?(gData.en.length?gData.en:gData.es):gData.es;
-  const total=qs.length;
+  const rawQs=_lang==='en'?(gData.en.length?gData.en:gData.es):gData.es;
+  const hKey=`${g}-${_lang==='en'?'en':'es'}`;
+  const hidSet=new Set(TRIVIA_HIDDEN[hKey]||[]);
+  const qs=rawQs.filter(q=>!hidSet.has(q.q));
+  const total=Math.max(qs.length,1);
   const idx=S.triviaIdx||0;
   const result=[];
   for(let i=0;i<3;i++) result.push(qs[(idx+i)%total]);
@@ -2029,10 +2110,11 @@ let PROMO_CODES={
   'AULATECH':{multi:true, hasta:'2026-06-04'},
   // Agregá más acá o gestioná desde el panel Admin
 };
+let TRIVIA_HIDDEN={};
 let MAX_PACKS_DIA=5;
 function getUsedCodes(){try{return new Set(JSON.parse(localStorage.getItem(SK('uc'))||'[]'));}catch(e){return new Set();}}
 function addUsedCode(c){const u=getUsedCodes();u.add(c);localStorage.setItem(SK('uc'),JSON.stringify([...u]));}
-function usarCodigo(){
+async function usarCodigo(){
   const inp=document.getElementById('promo-inp');
   const msg=document.getElementById('code-msg');
   const code=(inp.value||'').trim().toUpperCase();
@@ -2043,10 +2125,20 @@ function usarCodigo(){
   if(def.hasta&&new Date().toISOString().slice(0,10)>def.hasta){
     msg.style.cssText='display:block;color:var(--rojo)';msg.textContent='❌ Este código ya expiró.';return;
   }
-  if(!def.multi&&getUsedCodes().has(code)){
-    msg.style.cssText='display:block;color:var(--rojo)';msg.textContent='❌ Este código ya fue usado en tu curso.';return;
+  if(def.global){
+    // uso único global: verificar en Firebase
+    if(!fbDB){msg.style.cssText='display:block;color:var(--rojo)';msg.textContent='❌ Se requiere conexión para este código.';return;}
+    try{
+      const snap=await fbDB.ref(`admin/codes/${code}/usedAt`).once('value');
+      if(snap.exists()){msg.style.cssText='display:block;color:var(--rojo)';msg.textContent='❌ Este código ya fue utilizado por alguien.';return;}
+      await fbDB.ref(`admin/codes/${code}/usedAt`).set(new Date().toISOString());
+    }catch(e){msg.style.cssText='display:block;color:var(--rojo)';msg.textContent='❌ Error al verificar el código.';return;}
+  }else{
+    if(!def.multi&&getUsedCodes().has(code)){
+      msg.style.cssText='display:block;color:var(--rojo)';msg.textContent='❌ Este código ya fue usado en tu curso.';return;
+    }
+    if(!def.multi)addUsedCode(code);
   }
-  if(!def.multi)addUsedCode(code);
   inp.value='';
   S.pendCount++;svS();updPaqUI();
   msg.style.cssText='display:block;color:var(--dorado)';msg.textContent='🎉 ¡Código válido! Ganaste 1 sobre.';
@@ -2326,18 +2418,26 @@ async function loadAdminData(){
   for(let g=1;g<=6;g++) Object.keys(DN).forEach(d=>cursos.push(`${g}-${d}`));
   const cards=await Promise.all(cursos.map(async cc=>{
     const[g,d]=cc.split('-');const lbl=`${g}° ${DN[d]||d}`;
-    let pegCount=0,repCount=0,apCount=0;
+    let pegCount=0,repCount=0,apCount=0,startDate=null;
     if(fbDB){try{
       const snap=await fbDB.ref(`albums/${cc}`).get();
-      if(snap.exists()){const v=snap.val();pegCount=(v.peg||[]).length;repCount=(v.rep||[]).length;apCount=(v.ap||[]).length;}
+      if(snap.exists()){const v=snap.val();pegCount=(v.peg||[]).length;repCount=(v.rep||[]).length;apCount=(v.ap||[]).length;startDate=v.startDate||null;}
     }catch(e){}}
     const pct=Math.round(pegCount/TOTAL*100);
+    let estimStr='—';
+    if(pegCount>=TOTAL){estimStr='🏆 ¡Completo!';}
+    else if(startDate&&pegCount>0){
+      const daysElap=Math.max(1,(Date.now()-new Date(startDate).getTime())/86400000);
+      const rate=pegCount/daysElap;
+      if(rate>0){const d=Math.ceil((TOTAL-pegCount)/rate);estimStr=`~${d} día${d!==1?'s':''}`;}}
+    else if(pegCount>0){estimStr='calculando...';}
     return`<div class="acard ${pct===100?'comp':''}">
       <h4>${lbl}</h4>
       <div class="apct">${pct}%</div>
       <div class="abarra"><div class="afill" style="width:${pct}%"></div></div>
       <div class="aprog">${pegCount}/${TOTAL} pegadas</div>
-      <div style="font-size:.6rem;color:rgba(255,255,255,.35);margin-bottom:.2rem">${apCount} por pegar · ${repCount} repetidas</div>
+      <div style="font-size:.6rem;color:rgba(255,255,255,.35);margin:.1rem 0">${apCount} por pegar · ${repCount} repetidas</div>
+      <div style="font-size:.65rem;color:rgba(255,215,0,.75);margin-bottom:.3rem">⏱ ${estimStr} para completar</div>
       <button class="areset" onclick="resetCurso('${cc}','${lbl}')">🗑️ Resetear</button>
     </div>`;
   }));
@@ -2364,19 +2464,20 @@ async function loadCodigosAdmin(){
     const def=all[code];const isFirebase=!!fbCodes[code];
     return`<div class="arow">
       <span style="font-weight:900;color:var(--dorado);min-width:80px">${code}</span>
-      <span style="font-size:.68rem;color:rgba(255,255,255,.45);flex:1">${def.multi?'♾️ Ilimitado':'1️⃣ Un uso'}${def.hasta?' · 📅'+def.hasta:''}</span>
+      <span style="font-size:.68rem;color:rgba(255,255,255,.45);flex:1">${def.global?'🌐 Único global'+(def.usedAt?' · ✓ Ya usado':''):def.multi?'♾️ Ilimitado':'1️⃣ Un uso por curso'}${def.hasta?' · 📅'+def.hasta:''}</span>
       ${isFirebase?`<button class="acbtn red" onclick="deleteCodigo('${code}')">✕</button>`:`<span style="font-size:.6rem;color:rgba(255,255,255,.25)">default</span>`}
     </div>`;
   }).join('')}</div>`;
 }
 async function saveNewCodigo(){
   const code=(document.getElementById('nc-code').value||'').trim().toUpperCase();
-  const multi=document.querySelector('input[name="nc-multi"]:checked')?.value==='true';
+  const multiVal=document.querySelector('input[name="nc-multi"]:checked')?.value||'false';
   const hasta=document.getElementById('nc-hasta').value||'';
   const msg=document.getElementById('nc-msg');
   if(!code){msg.style.cssText='display:block;color:var(--rojo)';msg.textContent='❌ Ingresá un código';return;}
   if(!fbDB){msg.style.cssText='display:block;color:var(--rojo)';msg.textContent='❌ Firebase no conectado';return;}
-  const def={multi};if(hasta)def.hasta=hasta;
+  const def=multiVal==='global'?{multi:false,global:true}:multiVal==='true'?{multi:true}:{multi:false};
+  if(hasta)def.hasta=hasta;
   try{
     await fbDB.ref(`admin/codes/${code}`).set(def);
     PROMO_CODES[code]=def;
@@ -2394,13 +2495,24 @@ async function deleteCodigo(code){
 }
 
 // ── TRIVIA ───────────────────────────────────────────────────────
+let _triviaBaseQs=[];
 function loadTriviaAdmin(){
   const g=document.getElementById('tri-grado').value;
   const lang=document.getElementById('tri-lang').value;
-  const qs=(GRADE_TRIVIAS[g]||{})[lang]||[];
+  const allQs=(GRADE_TRIVIAS[g]||{})[lang]||[];
+  const hKey=`${g}-${lang}`;
+  const hidSet=new Set(TRIVIA_HIDDEN[hKey]||[]);
+  _triviaBaseQs=allQs;
   const exDiv=document.getElementById('trivia-existing');
-  exDiv.innerHTML=qs.length
-    ?qs.map((q,i)=>`<div style="border-bottom:1px solid rgba(255,255,255,.07);padding:.28rem 0;font-size:.7rem"><span style="color:rgba(255,255,255,.3)">${i+1}.</span> ${q.q} <span style="color:var(--dorado);font-size:.65rem"> ✓ ${q.ok}</span></div>`).join('')
+  exDiv.innerHTML=allQs.length
+    ?allQs.map((q,i)=>{
+      const oculta=hidSet.has(q.q);
+      return`<div style="border-bottom:1px solid rgba(255,255,255,.07);padding:.3rem 0;font-size:.7rem;display:flex;align-items:center;gap:.3rem;${oculta?'opacity:.32':''}">
+        <span style="color:rgba(255,255,255,.3);flex-shrink:0;min-width:18px">${i+1}.</span>
+        <span style="flex:1;line-height:1.3">${q.q}<span style="color:var(--dorado);font-size:.62rem"> ✓${q.ok}</span></span>
+        <button class="acbtn ${oculta?'gold':'red'}" onclick="toggleTriviaBase('${g}','${lang}',${i})" style="padding:.18rem .42rem;font-size:.6rem;flex-shrink:0" title="${oculta?'Restaurar pregunta':'Ocultar pregunta'}">${oculta?'↩':'✕'}</button>
+      </div>`;
+    }).join('')
     :'<p style="color:rgba(255,255,255,.22);font-size:.7rem;padding:.3rem 0">Sin preguntas para este grado/idioma.</p>';
   loadTriviaExtra(g,lang);
 }
@@ -2454,6 +2566,20 @@ async function deleteTriviaQ(g,lang,idx){
     await fbDB.ref(`admin/trivia/${g}-${lang}`).set(arr.length?arr:null);
     loadTriviaAdmin();
   }catch(e){toast('❌ Error al eliminar');}
+}
+
+async function toggleTriviaBase(g,lang,idx){
+  if(!fbDB){toast('⚠️ Firebase no conectado');return;}
+  const q=_triviaBaseQs[idx];if(!q)return;
+  const hKey=`${g}-${lang}`;
+  const hidden=[...(TRIVIA_HIDDEN[hKey]||[])];
+  const pos=hidden.indexOf(q.q);
+  if(pos>=0){hidden.splice(pos,1);}else{hidden.push(q.q);}
+  TRIVIA_HIDDEN[hKey]=hidden;
+  try{
+    await fbDB.ref(`admin/trivia-hidden/${hKey}`).set(hidden.length?hidden:null);
+    loadTriviaAdmin();
+  }catch(e){toast('❌ Error al guardar');}
 }
 
 // ── AJUSTES ──────────────────────────────────────────────────────
@@ -2577,9 +2703,10 @@ document.addEventListener('keydown',e=>{
           <span class="alabel">Código</span>
           <input class="ainp" id="nc-code" placeholder="Ej: MUNDIAL2026" oninput="this.value=this.value.toUpperCase()">
           <span class="alabel">Tipo</span>
-          <div style="display:flex;gap:1rem;margin-bottom:.6rem;flex-wrap:wrap">
-            <label style="display:flex;align-items:center;gap:.35rem;font-size:.82rem;color:#fff;cursor:pointer"><input type="radio" name="nc-multi" value="false" checked> Un solo uso por curso</label>
-            <label style="display:flex;align-items:center;gap:.35rem;font-size:.82rem;color:#fff;cursor:pointer"><input type="radio" name="nc-multi" value="true"> Ilimitado (reutilizable)</label>
+          <div style="display:flex;gap:.6rem;margin-bottom:.6rem;flex-wrap:wrap;flex-direction:column">
+            <label style="display:flex;align-items:center;gap:.35rem;font-size:.82rem;color:#fff;cursor:pointer"><input type="radio" name="nc-multi" value="false" checked> 1️⃣ Un uso por curso</label>
+            <label style="display:flex;align-items:center;gap:.35rem;font-size:.82rem;color:#fff;cursor:pointer"><input type="radio" name="nc-multi" value="true"> ♾️ Ilimitado (reutilizable)</label>
+            <label style="display:flex;align-items:center;gap:.35rem;font-size:.82rem;color:#fff;cursor:pointer"><input type="radio" name="nc-multi" value="global"> 🌐 Único global (1 uso en toda la app)</label>
           </div>
           <span class="alabel">Vence el (opcional)</span>
           <input class="ainp" id="nc-hasta" type="date">
@@ -2593,7 +2720,7 @@ document.addEventListener('keydown',e=>{
           <div style="flex:1"><span class="alabel">Grado</span><select class="ainp" id="tri-grado" onchange="loadTriviaAdmin()" style="margin:0"><option value="1">1° Grado</option><option value="2">2° Grado</option><option value="3">3° Grado</option><option value="4">4° Grado</option><option value="5">5° Grado</option><option value="6">6° Grado</option></select></div>
           <div style="flex:0 0 72px"><span class="alabel">Idioma</span><select class="ainp" id="tri-lang" onchange="loadTriviaAdmin()" style="margin:0"><option value="es">ES</option><option value="en">EN</option></select></div>
         </div>
-        <div style="font-size:.7rem;color:rgba(255,255,255,.35);margin-bottom:.3rem">Preguntas actuales (solo lectura):</div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.35);margin-bottom:.3rem">Preguntas actuales (✕ ocultar · ↩ restaurar):</div>
         <div id="trivia-existing" style="max-height:175px;overflow-y:auto;background:rgba(0,0,0,.25);border-radius:8px;padding:.4rem;margin-bottom:.5rem"></div>
         <div class="aform">
           <div style="font-size:.82rem;font-weight:900;color:var(--dorado);margin-bottom:.7rem">+ Agregar pregunta</div>
@@ -2628,6 +2755,22 @@ document.addEventListener('keydown',e=>{
         </div>
       </div>
     </div>
+  </div>
+</div>
+<!-- EPIC ANIM OVERLAY -->
+<div id="epic-ovl" onclick="closeEpic()">
+  <div class="epic-bg" id="epic-bg"></div>
+  <div class="epic-rays"></div>
+  <div class="epic-shimmer"></div>
+  <div class="epic-particles" id="epic-pts"></div>
+  <div class="epic-card">
+    <div class="epic-img-wrap">
+      <div class="epic-ring"></div>
+      <img id="epic-img" src="" class="epic-img" alt="">
+    </div>
+    <div class="epic-title" id="epic-title"></div>
+    <div class="epic-sub" id="epic-sub"></div>
+    <div class="epic-tap">Tocá para cerrar</div>
   </div>
 </div>
 <!-- ZOOM OVERLAY -->
