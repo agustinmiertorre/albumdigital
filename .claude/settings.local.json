@@ -21,7 +21,8 @@
       "Bash(Select-Object -First 50)",
       "Bash(Format-Table FullName)",
       "PowerShell(\\(Get-Content \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" | Measure-Object -Line\\).Lines)",
-      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\" -Recurse | Where-Object {-not $_.PSIsContainer} | Select-Object Name, Length | Format-Table -AutoSize)"
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\" -Recurse | Where-Object {-not $_.PSIsContainer} | Select-Object Name, Length | Format-Table -AutoSize)",
+      "Bash(python3 -c ' *)"
     ]
   }
 }
