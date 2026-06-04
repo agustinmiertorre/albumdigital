@@ -284,6 +284,23 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
 .acard .afill{height:100%;background:linear-gradient(90deg,var(--dorado),var(--rojo));border-radius:5px;transition:width .8s;}
 .areset{background:rgba(228,5,31,.15);border:1px solid rgba(228,5,31,.5);color:var(--rojo);padding:.3rem .7rem;border-radius:7px;font-size:.68rem;font-weight:900;cursor:pointer;margin-top:.4rem;font-family:inherit;transition:.2s;}
 .areset:hover{background:var(--rojo);color:#fff;}
+.atab{background:none;border:none;border-bottom:2px solid transparent;color:rgba(255,255,255,.45);padding:.6rem 1rem;font-family:inherit;font-size:.78rem;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:.15s;}
+.atab.active{color:var(--dorado);border-bottom-color:var(--dorado);}
+.atab:hover:not(.active){color:#fff;}
+.ainp{width:100%;padding:.6rem .8rem;border-radius:8px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:#fff;font-family:inherit;font-size:.85rem;margin-bottom:.5rem;outline:none;box-sizing:border-box;}
+.ainp::placeholder{color:rgba(255,255,255,.28);}
+.ainp option,.ainp optgroup{background:#001f33;}
+.acbtn{border:none;padding:.5rem 1rem;border-radius:8px;font-size:.78rem;font-weight:900;cursor:pointer;font-family:inherit;transition:.15s;}
+.acbtn.gold{background:linear-gradient(135deg,var(--dorado),#c8922a);color:#000;}
+.acbtn.red{background:linear-gradient(135deg,var(--rojo),#8b0000);color:#fff;padding:.28rem .55rem;}
+.aform{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:.9rem;margin-top:.8rem;}
+.alabel{font-size:.62rem;color:rgba(255,255,255,.38);display:block;margin-bottom:.18rem;letter-spacing:.5px;text-transform:uppercase;}
+.arow{display:flex;align-items:center;gap:.5rem;padding:.42rem 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:.8rem;}
+.arow:last-child{border-bottom:none;}
+.rep-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:.4rem;margin-top:.4rem;}
+.rep-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;overflow:hidden;text-align:center;}
+.rep-card img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;}
+.rep-card .rep-lbl{font-size:.43rem;color:rgba(255,255,255,.45);padding:2px 3px;line-height:1.2;}
 
 /* ACCIONES SOBRES */
 .sobre-accion-card{display:flex;align-items:center;gap:.8rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:.9rem 1rem;margin-bottom:.5rem;}
@@ -477,6 +494,7 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
         <div class="ifboxes" id="isu" style="margin:.5rem 0"></div>
         <button class="ibtn" id="binter" onclick="doInter()" disabled>🔄 CANJEAR POR 1 SOBRE</button>
       </div>
+      <div id="rep-visual"></div>
     </div>
   </div>
 
@@ -1470,6 +1488,13 @@ const FB={
 };
 let fbDB=null;
 try{firebase.initializeApp(FB);fbDB=firebase.database();}catch(e){console.warn('Firebase no configurado, modo local');}
+// Carga settings de admin desde Firebase (códigos, contraseña, max packs, trivia extra)
+(async()=>{if(!fbDB)return;try{
+  const[cs,st,tr]=await Promise.all([fbDB.ref('admin/codes').once('value'),fbDB.ref('admin/settings').once('value'),fbDB.ref('admin/trivia').once('value')]);
+  if(cs.exists())Object.assign(PROMO_CODES,cs.val()||{});
+  if(st.exists()){const s=st.val();if(s.pass)ADMIN_PASS=s.pass;if(s.maxPacks)MAX_PACKS_DIA=parseInt(s.maxPacks)||5;}
+  if(tr.exists()){const tv=tr.val();Object.keys(tv).forEach(key=>{const[g,lang]=key.split('-');if(GRADE_TRIVIAS[g]&&GRADE_TRIVIAS[g][lang])(tv[key]||[]).forEach(q=>GRADE_TRIVIAS[g][lang].push(q));});}
+}catch(e){}})();
 // ─────────────────────────────────────────────────────────────────
 
 // STATE
@@ -1879,19 +1904,19 @@ function renderSobresUI(){
     </div>`;
 }
 function darSobreAsist(){
-  if(S.shoy>=5){toast(tx('lbl_limite'));return;}
+  if(S.shoy>=MAX_PACKS_DIA){toast(tx('lbl_limite'));return;}
   const hoy=new Date().toDateString();
   S.asHoy=hoy;S.shoy+=1;S.pendCount++;svS();updPaqUI();
   toast(tx('toast_asist'));
 }
 function darSobreConv(){
-  if(S.shoy>=5){toast(tx('lbl_limite'));return;}
+  if(S.shoy>=MAX_PACKS_DIA){toast(tx('lbl_limite'));return;}
   const hoy=new Date().toDateString();
   S.cvHoy=hoy;S.shoy+=1;S.pendCount++;svS();updPaqUI();
   toast(tx('toast_conv'));
 }
 function iniciarTrivia(){
-  if(S.shoy>=5){toast('🚫 Límite diario alcanzado');return;}
+  if(S.shoy>=MAX_PACKS_DIA){toast('🚫 Límite diario alcanzado');return;}
   _triviaPregs=getTriviaParaGrado();_triviaIdx=0;_triviaAciertos=0;
   mostrarPreguntaTrivia();
 }
@@ -2000,10 +2025,11 @@ function closeSov(){
 function irPegar(){closeSov();nav('pegar');}
 // CÓDIGOS PROMOCIONALES
 // multi:true → ilimitado por curso  |  hasta:'YYYY-MM-DD' → expira al final del día
-const PROMO_CODES={
+let PROMO_CODES={
   'AULATECH':{multi:true, hasta:'2026-06-04'},
-  // Agregá más acá: 'CODIGO':{multi:false}
+  // Agregá más acá o gestioná desde el panel Admin
 };
+let MAX_PACKS_DIA=5;
 function getUsedCodes(){try{return new Set(JSON.parse(localStorage.getItem(SK('uc'))||'[]'));}catch(e){return new Set();}}
 function addUsedCode(c){const u=getUsedCodes();u.add(c);localStorage.setItem(SK('uc'),JSON.stringify([...u]));}
 function usarCodigo(){
@@ -2103,6 +2129,13 @@ function renderI(){
   } else {
     mis.innerHTML=reps.map(f=>`<div class="ifb" title="${f.nm}">${f.em||'🎴'}</div>`).join('');
     su.innerHTML=`<div class="ifb oculta"></div>`;binter.disabled=false;
+  }
+  // Grilla visual de todas las repetidas
+  const rv=document.getElementById('rep-visual');
+  if(rv){
+    if(S.rep.length>0){
+      rv.innerHTML=`<div style="margin-top:1rem"><div style="font-size:.7rem;color:rgba(255,255,255,.38);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:.45rem">📋 Todas tus repetidas (${S.rep.length})</div><div class="rep-grid">${S.rep.map(f=>`<div class="rep-card">${f.img?`<img src="${f.img}" loading="lazy">`:`<div style="font-size:1.6rem;padding:.45rem">${f.em||f.e||'🎴'}</div>`}<div class="rep-lbl">${f.nm||f.nombre||'?'}</div></div>`).join('')}</div></div>`;
+    }else{rv.innerHTML='';}
   }
 }
 function doInter(){
@@ -2250,14 +2283,15 @@ function verVistaPais(id){
 }
 
 // ── ADMIN ─────────────────────────────────────────────────────────
-const ADMIN_PASS='12345';
+let ADMIN_PASS='12345';
+
 function adminLogin(){
   const p=document.getElementById('apass').value;
   if(p!==ADMIN_PASS){document.getElementById('aerr').style.display='block';return;}
   document.getElementById('aerr').style.display='none';
   document.getElementById('admin-gate').style.display='none';
   document.getElementById('admin-panel').style.display='flex';
-  loadAdminData();
+  adminTab('cursos');
 }
 function resetAdmin(){
   document.getElementById('apass').value='';
@@ -2265,22 +2299,46 @@ function resetAdmin(){
   document.getElementById('admin-gate').style.display='flex';
   document.getElementById('admin-panel').style.display='none';
 }
+
+let _atab='cursos';
+function adminTab(tab){
+  _atab=tab;
+  ['cursos','codigos','trivia','ajustes'].forEach(t=>{
+    document.getElementById(`atab-${t}`).style.display=t===tab?'block':'none';
+    const b=document.getElementById(`atb-${t}`);if(b)b.classList.toggle('active',t===tab);
+  });
+  if(tab==='cursos')loadAdminData();
+  else if(tab==='codigos')loadCodigosAdmin();
+  else if(tab==='trivia')loadTriviaAdmin();
+  else if(tab==='ajustes')loadAjustes();
+}
+function adminRefresh(){
+  if(_atab==='cursos')loadAdminData();
+  else if(_atab==='codigos')loadCodigosAdmin();
+  else if(_atab==='trivia')loadTriviaAdmin();
+}
+
+// ── CURSOS ───────────────────────────────────────────────────────
 async function loadAdminData(){
   const grid=document.getElementById('admin-grid');
-  grid.innerHTML=`<p style="color:rgba(255,255,255,.45);grid-column:1/-1;text-align:center;padding:2rem">☁️ Cargando datos...</p>`;
+  grid.innerHTML=`<p style="color:rgba(255,255,255,.45);grid-column:1/-1;text-align:center;padding:2rem">☁️ Cargando...</p>`;
   const cursos=[];
   for(let g=1;g<=6;g++) Object.keys(DN).forEach(d=>cursos.push(`${g}-${d}`));
   const cards=await Promise.all(cursos.map(async cc=>{
     const[g,d]=cc.split('-');const lbl=`${g}° ${DN[d]||d}`;
-    let pegCount=0;
-    if(fbDB){try{const snap=await fbDB.ref(`albums/${cc}/peg`).get();if(snap.exists())pegCount=(snap.val()||[]).length;}catch(e){}}
+    let pegCount=0,repCount=0,apCount=0;
+    if(fbDB){try{
+      const snap=await fbDB.ref(`albums/${cc}`).get();
+      if(snap.exists()){const v=snap.val();pegCount=(v.peg||[]).length;repCount=(v.rep||[]).length;apCount=(v.ap||[]).length;}
+    }catch(e){}}
     const pct=Math.round(pegCount/TOTAL*100);
     return`<div class="acard ${pct===100?'comp':''}">
       <h4>${lbl}</h4>
       <div class="apct">${pct}%</div>
       <div class="abarra"><div class="afill" style="width:${pct}%"></div></div>
-      <div class="aprog">${pegCount} / ${TOTAL} figuritas</div>
-      <button class="areset" onclick="resetCurso('${cc}','${lbl}')">🗑️ Resetear datos</button>
+      <div class="aprog">${pegCount}/${TOTAL} pegadas</div>
+      <div style="font-size:.6rem;color:rgba(255,255,255,.35);margin-bottom:.2rem">${apCount} por pegar · ${repCount} repetidas</div>
+      <button class="areset" onclick="resetCurso('${cc}','${lbl}')">🗑️ Resetear</button>
     </div>`;
   }));
   grid.innerHTML=cards.join('');
@@ -2290,8 +2348,137 @@ async function resetCurso(cc,lbl){
   if(!fbDB){toast('⚠️ Firebase no conectado');return;}
   await fbDB.ref(`albums/${cc}`).remove();
   ['peg','ap','rep','sh','fh','ih','is','th','ta','as','cv'].forEach(k=>localStorage.removeItem(`sc_${cc}_${k}`));
-  toast(`✅ Datos de ${lbl} borrados`);
-  loadAdminData();
+  toast(`✅ Datos de ${lbl} borrados`);loadAdminData();
+}
+
+// ── CÓDIGOS ──────────────────────────────────────────────────────
+async function loadCodigosAdmin(){
+  const div=document.getElementById('codigos-list');
+  div.innerHTML='<p style="color:rgba(255,255,255,.3);font-size:.78rem">Cargando...</p>';
+  let fbCodes={};
+  if(fbDB){try{const s=await fbDB.ref('admin/codes').once('value');if(s.exists())fbCodes=s.val()||{};}catch(e){}}
+  const all={...PROMO_CODES,...fbCodes};
+  const keys=Object.keys(all);
+  if(!keys.length){div.innerHTML='<p style="color:rgba(255,255,255,.28);font-size:.78rem;padding:.3rem 0">No hay códigos. Agregá uno abajo.</p>';return;}
+  div.innerHTML=`<div style="background:rgba(0,0,0,.25);border-radius:8px;overflow:hidden;margin-bottom:.5rem">${keys.map(code=>{
+    const def=all[code];const isFirebase=!!fbCodes[code];
+    return`<div class="arow">
+      <span style="font-weight:900;color:var(--dorado);min-width:80px">${code}</span>
+      <span style="font-size:.68rem;color:rgba(255,255,255,.45);flex:1">${def.multi?'♾️ Ilimitado':'1️⃣ Un uso'}${def.hasta?' · 📅'+def.hasta:''}</span>
+      ${isFirebase?`<button class="acbtn red" onclick="deleteCodigo('${code}')">✕</button>`:`<span style="font-size:.6rem;color:rgba(255,255,255,.25)">default</span>`}
+    </div>`;
+  }).join('')}</div>`;
+}
+async function saveNewCodigo(){
+  const code=(document.getElementById('nc-code').value||'').trim().toUpperCase();
+  const multi=document.querySelector('input[name="nc-multi"]:checked')?.value==='true';
+  const hasta=document.getElementById('nc-hasta').value||'';
+  const msg=document.getElementById('nc-msg');
+  if(!code){msg.style.cssText='display:block;color:var(--rojo)';msg.textContent='❌ Ingresá un código';return;}
+  if(!fbDB){msg.style.cssText='display:block;color:var(--rojo)';msg.textContent='❌ Firebase no conectado';return;}
+  const def={multi};if(hasta)def.hasta=hasta;
+  try{
+    await fbDB.ref(`admin/codes/${code}`).set(def);
+    PROMO_CODES[code]=def;
+    document.getElementById('nc-code').value='';document.getElementById('nc-hasta').value='';
+    msg.style.cssText='display:block;color:var(--dorado)';msg.textContent='✅ Código guardado';
+    setTimeout(()=>{msg.style.display='none';},2000);
+    loadCodigosAdmin();
+  }catch(e){msg.style.cssText='display:block;color:var(--rojo)';msg.textContent='❌ Error al guardar';}
+}
+async function deleteCodigo(code){
+  if(!confirm(`¿Eliminar el código "${code}"?`))return;
+  if(!fbDB)return;
+  try{await fbDB.ref(`admin/codes/${code}`).remove();delete PROMO_CODES[code];loadCodigosAdmin();}
+  catch(e){toast('❌ Error al eliminar');}
+}
+
+// ── TRIVIA ───────────────────────────────────────────────────────
+function loadTriviaAdmin(){
+  const g=document.getElementById('tri-grado').value;
+  const lang=document.getElementById('tri-lang').value;
+  const qs=(GRADE_TRIVIAS[g]||{})[lang]||[];
+  const exDiv=document.getElementById('trivia-existing');
+  exDiv.innerHTML=qs.length
+    ?qs.map((q,i)=>`<div style="border-bottom:1px solid rgba(255,255,255,.07);padding:.28rem 0;font-size:.7rem"><span style="color:rgba(255,255,255,.3)">${i+1}.</span> ${q.q} <span style="color:var(--dorado);font-size:.65rem"> ✓ ${q.ok}</span></div>`).join('')
+    :'<p style="color:rgba(255,255,255,.22);font-size:.7rem;padding:.3rem 0">Sin preguntas para este grado/idioma.</p>';
+  loadTriviaExtra(g,lang);
+}
+async function loadTriviaExtra(g,lang){
+  const div=document.getElementById('trivia-extra-list');
+  if(!fbDB){div.innerHTML='';return;}
+  let extras=[];
+  try{const s=await fbDB.ref(`admin/trivia/${g}-${lang}`).once('value');if(s.exists())extras=s.val()||[];}catch(e){}
+  div.innerHTML=extras.length
+    ?`<div style="font-size:.7rem;color:rgba(255,255,255,.38);margin-bottom:.3rem">Preguntas extra guardadas (${extras.length}):</div>
+      <div style="background:rgba(0,0,0,.25);border-radius:8px;overflow:hidden">${extras.map((q,i)=>`<div class="arow">
+        <span style="flex:1;font-size:.72rem">${q.q}</span>
+        <span style="font-size:.67rem;color:var(--dorado);margin:0 .35rem">✓${q.ok}</span>
+        <button class="acbtn red" onclick="deleteTriviaQ('${g}','${lang}',${i})">✕</button>
+      </div>`).join('')}</div>`:'';}
+async function saveTriviaQ(){
+  const g=document.getElementById('tri-grado').value;
+  const lang=document.getElementById('tri-lang').value;
+  const q=document.getElementById('tri-q').value.trim();
+  const ok=document.getElementById('tri-ok').value.trim();
+  const w1=document.getElementById('tri-w1').value.trim();
+  const w2=document.getElementById('tri-w2').value.trim();
+  const w3=document.getElementById('tri-w3').value.trim();
+  const msg=document.getElementById('tri-msg');
+  if(!q||!ok||!w1||!w2||!w3){msg.style.cssText='display:block;color:var(--rojo)';msg.textContent='❌ Completá todos los campos';return;}
+  if(!fbDB){msg.style.cssText='display:block;color:var(--rojo)';msg.textContent='❌ Firebase no conectado';return;}
+  try{
+    const path=`admin/trivia/${g}-${lang}`;
+    const snap=await fbDB.ref(path).once('value');
+    const arr=snap.exists()?(snap.val()||[]):[];
+    const newQ={q,ok,ops:[w1,w2,w3]};
+    arr.push(newQ);
+    await fbDB.ref(path).set(arr);
+    GRADE_TRIVIAS[g][lang].push(newQ);
+    ['tri-q','tri-ok','tri-w1','tri-w2','tri-w3'].forEach(id=>document.getElementById(id).value='');
+    msg.style.cssText='display:block;color:var(--dorado)';msg.textContent='✅ Pregunta agregada';
+    setTimeout(()=>{msg.style.display='none';},2000);
+    loadTriviaAdmin();
+  }catch(e){msg.style.cssText='display:block;color:var(--rojo)';msg.textContent='❌ Error al guardar';}
+}
+async function deleteTriviaQ(g,lang,idx){
+  if(!confirm('¿Eliminar esta pregunta?'))return;
+  if(!fbDB)return;
+  try{
+    const snap=await fbDB.ref(`admin/trivia/${g}-${lang}`).once('value');
+    const arr=snap.exists()?(snap.val()||[]):[];
+    // También remove from GRADE_TRIVIAS in memory
+    const qToRemove=arr[idx];
+    if(qToRemove){const li=GRADE_TRIVIAS[g][lang].findIndex(x=>x.q===qToRemove.q);if(li>=0)GRADE_TRIVIAS[g][lang].splice(li,1);}
+    arr.splice(idx,1);
+    await fbDB.ref(`admin/trivia/${g}-${lang}`).set(arr.length?arr:null);
+    loadTriviaAdmin();
+  }catch(e){toast('❌ Error al eliminar');}
+}
+
+// ── AJUSTES ──────────────────────────────────────────────────────
+function loadAjustes(){
+  const lbl=document.getElementById('aj-maxlbl');if(lbl)lbl.textContent=MAX_PACKS_DIA;
+  const inp=document.getElementById('aj-max');if(inp)inp.value=MAX_PACKS_DIA;
+}
+async function saveAdminPass(){
+  const np=(document.getElementById('aj-pass').value||'').trim();
+  const msg=document.getElementById('aj-pass-msg');
+  if(!np){msg.style.cssText='display:block;color:var(--rojo)';msg.textContent='❌ Ingresá la nueva contraseña';return;}
+  ADMIN_PASS=np;
+  if(fbDB){try{await fbDB.ref('admin/settings/pass').set(np);}catch(e){}}
+  document.getElementById('aj-pass').value='';
+  msg.style.cssText='display:block;color:var(--dorado)';msg.textContent='✅ Contraseña actualizada';
+  setTimeout(()=>{msg.style.display='none';},2500);
+}
+async function saveMaxPacks(){
+  const v=Math.max(1,parseInt(document.getElementById('aj-max').value)||5);
+  const msg=document.getElementById('aj-max-msg');
+  MAX_PACKS_DIA=v;
+  if(fbDB){try{await fbDB.ref('admin/settings/maxPacks').set(v);}catch(e){}}
+  const lbl=document.getElementById('aj-maxlbl');if(lbl)lbl.textContent=v;
+  msg.style.cssText='display:block;color:var(--dorado)';msg.textContent=`✅ Límite cambiado a ${v}`;
+  setTimeout(()=>{msg.style.display='none';},2500);
 }
 
 // CURSOR COPA DEL MUNDO
@@ -2363,19 +2550,82 @@ document.addEventListener('keydown',e=>{
       <br><button class="bvolver" onclick="go('sp')">← Volver al inicio</button>
     </div>
   </div>
-  <div id="admin-panel" style="display:none;flex-direction:column;width:100%">
+  <div id="admin-panel" style="display:none;flex-direction:column;width:100%;min-height:100vh">
     <div class="admin-hdr">
       <button class="bbtn" onclick="go('sp');resetAdmin()" style="margin:0">← Salir</button>
-      <div style="flex:1">
-        <div style="font-size:1rem;font-weight:900">🔧 PANEL ADMINISTRADOR</div>
-        <div style="font-size:.65rem;color:rgba(255,255,255,.7)">San Carlos · Mundial 2026</div>
-      </div>
-      <button class="bbtn" onclick="loadAdminData()" style="margin:0">🔄</button>
+      <div style="flex:1"><div style="font-size:1rem;font-weight:900">🔧 PANEL ADMIN</div><div style="font-size:.6rem;color:rgba(255,255,255,.65)">San Carlos · Mundial 2026</div></div>
+      <button class="bbtn" onclick="adminRefresh()" style="margin:0">🔄</button>
     </div>
-    <div style="padding:1rem">
-      <div style="font-size:.8rem;color:rgba(255,255,255,.5);margin-bottom:.3rem">Estado de todos los cursos · datos en tiempo real</div>
-      <div class="admin-grid" id="admin-grid">
-        <p style="color:rgba(255,255,255,.4);grid-column:1/-1;text-align:center;padding:2rem">Cargando...</p>
+    <div style="display:flex;background:rgba(0,0,0,.45);border-bottom:1px solid rgba(255,255,255,.1);overflow-x:auto;flex-shrink:0">
+      <button class="atab active" id="atb-cursos" onclick="adminTab('cursos')">📊 Cursos</button>
+      <button class="atab" id="atb-codigos" onclick="adminTab('codigos')">🎁 Códigos</button>
+      <button class="atab" id="atb-trivia" onclick="adminTab('trivia')">🧠 Trivia</button>
+      <button class="atab" id="atb-ajustes" onclick="adminTab('ajustes')">⚙️ Ajustes</button>
+    </div>
+    <div style="padding:1rem;flex:1;overflow-y:auto">
+      <!-- CURSOS -->
+      <div id="atab-cursos">
+        <div style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:.5rem">Progreso de cada curso · tiempo real</div>
+        <div class="admin-grid" id="admin-grid"><p style="color:rgba(255,255,255,.4);grid-column:1/-1;text-align:center;padding:2rem">Cargando...</p></div>
+      </div>
+      <!-- CÓDIGOS -->
+      <div id="atab-codigos" style="display:none">
+        <div style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:.5rem">Códigos activos que otorgan 1 sobre extra</div>
+        <div id="codigos-list"></div>
+        <div class="aform">
+          <div style="font-size:.82rem;font-weight:900;color:var(--dorado);margin-bottom:.7rem">+ Nuevo código</div>
+          <span class="alabel">Código</span>
+          <input class="ainp" id="nc-code" placeholder="Ej: MUNDIAL2026" oninput="this.value=this.value.toUpperCase()">
+          <span class="alabel">Tipo</span>
+          <div style="display:flex;gap:1rem;margin-bottom:.6rem;flex-wrap:wrap">
+            <label style="display:flex;align-items:center;gap:.35rem;font-size:.82rem;color:#fff;cursor:pointer"><input type="radio" name="nc-multi" value="false" checked> Un solo uso por curso</label>
+            <label style="display:flex;align-items:center;gap:.35rem;font-size:.82rem;color:#fff;cursor:pointer"><input type="radio" name="nc-multi" value="true"> Ilimitado (reutilizable)</label>
+          </div>
+          <span class="alabel">Vence el (opcional)</span>
+          <input class="ainp" id="nc-hasta" type="date">
+          <button class="acbtn gold" onclick="saveNewCodigo()" style="width:100%;padding:.65rem">GUARDAR CÓDIGO</button>
+          <div id="nc-msg" style="font-size:.75rem;margin-top:.4rem;text-align:center;display:none"></div>
+        </div>
+      </div>
+      <!-- TRIVIA -->
+      <div id="atab-trivia" style="display:none">
+        <div style="display:flex;gap:.5rem;margin-bottom:.7rem;align-items:flex-end">
+          <div style="flex:1"><span class="alabel">Grado</span><select class="ainp" id="tri-grado" onchange="loadTriviaAdmin()" style="margin:0"><option value="1">1° Grado</option><option value="2">2° Grado</option><option value="3">3° Grado</option><option value="4">4° Grado</option><option value="5">5° Grado</option><option value="6">6° Grado</option></select></div>
+          <div style="flex:0 0 72px"><span class="alabel">Idioma</span><select class="ainp" id="tri-lang" onchange="loadTriviaAdmin()" style="margin:0"><option value="es">ES</option><option value="en">EN</option></select></div>
+        </div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.35);margin-bottom:.3rem">Preguntas actuales (solo lectura):</div>
+        <div id="trivia-existing" style="max-height:175px;overflow-y:auto;background:rgba(0,0,0,.25);border-radius:8px;padding:.4rem;margin-bottom:.5rem"></div>
+        <div class="aform">
+          <div style="font-size:.82rem;font-weight:900;color:var(--dorado);margin-bottom:.7rem">+ Agregar pregunta</div>
+          <span class="alabel">Pregunta</span>
+          <input class="ainp" id="tri-q" placeholder="¿Cuánto es...?">
+          <span class="alabel">Respuesta correcta</span>
+          <input class="ainp" id="tri-ok" placeholder="Respuesta correcta">
+          <span class="alabel">Opciones incorrectas</span>
+          <input class="ainp" id="tri-w1" placeholder="Incorrecta 1">
+          <input class="ainp" id="tri-w2" placeholder="Incorrecta 2">
+          <input class="ainp" id="tri-w3" placeholder="Incorrecta 3">
+          <button class="acbtn gold" onclick="saveTriviaQ()" style="width:100%;padding:.65rem">AGREGAR PREGUNTA</button>
+          <div id="tri-msg" style="font-size:.75rem;margin-top:.4rem;text-align:center;display:none"></div>
+        </div>
+        <div id="trivia-extra-list" style="margin-top:.8rem"></div>
+      </div>
+      <!-- AJUSTES -->
+      <div id="atab-ajustes" style="display:none">
+        <div class="aform">
+          <div style="font-size:.82rem;font-weight:900;color:var(--dorado);margin-bottom:.7rem">🔑 Contraseña de admin</div>
+          <span class="alabel">Nueva contraseña</span>
+          <input class="ainp" id="aj-pass" type="password" placeholder="Nueva contraseña">
+          <button class="acbtn gold" onclick="saveAdminPass()" style="width:100%;padding:.65rem">CAMBIAR CONTRASEÑA</button>
+          <div id="aj-pass-msg" style="font-size:.75rem;margin-top:.4rem;text-align:center;display:none"></div>
+        </div>
+        <div class="aform">
+          <div style="font-size:.82rem;font-weight:900;color:var(--dorado);margin-bottom:.7rem">📦 Límite de sobres por día</div>
+          <span class="alabel">Máximo actual: <span id="aj-maxlbl">5</span></span>
+          <input class="ainp" id="aj-max" type="number" min="1" max="50" value="5">
+          <button class="acbtn gold" onclick="saveMaxPacks()" style="width:100%;padding:.65rem">GUARDAR LÍMITE</button>
+          <div id="aj-max-msg" style="font-size:.75rem;margin-top:.4rem;text-align:center;display:none"></div>
+        </div>
       </div>
     </div>
   </div>
