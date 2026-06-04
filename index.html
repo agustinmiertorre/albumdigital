@@ -383,7 +383,7 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
     <div class="lerr" id="lerr">❌ Contraseña incorrecta</div>
     <button type="submit" class="pbtn" style="width:100%;margin:0">ENTRAR ⚽</button>
     </form>
-    <br><button class="bvolver" onclick="go('sp')">← Volver al inicio</button>
+    <button class="pbtn sec" onclick="go('sp')" style="width:100%;margin-top:.8rem">← Volver al inicio</button>
   </div>
 </div>
 
@@ -439,6 +439,16 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
       <div id="asist-section"></div>
       <div id="trivia-section" style="margin-top:.7rem"></div>
       <div id="conv-section" style="margin-top:.7rem"></div>
+      <div style="margin-top:1rem;background:rgba(255,255,255,.04);border:1px solid rgba(240,192,64,.2);border-radius:12px;padding:.9rem">
+        <div style="font-size:.68rem;letter-spacing:2px;color:rgba(255,255,255,.4);text-align:center;margin-bottom:.7rem">🎁 ¿TENÉS UN CÓDIGO ESPECIAL?</div>
+        <div style="display:flex;gap:.5rem">
+          <input id="promo-inp" type="text" placeholder="Ingresá el código" maxlength="20"
+            style="flex:1;padding:.7rem;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font-family:inherit;font-size:.9rem;outline:none;text-transform:uppercase"
+            onkeydown="if(event.key==='Enter')usarCodigo()">
+          <button onclick="usarCodigo()" style="background:linear-gradient(135deg,var(--dorado),#c8922a);color:#000;border:none;padding:.7rem 1rem;border-radius:10px;font-weight:900;font-size:.85rem;font-family:inherit">USAR</button>
+        </div>
+        <div id="code-msg" style="font-size:.75rem;margin-top:.5rem;text-align:center;display:none"></div>
+      </div>
     </div>
     <!-- TRIVIA OVERLAY -->
     <div id="trivia-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:190;align-items:center;justify-content:center;padding:1rem"></div>
@@ -1986,9 +1996,38 @@ function closeSov(){
   renderAP();
 }
 function irPegar(){closeSov();nav('pegar');}
+// CÓDIGOS PROMOCIONALES
+const PROMO_CODES={
+  // Agregá los códigos acá: 'CODIGO':'activo'
+};
+function getUsedCodes(){try{return new Set(JSON.parse(localStorage.getItem(SK('uc'))||'[]'));}catch(e){return new Set();}}
+function addUsedCode(c){const u=getUsedCodes();u.add(c);localStorage.setItem(SK('uc'),JSON.stringify([...u]));}
+function usarCodigo(){
+  const inp=document.getElementById('promo-inp');
+  const msg=document.getElementById('code-msg');
+  const code=(inp.value||'').trim().toUpperCase();
+  msg.style.display='none';
+  if(!code)return;
+  if(getUsedCodes().has(code)){
+    msg.style.cssText='display:block;color:var(--rojo)';msg.textContent='❌ Este código ya fue usado en tu curso.';return;
+  }
+  if(!PROMO_CODES[code]){
+    msg.style.cssText='display:block;color:var(--rojo)';msg.textContent='❌ Código inválido.';return;
+  }
+  addUsedCode(code);inp.value='';
+  S.pendCount++;svS();updPaqUI();
+  msg.style.cssText='display:block;color:var(--dorado)';msg.textContent='🎉 ¡Código válido! Ganaste 1 sobre.';
+  setTimeout(()=>{msg.style.display='none';},3500);
+  snd('click');
+}
+
 function genSobre(){
   const pool=[];
-  PAISES.forEach(p=>FPP[p.id].filter(f=>!f.holo).forEach(f=>pool.push(f)));
+  PAISES.forEach(p=>{
+    FPP[p.id].filter(f=>!f.holo).forEach(f=>pool.push(f));
+    const h=FPP[p.id].find(f=>f.holo);
+    if(h)pool.push(h); // 1 entrada por país → baja probabilidad (~4% por carta)
+  });
   // Especiales con menor frecuencia (~2x cada una)
   ECOLE.forEach(f=>{pool.push({...f,num:f.id,pais:'cole',pos:'Especial',hab:'🏫 San Carlos'});pool.push({...f,num:f.id,pais:'cole',pos:'Especial',hab:'🏫 San Carlos'});});
   const figs=Array(5).fill(0).map(()=>pool[Math.floor(Math.random()*pool.length)]);
