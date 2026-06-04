@@ -7,7 +7,7 @@
 <style>
 @import url('data:text/css,');
 :root{--rojo:#e4051f;--azul:#00476c;--dorado:#f0c040;--negro:#111;--blanco:#fff;}
-*{margin:0;padding:0;box-sizing:border-box;cursor:url('Copa del Mundo.png') 12 0, auto;}
+*{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;min-height:100vh;overflow-x:hidden;}
 .bb{font-family:Impact,'Arial Black',Arial,sans-serif;letter-spacing:2px;}
 .screen{display:none;min-height:100vh;flex-direction:column;}
@@ -1978,7 +1978,13 @@ function nextS(){
   document.getElementById('sovtit').textContent=tx('sov_toca');
   updSovCtr();
 }
-function closeSov(){document.getElementById('sobig').style.display='';document.getElementById('sovl').classList.remove('active');renderAP();}
+function closeSov(){
+  const remaining=pend.length-cidx-1;
+  if(remaining>0){S.pendCount+=remaining;svS();updPaqUI();}
+  document.getElementById('sobig').style.display='';
+  document.getElementById('sovl').classList.remove('active');
+  renderAP();
+}
 function irPegar(){closeSov();nav('pegar');}
 function genSobre(){
   const pool=[];
@@ -2241,6 +2247,21 @@ async function resetCurso(cc,lbl){
   toast(`✅ Datos de ${lbl} borrados`);
   loadAdminData();
 }
+
+// CURSOR COPA DEL MUNDO
+(function initCopaCursor(){
+  const img=new Image();
+  img.onload=function(){
+    const c=document.createElement('canvas');
+    c.width=c.height=48;
+    c.getContext('2d').drawImage(img,0,0,48,48);
+    const url=c.toDataURL('image/png');
+    const s=document.createElement('style');
+    s.textContent=`*,*:hover,*:active{cursor:url("${url}") 24 0,auto!important;}`;
+    document.head.appendChild(s);
+  };
+  img.src='Copa del Mundo.png';
+})();
 
 // NAVEGACIÓN POR TECLADO
 document.addEventListener('keydown',e=>{
