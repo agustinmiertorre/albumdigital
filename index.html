@@ -203,8 +203,8 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
 .sbf .sbl{position:relative;z-index:1;}
 .sbf .sbsc{font-size:.9rem;color:rgba(255,255,255,.95);letter-spacing:2px;font-weight:900;white-space:nowrap;position:relative;z-index:1;text-shadow:0 2px 8px rgba(0,0,0,.5);}
 .sbb{display:none;}
-.frev{display:grid;grid-template-columns:repeat(5,1fr);gap:.55rem;max-width:440px;width:96vw;}
-.frc{background:linear-gradient(160deg,#1a2a6c,#001028);border:2px solid var(--dorado);border-radius:12px;overflow:hidden;text-align:center;opacity:0;transform:translateY(40px) scale(.7);transition:all .45s cubic-bezier(.34,1.56,.64,1);display:flex;flex-direction:column;align-items:center;}
+.frev{display:flex;flex-wrap:wrap;gap:.6rem;max-width:600px;width:96vw;justify-content:center;align-items:flex-start;}
+.frc{flex:0 0 calc(33.33% - .45rem);background:linear-gradient(160deg,#1a2a6c,#001028);border:2px solid var(--dorado);border-radius:12px;overflow:hidden;text-align:center;opacity:0;transform:translateY(40px) scale(.7);transition:all .45s cubic-bezier(.34,1.56,.64,1);display:flex;flex-direction:column;align-items:center;}
 .frc.show{opacity:1;transform:translateY(0) scale(1);}
 .frc.rep{border-color:rgba(255,255,255,.2);background:rgba(30,30,30,.6);}
 .frc-img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;}
@@ -258,8 +258,10 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
 .bbtn:hover{background:rgba(255,255,255,.14);}
 @keyframes pego{0%{transform:scale(1.3) rotate(-5deg)}60%{transform:scale(.95) rotate(2deg)}100%{transform:scale(1)}}
 .peging{animation:pego .5s cubic-bezier(.34,1.56,.64,1);}
-::-webkit-scrollbar{width:5px;height:5px;}
-::-webkit-scrollbar-thumb{background:var(--dorado);border-radius:3px;}
+::-webkit-scrollbar{width:12px;height:12px;}
+::-webkit-scrollbar-track{background:rgba(0,0,0,.35);}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#ffe87a,var(--dorado),#c8922a);border-radius:3px;border:2px solid rgba(0,0,0,.4);}
+::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#fff5a0,#ffe87a,var(--dorado));}
 
 /* MODO VISTA */
 #vsel option, #vsel optgroup{background:#001f33;color:#fff;}
@@ -417,12 +419,6 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
     <div id="vc">
       <p id="album-hint" style="color:rgba(255,255,255,.4);font-size:.76rem;margin-bottom:.8rem;text-align:center">Tocá un país para ver sus figuritas ⚽</p>
       <div class="cgrid" id="cgrid"></div>
-      <div style="display:grid;grid-template-columns:1fr;gap:.8rem;margin-top:.8rem;max-width:200px;margin-left:auto;margin-right:auto">
-        <div class="ccard" onclick="showPage('cole')" style="border-color:rgba(228,5,31,.4)">
-          <div class="flag-box" style="background:#fff;overflow:hidden;padding:3px"><img src="Logo San Carlos.png" style="width:100%;height:100%;object-fit:contain"></div>
-          <div class="cname">Especiales</div><div class="cprog" id="pgcole">Especial</div>
-        </div>
-      </div>
     </div>
     <div id="vp" style="display:none"></div>
   </div>
@@ -1652,6 +1648,12 @@ function updProg(){
 
 // COUNTRIES
 function buildCG(){
+  const cp=ECOLE.filter(f=>S.peg.has(f.id)).length;
+  const coleCard=`<div class="ccard ${cp===ECOLE.length?'completo':''}" onclick="showPage('cole')" style="border-color:rgba(228,5,31,.4)">
+    <div class="flag-box" style="background:#fff;overflow:hidden;padding:3px"><img src="Logo San Carlos.png" style="width:100%;height:100%;object-fit:contain" loading="lazy"></div>
+    <div class="cname">Especiales</div>
+    <div class="cprog" id="pgcole">${cp}/${ECOLE.length}</div>
+  </div>`;
   document.getElementById('cgrid').innerHTML=PAISES.map(p=>{
     const fs=FPP[p.id];const pg=fs.filter(f=>S.peg.has(f.id)).length;
     return`<div class="ccard ${pg===fs.length?'completo':''}" onclick="showPage('${p.id}')">
@@ -1660,9 +1662,7 @@ function buildCG(){
       <div class="cname">${(_lang==='en'&&p.n_en)?p.n_en:p.n}</div>
       <div class="cprog">${pg}/${fs.length}</div>
     </div>`;
-  }).join('');
-  const cp=ECOLE.filter(f=>S.peg.has(f.id)).length;
-  const ce=document.getElementById('pgcole');if(ce)ce.textContent=`${cp}/${ECOLE.length}`;
+  }).join('')+coleCard;
 }
 
 // PAGE NAV
@@ -1932,6 +1932,7 @@ function openSov(){
   document.getElementById('frev').style.display='none';
   document.getElementById('revbtns').style.display='none';
   const sob=document.getElementById('sobig');
+  sob.style.display='';
   sob.classList.remove('opening');sob.style.animation='none';
   sob.offsetHeight;sob.style.animation='';sob.style.opacity='1';sob.style.transform='';
   document.getElementById('sovtit').textContent=tx('sov_toca');
@@ -1945,7 +1946,8 @@ function flipSobre(){
 }
 function mostrarFigs(figs){
   document.getElementById('sovtit').textContent=tx('sov_figus');
-  const rev=document.getElementById('frev');rev.style.display='grid';rev.innerHTML='';
+  document.getElementById('sobig').style.display='none';
+  const rev=document.getElementById('frev');rev.style.display='flex';rev.innerHTML='';
   figs.forEach((f,i)=>{
     const rep=S.peg.has(f.id)||S.ap.some(x=>x.id===f.id);
     if(rep)S.rep.push(f);else S.ap.push(f);
@@ -1970,12 +1972,13 @@ function nextS(){
   document.getElementById('frev').style.display='none';
   document.getElementById('revbtns').style.display='none';
   const sob=document.getElementById('sobig');
+  sob.style.display='';
   sob.classList.remove('opening');sob.style.animation='none';
   sob.offsetHeight;sob.style.animation='';sob.style.opacity='1';sob.style.transform='';
   document.getElementById('sovtit').textContent=tx('sov_toca');
   updSovCtr();
 }
-function closeSov(){document.getElementById('sovl').classList.remove('active');renderAP();}
+function closeSov(){document.getElementById('sobig').style.display='';document.getElementById('sovl').classList.remove('active');renderAP();}
 function irPegar(){closeSov();nav('pegar');}
 function genSobre(){
   const pool=[];
@@ -2195,7 +2198,7 @@ function verVistaPais(id){
 }
 
 // ── ADMIN ─────────────────────────────────────────────────────────
-const ADMIN_PASS='admin2026';
+const ADMIN_PASS='12345';
 function adminLogin(){
   const p=document.getElementById('apass').value;
   if(p!==ADMIN_PASS){document.getElementById('aerr').style.display='block';return;}
