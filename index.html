@@ -167,9 +167,6 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
 .sobre-hero-tit{font-size:1.9rem;font-weight:900;color:var(--dorado);letter-spacing:3px;text-shadow:0 0 30px rgba(240,192,64,.5);position:relative;z-index:1;font-family:Impact,'Arial Black',Arial,sans-serif;}
 .sobre-hero-sub{font-size:.82rem;color:rgba(255,255,255,.5);margin:.5rem 0 1.2rem;position:relative;z-index:1;}
 .sobre-dots-row{display:flex;align-items:center;justify-content:center;gap:.6rem;position:relative;z-index:1;}
-.pdots{display:flex;gap:.5rem;justify-content:center;}
-.pdot{width:32px;height:32px;border-radius:50%;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);transition:.3s;}
-.pdot.used{background:var(--dorado);border-color:var(--dorado);box-shadow:0 0 10px rgba(240,192,64,.6);}
 .sobre-opts-section{padding:1.5rem 1rem 5rem;}
 .sobre-opts-tit{font-size:.7rem;letter-spacing:3px;color:rgba(255,255,255,.35);text-align:center;margin-bottom:1rem;text-transform:uppercase;}
 .sopts{display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap;}
@@ -495,9 +492,7 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
       <div class="sobre-hero-tit" id="sobre-hero-tit">🎴 APERTURA DE SOBRES</div>
       <div class="sobre-hero-sub" id="sobre-hero-sub">Completá las actividades del día para ganar sobres</div>
       <div class="sobre-dots-row">
-        <span style="font-size:.75rem;color:rgba(255,255,255,.5)" id="lbl-hoy">HOY:</span>
-        <div class="pdots" id="pdots"></div>
-        <span style="font-size:.75rem;color:rgba(255,255,255,.5)" id="ptxt">Máximo 5</span>
+        <span style="font-size:.75rem;color:rgba(255,255,255,.5)" id="ptxt">Sobres disponibles hoy</span>
       </div>
     </div>
     <div id="abrir-section"></div>
@@ -2020,8 +2015,7 @@ function getTriviaParaGrado(){
 }
 let _triviaHecha=false;let _triviaPregs=[];let _triviaIdx=0;let _triviaAciertos=0;
 function updPaqUI(){
-  document.getElementById('pdots').innerHTML=Array(5).fill(0).map((_,i)=>`<div class="pdot ${i<S.shoy?'used':''}"></div>`).join('');
-  const r=5-S.shoy;
+  const r=MAX_PACKS_DIA-S.shoy;
   document.getElementById('ptxt').textContent=r>0?`${tx('lbl_quedan')} ${r} ${tx('lbl_sobres')}`:tx('lbl_limite');
   const hoy=new Date().toDateString();
   _triviaHecha=(S.fhoy===hoy&&(S.thoy||0)>0);
@@ -2029,7 +2023,7 @@ function updPaqUI(){
 }
 function renderSobresUI(){
   const hoy=new Date().toDateString();
-  const r=5-S.shoy;
+  const r=MAX_PACKS_DIA-S.shoy;
   const tDiv=document.getElementById('trivia-section');
   const asDiv=document.getElementById('asist-section');
   const cvDiv=document.getElementById('conv-section');
@@ -2115,7 +2109,7 @@ function finTrivia(){
   const hoy=new Date().toDateString();
   S.thoy=hoy;S.tAciertos=_triviaAciertos;S.triviaIdx=_nextTriviaIdx;
   const sobresGanados=_triviaAciertos;
-  const posible=Math.min(sobresGanados,5-S.shoy);
+  const posible=Math.min(sobresGanados,MAX_PACKS_DIA-S.shoy);
   if(sobresGanados===0){
     svS();updPaqUI();
     toast(_lang==='en'?'😅 0/3 correct, no packs this time':'😅 0/3 correctas, sin sobres esta vez');

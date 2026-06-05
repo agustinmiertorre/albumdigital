@@ -67,6 +67,7 @@ select option,select optgroup{background:#001f33;color:#fff;}
   <div class="sel-row">
     <select id="vsel">
       <option value="">-- Elegí un curso --</option>
+      <option value="__full__" style="background:#1a0040;color:#ffd700;font-weight:900">📖 Álbum Completo (ejemplo)</option>
       <optgroup label="1° Grado"><option value="1-arayan">1° Arrayán</option><option value="1-jacaranda">1° Jacarandá</option><option value="1-ceibo">1° Ceibo</option></optgroup>
       <optgroup label="2° Grado"><option value="2-arayan">2° Arrayán</option><option value="2-jacaranda">2° Jacarandá</option><option value="2-ceibo">2° Ceibo</option></optgroup>
       <optgroup label="3° Grado"><option value="3-arayan">3° Arrayán</option><option value="3-jacaranda">3° Jacarandá</option><option value="3-ceibo">3° Ceibo</option></optgroup>
@@ -176,6 +177,45 @@ window.addEventListener('DOMContentLoaded',()=>{
 async function cargarVista(){
   const cc=document.getElementById('vsel').value;
   if(!cc){alert('Elegí un curso');return;}
+
+  if(cc==='__full__'){
+    const allIds=[];
+    PAISES.forEach(p=>FPP[p.id].forEach(f=>allIds.push(f.id)));
+    ECOLE.forEach(f=>allIds.push(f.id));
+    VPEG=new Set(allIds);
+    const pegCount=VPEG.size;
+    let html=`
+      <div class="stat-card" style="border:2px solid var(--dorado);background:linear-gradient(135deg,rgba(240,192,64,.1),rgba(0,71,108,.15))">
+        <div class="curso">📖 ÁLBUM COMPLETO</div>
+        <div class="sub">Así se ve cuando está completo · ${pegCount}/${TOTAL} figuritas</div>
+        <div class="progbar"><div class="progfill" style="width:100%"></div></div>
+        <div class="pct">🏆 100%</div>
+      </div>
+      <div id="vpaisdetalle"></div>
+      <div class="vpais-grid">`;
+    PAISES.forEach(p=>{
+      const fs=FPP[p.id];const t2=fs.length;
+      html+=`<div class="vpais" onclick="verVistaPais('${p.id}')" style="border-color:rgba(240,192,64,.5);background:rgba(240,192,64,.06)">
+        <div class="flag-box">${flagImg(p,80)}</div>
+        <div style="font-size:.75rem;font-weight:900;margin:.15rem 0">${p.n}</div>
+        <div style="font-size:.58rem;color:var(--dorado)">${t2}/${t2} · 100%</div>
+        <div style="height:4px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;margin-top:.3rem">
+          <div style="width:100%;height:100%;background:var(--dorado);border-radius:4px"></div>
+        </div>
+      </div>`;
+    });
+    html+=`<div class="vpais" onclick="verVistaEsp()" style="border-color:rgba(240,192,64,.5);background:rgba(240,192,64,.06)">
+      <div style="font-size:1.4rem;margin:.2rem 0">⭐</div>
+      <div style="font-size:.75rem;font-weight:900;margin:.15rem 0">Especiales</div>
+      <div style="font-size:.58rem;color:var(--dorado)">${ECOLE.length}/${ECOLE.length} · 100%</div>
+      <div style="height:4px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;margin-top:.3rem">
+        <div style="width:100%;height:100%;background:var(--dorado);border-radius:4px"></div>
+      </div>
+    </div></div>`;
+    document.getElementById('vresult').innerHTML=html;
+    return;
+  }
+
   const[g,d]=cc.split('-');
   const lbl=`${g}° ${DN[d]||d}`;
   document.getElementById('vresult').innerHTML=`<p style="text-align:center;color:rgba(255,255,255,.5);padding:2rem">☁️ Cargando ${lbl}...</p>`;
