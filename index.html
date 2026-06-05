@@ -1669,6 +1669,7 @@ async function login(){
   document.getElementById('hcl').textContent=lbl.toUpperCase();
   localStorage.setItem('sc_lastCourse', CC);
   startSync();
+  if(fbDB)fbDB.ref(`albums/${CC}/startDate`).once('value').then(s=>{if(!s.exists())fbDB.ref(`albums/${CC}/startDate`).set(new Date().toISOString().slice(0,10));}).catch(()=>{});
   initApp(); go('sa'); snd('click');
 }
 function salir(){toggleHam();go('sp');document.getElementById('lpass').value='';document.getElementById('bnav').classList.remove('vis');localStorage.removeItem('sc_lastCourse');}
@@ -1886,7 +1887,10 @@ function pegFig(id){
   // epic animation for holos and especiales
   if(fig&&(fig.holo||fig.pais==='cole'))setTimeout(()=>showEpicAnim(fig),180);
   // ÁLBUM COMPLETO - animación épica total
-  if(S.peg.size>=TOTAL)setTimeout(()=>showAlbumCompletoAnim(),500);
+  if(S.peg.size>=TOTAL){
+    if(fbDB)fbDB.ref(`albums/${CC}/completedAt`).once('value').then(s=>{if(!s.exists())fbDB.ref(`albums/${CC}/completedAt`).set(new Date().toISOString());}).catch(()=>{});
+    setTimeout(()=>showAlbumCompletoAnim(),500);
+  }
 }
 let _epicTimer=null;
 function showEpicAnim(fig,customTitle,customColor){
@@ -2265,120 +2269,93 @@ function selF(id){snd('click');FSel=id;const f=S.ap.find(x=>x.id===id);const hin
 function irAF(id){const f=S.ap.find(x=>x.id===id);if(!f)return;FSel=id;nav('album');setTimeout(()=>showPage(f.pais||'cole'),100);}
 
 // INTERCAMBIO
-let _interSel=null;
 function buildIS(){}
 function renderI(){
-  _interSel=null;
   const sem=getWeekStart();
   const tradesDone=S.isem===sem?(S.tradeW||0):0;
   const repCount=S.rep.length;
   const canTrade=repCount>=10&&tradesDone<MAX_TRADES_WEEK;
+  const missing=TOTAL-S.peg.size;
+  const figUnlocked=missing<=50&&S.peg.size>0;
   // STATUS
-  const statusDiv=document.getElementById('inter-status');
   const colRep=repCount>=10?'var(--dorado)':'rgba(255,255,255,.45)';
   const colSem=tradesDone<MAX_TRADES_WEEK?'var(--dorado)':'rgba(255,255,255,.45)';
-  statusDiv.innerHTML=`
+  document.getElementById('inter-status').innerHTML=`
     <div style="display:flex;gap:.5rem;margin-bottom:.7rem">
       <div style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:.65rem;text-align:center">
         <div style="font-size:1.6rem;font-weight:900;color:${colRep}">${repCount}</div>
         <div style="font-size:.58rem;color:rgba(255,255,255,.4);letter-spacing:1px">REPETIDAS</div>
-        <div style="font-size:.55rem;margin-top:.15rem;color:${colRep}">${repCount>=10?'✓ Suficientes':'Faltan '+(10-repCount)+' más'}</div>
+        <div style="font-size:.55rem;margin-top:.1rem;color:${colRep}">${repCount>=10?'✓ Suficientes':'Faltan '+(10-repCount)+' más'}</div>
       </div>
       <div style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:.65rem;text-align:center">
         <div style="font-size:1.6rem;font-weight:900;color:${colSem}">${MAX_TRADES_WEEK-tradesDone}</div>
         <div style="font-size:.58rem;color:rgba(255,255,255,.4);letter-spacing:1px">CANJES RESTANTES</div>
-        <div style="font-size:.55rem;margin-top:.15rem;color:rgba(255,255,255,.35)">${tradesDone}/${MAX_TRADES_WEEK} esta semana</div>
+        <div style="font-size:.55rem;margin-top:.1rem;color:rgba(255,255,255,.35)">${tradesDone}/${MAX_TRADES_WEEK} esta semana</div>
       </div>
     </div>
-    ${!canTrade?`<div class="istatus" style="margin-bottom:.7rem">${repCount<10?`📦 Necesitás al menos 10 repetidas (tenés ${repCount}).`:`✅ Ya usaste todos tus canjes esta semana. ¡Volvé el lunes!`}</div>`:''}`;
-  // SELECTOR
+    ${!canTrade?`<div class="istatus" style="margin-bottom:.7rem">${repCount<10?`📦 Necesitás 10 repetidas (tenés ${repCount}).`:`✅ Ya usaste todos tus canjes esta semana.`}</div>`:''}`;
+  // OPCIONES DE CANJE
   const selectorDiv=document.getElementById('inter-selector');
-  if(canTrade){
-    const countries=PAISES.map(p=>`<option value="${p.id}">${p.n}</option>`).join('');
-    selectorDiv.innerHTML=`
-      <div style="font-size:.78rem;font-weight:900;color:var(--dorado);margin-bottom:.4rem">Elegí la figurita que querés:</div>
-      <select id="inter-pais-filter" class="isel" onchange="filterInterFigs()" style="margin-bottom:.4rem;font-size:.82rem">
-        <option value="">🌍 Todos los países</option>
-        ${countries}
-        <option value="cole">⭐ Especiales</option>
-      </select>
-      <div id="inter-fig-grid" style="max-height:265px;overflow-y:auto;border-radius:8px;padding:.3rem;background:rgba(0,0,0,.18)"></div>
-      <div id="inter-fig-preview" style="margin-top:.4rem"></div>
-      <button class="ibtn" id="binter" onclick="doInter()" disabled style="width:100%;margin-top:.4rem">🔄 CANJEAR (10 repetidas)</button>`;
-    renderInterFigs('');
-  }else{selectorDiv.innerHTML='';}
+  const btnStyle=`width:100%;padding:.55rem;border-radius:8px;font-size:.78rem;font-weight:900;cursor:pointer;font-family:inherit;border:none;transition:.15s;`;
+  const btnOn=`background:linear-gradient(135deg,var(--dorado),#c8922a);color:#000;`;
+  const btnOff=`background:rgba(255,255,255,.08);color:rgba(255,255,255,.3);cursor:not-allowed;`;
+  selectorDiv.innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:.5rem">
+      <!-- OPCIÓN A: sobre aleatorio -->
+      <div style="background:rgba(255,255,255,.04);border:1px solid ${canTrade?'rgba(240,192,64,.35)':'rgba(255,255,255,.1)'};border-radius:12px;padding:.75rem">
+        <div style="display:flex;align-items:center;gap:.7rem;margin-bottom:.5rem">
+          <div style="font-size:1.8rem;flex-shrink:0">🎴</div>
+          <div style="flex:1">
+            <div style="font-size:.85rem;font-weight:900;color:#fff">1 Sobre aleatorio</div>
+            <div style="font-size:.65rem;color:rgba(255,255,255,.45)">5 figuritas al azar · siempre disponible</div>
+          </div>
+        </div>
+        <button style="${btnStyle}${canTrade?btnOn:btnOff}" ${canTrade?'':'disabled'} onclick="doInter('sobre')">🎴 CANJEAR POR UN SOBRE</button>
+      </div>
+      <!-- OPCIÓN B: figurita al azar de las que faltan -->
+      <div style="background:rgba(255,255,255,.04);border:1px solid ${canTrade&&figUnlocked?'rgba(0,200,100,.4)':'rgba(255,255,255,.1)'};border-radius:12px;padding:.75rem;${canTrade&&figUnlocked?'':'opacity:.65'}">
+        <div style="display:flex;align-items:center;gap:.7rem;margin-bottom:.5rem">
+          <div style="font-size:1.8rem;flex-shrink:0">🎯</div>
+          <div style="flex:1">
+            <div style="font-size:.85rem;font-weight:900;color:#fff">1 Figurita que te falta</div>
+            <div style="font-size:.65rem;color:rgba(255,255,255,.45)">Al azar entre las que no tenés · solo al final</div>
+          </div>
+        </div>
+        ${!figUnlocked?`<div style="font-size:.62rem;color:rgba(255,200,0,.6);background:rgba(255,200,0,.07);border-radius:6px;padding:.35rem .5rem;margin-bottom:.4rem;text-align:center">🔒 Se habilita cuando falten ≤50 figuritas (faltan ${missing} ahora)</div>`:''}
+        <button style="${btnStyle}${canTrade&&figUnlocked?'background:linear-gradient(135deg,#00c864,#007a3a);color:#fff;':''+btnOff}" ${canTrade&&figUnlocked?'':'disabled'} onclick="doInter('fig')">🎯 CANJEAR POR UNA FIGURITA</button>
+      </div>
+    </div>`;
   // REPETIDAS VISUAL
   const rv=document.getElementById('rep-visual');
   if(rv){
-    if(S.rep.length>0){
-      rv.innerHTML=`<div style="margin-top:.8rem"><div style="font-size:.62rem;color:rgba(255,255,255,.35);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:.4rem">📋 Todas tus repetidas (${S.rep.length})</div><div class="rep-grid">${S.rep.map(f=>`<div class="rep-card">${f.img?`<img src="${f.img}" loading="lazy">`:`<div style="font-size:1.4rem;padding:.4rem">${f.em||f.e||'🎴'}</div>`}<div class="rep-lbl">${f.nm||f.nombre||'?'}</div></div>`).join('')}</div></div>`;
-    }else{rv.innerHTML='';}
+    rv.innerHTML=S.rep.length>0?`<div style="margin-top:.6rem"><div style="font-size:.6rem;color:rgba(255,255,255,.32);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:.4rem">📋 Tus repetidas (${S.rep.length})</div><div class="rep-grid">${S.rep.map(f=>`<div class="rep-card">${f.img?`<img src="${f.img}" loading="lazy">`:`<div style="font-size:1.4rem;padding:.4rem">${f.em||f.e||'🎴'}</div>`}<div class="rep-lbl">${f.nm||f.nombre||'?'}</div></div>`).join('')}</div></div>`:'';
   }
 }
-function renderInterFigs(filter){
-  const grid=document.getElementById('inter-fig-grid');if(!grid)return;
-  const allMissing=allFigs().filter(f=>!S.peg.has(f.id)&&!S.ap.some(x=>x.id===f.id));
-  const shown=filter?allMissing.filter(f=>f.pais===filter):allMissing;
-  if(!shown.length){
-    grid.innerHTML=`<p style="color:rgba(255,255,255,.4);font-size:.75rem;text-align:center;padding:1.2rem">¡Tenés todas las figuritas de este grupo! 🎉</p>`;
-    return;
-  }
-  grid.innerHTML=`<div class="fgrid" style="grid-template-columns:repeat(7,1fr);gap:.3rem">${
-    shown.map(f=>{
-      const sel=_interSel===f.id;
-      const img=f.img?`<img src="${f.img}" style="width:100%;height:100%;object-fit:cover" loading="lazy">`:`<div style="font-size:.8rem;display:flex;align-items:center;justify-content:center;height:100%">${f.em||f.e||'⭐'}</div>`;
-      return`<div class="fig ${sel?'peg':''}" onclick="selInterFig('${f.id}')" style="${sel?'border-color:var(--dorado);box-shadow:0 0 10px rgba(240,192,64,.7);':''}cursor:pointer">
-        <div class="fav">${img}</div>
-        <div style="position:absolute;top:1px;left:1px;background:rgba(0,0,0,.7);color:var(--dorado);font-size:.3rem;padding:1px 2px;border-radius:2px">#${f.num}</div>
-        ${sel?`<div style="position:absolute;top:2px;right:2px;background:var(--dorado);color:#000;font-size:.38rem;font-weight:900;padding:1px 3px;border-radius:2px;z-index:2">✓</div>`:''}
-      </div>`;
-    }).join('')
-  }</div>`;
-}
-function filterInterFigs(){
-  _interSel=null;
-  const preview=document.getElementById('inter-fig-preview');if(preview)preview.innerHTML='';
-  const btn=document.getElementById('binter');if(btn)btn.disabled=true;
-  renderInterFigs(document.getElementById('inter-pais-filter').value);
-}
-function selInterFig(id){
-  snd('click');
-  _interSel=id;
-  renderInterFigs(document.getElementById('inter-pais-filter')?.value||'');
-  const fig=allFigs().find(f=>f.id===id);
-  if(!fig)return;
-  const preview=document.getElementById('inter-fig-preview');
-  if(preview){
-    const imgEl=fig.img?`<img src="${fig.img}" style="width:46px;height:62px;object-fit:cover;border-radius:6px;flex-shrink:0">`:`<div style="width:46px;height:62px;background:#1e1e3a;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0">${fig.em||'⭐'}</div>`;
-    preview.innerHTML=`<div style="display:flex;align-items:center;gap:.6rem;background:rgba(240,192,64,.08);border:1px solid rgba(240,192,64,.35);border-radius:10px;padding:.55rem;animation:pego .4s cubic-bezier(.34,1.56,.64,1)">
-      ${imgEl}
-      <div style="min-width:0">
-        <div style="font-size:.85rem;font-weight:900;color:#fff;line-height:1.2">${fig.nm||fig.nombre}</div>
-        <div style="font-size:.63rem;color:rgba(255,255,255,.5);margin:.1rem 0">${fig.gr||'Especial'} · #${fig.num}</div>
-        <div style="font-size:.6rem;color:var(--dorado)">✓ Seleccionada</div>
-      </div>
-    </div>`;
-  }
-  const btn=document.getElementById('binter');if(btn)btn.disabled=false;
-}
-function doInter(){
+function doInter(type){
   if(S.rep.length<10){toast('⚠️ Necesitás 10 repetidas');return;}
   const sem=getWeekStart();
   const tradesDone=S.isem===sem?(S.tradeW||0):0;
   if(tradesDone>=MAX_TRADES_WEEK){toast(tx('inter_ya'));return;}
-  if(!_interSel){toast('⚠️ Seleccioná una figurita primero');return;}
-  const fig=allFigs().find(f=>f.id===_interSel);
-  if(!fig){toast('❌ Error al buscar la figurita');return;}
-  if(S.peg.has(fig.id)||S.ap.some(x=>x.id===fig.id)){toast('⚠️ Ya tenés esa figurita');_interSel=null;renderI();return;}
-  S.rep.splice(0,10);
-  if(S.isem===sem){S.tradeW=(S.tradeW||0)+1;}else{S.isem=sem;S.tradeW=1;}
-  S.ap.push(fig);
-  _interSel=null;
-  svS();updProg();buildCG();renderAP();renderI();
-  toast(`🎉 ¡${fig.nm||fig.nombre} va a tu colección!`);
-  setTimeout(()=>showFiguRecibida(fig),250);
+  if(type==='fig'){
+    const missing=TOTAL-S.peg.size;
+    if(missing>50){toast('🔒 Esta opción se habilita cuando falten ≤50 figuritas');return;}
+    const pool=allFigs().filter(f=>!S.peg.has(f.id)&&!S.ap.some(x=>x.id===f.id));
+    if(!pool.length){toast('🎉 ¡Ya tenés todas!');return;}
+    const fig=pool[Math.floor(Math.random()*pool.length)];
+    S.rep.splice(0,10);
+    if(S.isem===sem){S.tradeW=(S.tradeW||0)+1;}else{S.isem=sem;S.tradeW=1;}
+    S.ap.push(fig);
+    svS();updProg();buildCG();renderAP();renderI();
+    toast(`🎯 ¡${fig.nm||fig.nombre} va a tu colección!`);
+    setTimeout(()=>showEpicAnim(fig,'🎯 ¡FIGURITA CONSEGUIDA!','#aaff88'),250);
+  }else{
+    S.rep.splice(0,10);
+    if(S.isem===sem){S.tradeW=(S.tradeW||0)+1;}else{S.isem=sem;S.tradeW=1;}
+    S.pendCount++;
+    svS();updPaqUI();renderI();
+    toast(tx('toast_canje'));
+  }
 }
-function showFiguRecibida(fig){showEpicAnim(fig,'🔄 ¡FIGURITA CONSEGUIDA!','#aaff88');}
 
 // ESPECIALES
 let _espPag=0;
@@ -2588,18 +2565,28 @@ async function loadAdminData(){
   for(let g=1;g<=6;g++) Object.keys(DN).forEach(d=>cursos.push(`${g}-${d}`));
   const cards=await Promise.all(cursos.map(async cc=>{
     const[g,d]=cc.split('-');const lbl=`${g}° ${DN[d]||d}`;
-    let pegCount=0,repCount=0,apCount=0;
+    let pegCount=0,repCount=0,apCount=0,startDate=null,completedAt=null;
     if(fbDB){try{
       const snap=await fbDB.ref(`albums/${cc}`).get();
-      if(snap.exists()){const v=snap.val();pegCount=(v.peg||[]).length;repCount=(v.rep||[]).length;apCount=(v.ap||[]).length;}
+      if(snap.exists()){const v=snap.val();pegCount=(v.peg||[]).length;repCount=(v.rep||[]).length;apCount=(v.ap||[]).length;startDate=v.startDate||null;completedAt=v.completedAt||null;}
     }catch(e){}}
     const pct=Math.round(pegCount/TOTAL*100);
+    let daysStr='—';
+    if(startDate){const days=Math.max(0,Math.floor((Date.now()-new Date(startDate).getTime())/86400000));daysStr=`${days} día${days!==1?'s':''}`;}
+    let compStr='';
+    if(completedAt){
+      const d=new Date(completedAt);
+      const dd=`${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+      compStr=`<div style="font-size:.55rem;color:var(--dorado);font-weight:900;margin:.15rem 0">🏆 Completado ${dd}</div>`;
+    }
     return`<div class="acard ${pct===100?'comp':''}">
       <h4>${lbl}</h4>
       <div class="apct">${pct}%</div>
       <div class="abarra"><div class="afill" style="width:${pct}%"></div></div>
       <div class="aprog">${pegCount}/${TOTAL} pegadas</div>
-      <div style="font-size:.6rem;color:rgba(255,255,255,.35);margin:.1rem 0">${apCount} por pegar · ${repCount} repetidas</div>
+      <div style="font-size:.58rem;color:rgba(255,255,255,.32);margin:.1rem 0">${apCount} por pegar · ${repCount} rep.</div>
+      <div style="font-size:.58rem;color:rgba(255,255,255,.32);margin:.1rem 0">📅 ${daysStr} activo</div>
+      ${compStr}
       <button class="areset" onclick="resetCurso('${cc}','${lbl}')">🗑️ Resetear</button>
     </div>`;
   }));
