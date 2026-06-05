@@ -107,12 +107,12 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
 .tc.active{display:block;}
 
 /* COUNTRIES */
-.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.6rem;}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:.6rem;}
 .ccard{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:1rem;text-align:center;cursor:pointer;transition:all .2s;position:relative;}
 .ccard:hover{border-color:var(--dorado);}
 .ccard.completo{border-color:rgba(240,192,64,.5);background:rgba(240,192,64,.06);}
-.flag-box{width:64px;height:44px;border-radius:4px;margin:0 auto .3rem;display:flex;align-items:center;justify-content:center;font-size:1.5rem;overflow:hidden;}
-.cname{font-size:.9rem;font-weight:900;}
+.flag-box{width:80px;height:55px;border-radius:4px;margin:0 auto .4rem;display:flex;align-items:center;justify-content:center;font-size:1.5rem;overflow:hidden;}
+.cname{font-size:1rem;font-weight:900;}
 .cprog{font-size:.62rem;color:rgba(255,255,255,.4);margin-top:.15rem;}
 .hbadge{position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:var(--dorado);animation:hp 2s infinite;}
 @keyframes hp{0%,100%{opacity:.6}50%{opacity:1}}
@@ -371,6 +371,28 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
 .flag-sn{background:linear-gradient(to right,#00853f 33%,#fdef42 33% 67%,#e31b23 67%);}
 .flag-ma{background:#c1272d;}
 .flag-au{background:#00008b;}
+
+/* ALBUM COMPLETO OVERLAY */
+#alb-complete-ovl{position:fixed;inset:0;z-index:500;display:none;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;}
+#alb-complete-ovl.show{display:flex;}
+.albc-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,#0a0030 0%,#000010 100%);}
+.albc-rays{position:absolute;inset:0;background:conic-gradient(from 0deg at 50% 50%,rgba(255,215,0,.3) 0deg,rgba(255,0,100,.2) 45deg,rgba(0,200,255,.25) 90deg,rgba(200,255,0,.15) 135deg,rgba(255,100,0,.2) 180deg,rgba(150,0,255,.25) 225deg,rgba(0,255,150,.15) 270deg,rgba(255,215,0,.3) 360deg);animation:albcrays 3s linear infinite;}
+@keyframes albcrays{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+.albc-shimmer{position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(255,255,255,.025) 10px,rgba(255,255,255,.025) 20px);animation:albcshim .5s linear infinite;}
+@keyframes albcshim{0%{background-position:0 0}100%{background-position:28px 28px}}
+.albc-stars{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.albc-star{position:absolute;animation:albcstar linear forwards;}
+@keyframes albcstar{0%{opacity:1;transform:translateY(-10px) rotate(0) scale(1)}100%{opacity:0;transform:translateY(110vh) rotate(720deg) scale(0)}}
+.albc-fw{position:absolute;width:7px;height:7px;border-radius:50%;}
+@keyframes fwburst{0%{transform:translate(0,0) scale(0);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(1);opacity:0}}
+.albc-card{position:relative;z-index:2;text-align:center;padding:1.5rem;animation:albcpop .7s cubic-bezier(.34,1.56,.64,1) forwards;}
+@keyframes albcpop{0%{transform:scale(0) rotate(-15deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+.albc-trophy{font-size:clamp(5rem,18vw,9rem);line-height:1;display:block;margin-bottom:.3rem;animation:albctrophy 1.5s ease-in-out infinite alternate;}
+@keyframes albctrophy{0%{transform:scale(1) rotate(-3deg);filter:drop-shadow(0 0 20px rgba(255,215,0,.7))}100%{transform:scale(1.12) rotate(3deg);filter:drop-shadow(0 0 60px rgba(255,215,0,1)) drop-shadow(0 0 120px rgba(255,130,0,.6))}}
+.albc-tit{font-size:clamp(2rem,8vw,3.5rem);font-weight:900;letter-spacing:3px;font-family:Impact,'Arial Black',Arial,sans-serif;background:linear-gradient(90deg,#ffd700,#ff6b00,#ffd700,#fffb00,#ffd700);background-size:300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:albctitshine 2s linear infinite;}
+@keyframes albctitshine{0%{background-position:0%}100%{background-position:300%}}
+.albc-sub{font-size:clamp(.9rem,3.5vw,1.4rem);color:rgba(255,255,255,.9);font-weight:900;margin:.4rem 0;letter-spacing:2px;text-shadow:0 0 20px rgba(255,255,255,.4);}
+.albc-tap{font-size:.72rem;color:rgba(255,255,255,.38);margin-top:1rem;letter-spacing:1px;}
 
 /* ZOOM OVERLAY */
 #zoom-ovl{display:none;position:fixed;inset:0;background:rgba(0,0,0,.94);z-index:400;align-items:center;justify-content:center;flex-direction:column;padding:1rem;}
@@ -1519,7 +1541,7 @@ try{firebase.initializeApp(FB);fbDB=firebase.database();}catch(e){console.warn('
 (async()=>{if(!fbDB)return;try{
   const[cs,st,tr,th]=await Promise.all([fbDB.ref('admin/codes').once('value'),fbDB.ref('admin/settings').once('value'),fbDB.ref('admin/trivia').once('value'),fbDB.ref('admin/trivia-hidden').once('value')]);
   if(cs.exists())Object.assign(PROMO_CODES,cs.val()||{});
-  if(st.exists()){const s=st.val();if(s.pass)ADMIN_PASS=s.pass;if(s.maxPacks)MAX_PACKS_DIA=parseInt(s.maxPacks)||5;}
+  if(st.exists()){const s=st.val();if(s.pass)ADMIN_PASS=s.pass;if(s.maxPacks)MAX_PACKS_DIA=parseInt(s.maxPacks)||5;if(s.maxTrades)MAX_TRADES_WEEK=parseInt(s.maxTrades)||1;if(s.cursoPass)CURSO_PASS=s.cursoPass||{};}
   if(tr.exists()){const tv=tr.val();Object.keys(tv).forEach(key=>{const[g,lang]=key.split('-');if(GRADE_TRIVIAS[g]&&GRADE_TRIVIAS[g][lang])(tv[key]||[]).forEach(q=>GRADE_TRIVIAS[g][lang].push(q));});}
   if(th.exists()){const tv=th.val();Object.keys(tv).forEach(key=>{TRIVIA_HIDDEN[key]=tv[key]||[];});}
 }catch(e){}})();
@@ -1539,6 +1561,7 @@ function _parseS(d){
     fhoy:d.fhoy||'',
     ihoy:d.ihoy||'',
     isem:d.isem||'',
+    tradeW:parseInt(d.tradeW||0),
     thoy:d.thoy||'',
     tAciertos:parseInt(d.tAciertos||0),
     asHoy:d.asHoy||'',
@@ -1556,6 +1579,7 @@ function ldS(){
     fhoy:localStorage.getItem(SK('fh'))||'',
     ihoy:localStorage.getItem(SK('ih'))||'',
     isem:localStorage.getItem(SK('is'))||'',
+    tradeW:parseInt(localStorage.getItem(SK('tw'))||'0'),
     thoy:localStorage.getItem(SK('th'))||'',
     tAciertos:parseInt(localStorage.getItem(SK('ta'))||'0'),
     asHoy:localStorage.getItem(SK('as'))||'',
@@ -1572,6 +1596,7 @@ function _cacheS(){
   localStorage.setItem(SK('fh'),S.fhoy);
   localStorage.setItem(SK('ih'),S.ihoy||'');
   localStorage.setItem(SK('is'),S.isem||'');
+  localStorage.setItem(SK('tw'),S.tradeW||0);
   localStorage.setItem(SK('th'),S.thoy||'');
   localStorage.setItem(SK('ta'),S.tAciertos||0);
   localStorage.setItem(SK('as'),S.asHoy||'');
@@ -1584,7 +1609,7 @@ function svS(){
   if(!fbDB)return;
   fbDB.ref(`albums/${CC}`).set({
     peg:[...S.peg],ap:S.ap,rep:S.rep,
-    shoy:S.shoy,fhoy:S.fhoy,ihoy:S.ihoy||'',isem:S.isem||'',
+    shoy:S.shoy,fhoy:S.fhoy,ihoy:S.ihoy||'',isem:S.isem||'',tradeW:S.tradeW||0,
     thoy:S.thoy||'',tAciertos:S.tAciertos||0,asHoy:S.asHoy||'',cvHoy:S.cvHoy||'',pendCount:S.pendCount||0,triviaIdx:S.triviaIdx||0
   });
   // Guardar startDate si hay actividad y no está registrado
@@ -1604,7 +1629,7 @@ function startSync(){
     S.peg=new Set(d.peg||[]);
     S.ap=d.ap||[];S.rep=d.rep||[];
     S.shoy=parseInt(d.shoy||0);
-    S.fhoy=d.fhoy||'';S.ihoy=d.ihoy||'';S.isem=d.isem||'';
+    S.fhoy=d.fhoy||'';S.ihoy=d.ihoy||'';S.isem=d.isem||'';S.tradeW=parseInt(d.tradeW||0);
     S.thoy=d.thoy||'';S.tAciertos=parseInt(d.tAciertos||0);
     S.asHoy=d.asHoy||'';S.cvHoy=d.cvHoy||'';S.pendCount=parseInt(d.pendCount||0);
     _cacheS();
@@ -1642,8 +1667,9 @@ async function login(){
   const pass=document.getElementById('lpass').value.trim().toLowerCase();
   if(!curso){toast('⚠️ Seleccioná tu curso');return;}
   const[g,d]=curso.split('-');
-  const exp=d==='arayan'?`arrayan${g}`:`${d}${g}`;
-  if(pass!==exp&&pass!=='demo'){document.getElementById('lerr').style.display='block';return;}
+  const expDefault=`${g}${d}${g}`;
+  const expPass=CURSO_PASS[curso]||expDefault;
+  if(pass!==expPass&&pass!=='demo'){document.getElementById('lerr').style.display='block';return;}
   document.getElementById('lerr').style.display='none';
   CC=curso;
   // Cargar desde Firebase si está configurado, sino desde localStorage
@@ -1699,6 +1725,7 @@ function nav(t,silent){
   document.getElementById('tab-'+t).classList.add('active');
   const hn=document.getElementById('hn-'+t);if(hn)hn.classList.add('active');
   const bn=document.getElementById('bn-'+t);if(bn)bn.classList.add('active');
+  if(t==='album'){CPG='';document.getElementById('vc').style.display='';document.getElementById('vp').style.display='none';buildCG();}
   if(t==='pegar')renderAP();
   if(t==='intercambio')renderI();
   if(t==='especiales')buildEsp();
@@ -1779,7 +1806,7 @@ function renderPg(id){
     <div class="abar" style="border-radius:8px;margin-bottom:.5rem;font-size:.74rem">🏅 ${tx('pg_figuritas')} ${p.n.toUpperCase()}</div>
     <div class="pg-figs-wrapper">
       <button class="side-nav-btn" onclick="${prev?`showPage('${prev}')`:'void(0)'}" ${!prev?'disabled':''}>‹</button>
-      <div class="fgrid" style="grid-template-columns:repeat(8,1fr);flex:1">${norm.map(f=>rfig(f)).join('')}</div>
+      <div class="fgrid" style="grid-template-columns:repeat(7,1fr);flex:1">${norm.map(f=>rfig(f)).join('')}</div>
       <button class="side-nav-btn" onclick="${next?`showPage('${next}')`:'void(0)'}" ${!next?'disabled':''}>›</button>
     </div>
     ${holo?`<div style="margin-top:.7rem"><div class="abar" style="border-radius:8px;margin-bottom:.5rem;font-size:.68rem">✨ ${tx('pg_holo')} · ${p.n.toUpperCase()}</div><div style="display:flex;justify-content:center"><div style="width:min(150px,30vw)">${rfig(holo)}</div></div></div>`:''}
@@ -1811,7 +1838,7 @@ function renderSPg(id,prev,next){
     <div class="abar" style="border-radius:8px;margin-bottom:.5rem;font-size:.74rem">⭐ ${tx('pg_especial').toUpperCase()} · SAN CARLOS MUNDIAL 2026</div>
     <div class="pg-figs-wrapper">
       <button class="side-nav-btn" onclick="${prev?`showPage('${prev}')`:'void(0)'}" ${!prev?'disabled':''}>‹</button>
-      <div class="espg" style="grid-template-columns:repeat(6,1fr);gap:.6rem;flex:1">${figs.map(f=>rfig(f)).join('')}</div>
+      <div class="espg" style="grid-template-columns:repeat(5,1fr);gap:.6rem;flex:1">${figs.map(f=>rfig(f)).join('')}</div>
       <button class="side-nav-btn" onclick="${next?`showPage('${next}')`:'void(0)'}" ${!next?'disabled':''}>›</button>
     </div>
   `;
@@ -1876,6 +1903,8 @@ function pegFig(id){
   }
   // epic animation for holos and especiales
   if(fig&&(fig.holo||fig.pais==='cole'))setTimeout(()=>showEpicAnim(fig),180);
+  // ÁLBUM COMPLETO - animación épica total
+  if(S.peg.size>=TOTAL)setTimeout(()=>showAlbumCompletoAnim(),500);
 }
 let _epicTimer=null;
 function showEpicAnim(fig){
@@ -1918,6 +1947,60 @@ function closeEpic(){
   ovl.classList.remove('show');
   document.getElementById('epic-pts').innerHTML='';
   if(_epicTimer)clearTimeout(_epicTimer);_epicTimer=null;
+}
+
+// ÁLBUM COMPLETO ANIMATION
+let _albcTimer=null;
+function showAlbumCompletoAnim(){
+  const ovl=document.getElementById('alb-complete-ovl');
+  const stars=document.getElementById('albc-stars-el');
+  stars.innerHTML='';
+  const cols=['#ffd700','#ff4400','#00ccff','#ff00cc','#00ff88','#ffffff','#ffaa00','#4488ff','#ff6699','#99ff00'];
+  const shapes=['50%','3px','0'];
+  for(let i=0;i<150;i++){
+    const p=document.createElement('div');
+    p.className='albc-star';
+    const sz=3+Math.random()*14;
+    const dur=1.5+Math.random()*3.5;
+    p.style.cssText=`left:${Math.random()*100}%;top:${-20-Math.random()*60}px;background:${cols[i%cols.length]};width:${sz}px;height:${sz}px;border-radius:${shapes[i%3]};animation-duration:${dur}s;animation-delay:${Math.random()*2.5}s`;
+    stars.appendChild(p);
+  }
+  const launchFW=()=>{
+    const x=10+Math.random()*80;const y=5+Math.random()*70;
+    for(let i=0;i<20;i++){
+      const p=document.createElement('div');p.className='albc-fw';
+      const angle=i*(Math.PI*2/20);const dist=70+Math.random()*100;
+      const tx2=Math.cos(angle)*dist;const ty2=Math.sin(angle)*dist;
+      p.style.cssText=`left:${x}%;top:${y}%;background:${cols[i%cols.length]};--tx:${tx2}px;--ty:${ty2}px;animation:fwburst ${.35+Math.random()*.4}s ease-out forwards`;
+      ovl.appendChild(p);
+      setTimeout(()=>p.remove(),900);
+    }
+  };
+  launchFW();const fwInt=setInterval(launchFW,600);
+  ovl.classList.add('show');
+  if(_albcTimer)clearTimeout(_albcTimer);
+  [523,659,784,1047,1319,1568,2093,2637].forEach((f,i)=>{
+    setTimeout(()=>{
+      const c=gAC();if(!c)return;
+      const tm=c.currentTime;
+      const o=c.createOscillator(),g2=c.createGain();
+      o.connect(g2);g2.connect(c.destination);
+      o.type='sine';o.frequency.setValueAtTime(f,tm);
+      o.frequency.exponentialRampToValueAtTime(f*1.5,tm+.45);
+      g2.gain.setValueAtTime(.28,tm);g2.gain.exponentialRampToValueAtTime(.001,tm+.9);
+      o.start(tm);o.stop(tm+.95);
+    },i*130);
+  });
+  _albcTimer=setTimeout(()=>{clearInterval(fwInt);},15000);
+  ovl._fwInt=fwInt;
+}
+function closeAlbComplete(){
+  const ovl=document.getElementById('alb-complete-ovl');
+  ovl.classList.remove('show');
+  if(ovl._fwInt){clearInterval(ovl._fwInt);ovl._fwInt=null;}
+  if(_albcTimer){clearTimeout(_albcTimer);_albcTimer=null;}
+  // remove any stray fw particles
+  ovl.querySelectorAll('.albc-fw').forEach(p=>p.remove());
 }
 
 // SOBRES
@@ -2112,6 +2195,8 @@ let PROMO_CODES={
 };
 let TRIVIA_HIDDEN={};
 let MAX_PACKS_DIA=5;
+let MAX_TRADES_WEEK=1;
+let CURSO_PASS={};
 function getUsedCodes(){try{return new Set(JSON.parse(localStorage.getItem(SK('uc'))||'[]'));}catch(e){return new Set();}}
 function addUsedCode(c){const u=getUsedCodes();u.add(c);localStorage.setItem(SK('uc'),JSON.stringify([...u]));}
 async function usarCodigo(){
@@ -2156,8 +2241,9 @@ function genSobre(){
   // Especiales con menor frecuencia (~2x cada una)
   ECOLE.forEach(f=>{pool.push({...f,num:f.id,pais:'cole',pos:'Especial',hab:'🏫 San Carlos'});pool.push({...f,num:f.id,pais:'cole',pos:'Especial',hab:'🏫 San Carlos'});});
   const figs=Array(5).fill(0).map(()=>pool[Math.floor(Math.random()*pool.length)]);
-  // Forzar ~1 repetida cada 2 sobres (50% de probabilidad por sobre)
-  if(Math.random()<0.5){
+  // Por debajo de 75% forzar ~1 repetida por sobre (50%). Arriba de 75% casi nada (8%).
+  const _repChance=S.peg.size/TOTAL>=0.75?0.08:0.5;
+  if(Math.random()<_repChance){
     const haveIds=new Set([...S.peg,...S.ap.map(x=>x.id)]);
     if(haveIds.size>0){
       const owned=pool.filter(f=>haveIds.has(f.id));
@@ -2206,7 +2292,8 @@ function buildIS(){/* sin selector de destino */}
 function renderI(){
   const div=document.getElementById('idiv');
   const sem=getWeekStart();
-  if(S.isem===sem){div.innerHTML=`<div class="istatus">${tx('inter_ya')}</div>`;document.getElementById('binter').disabled=true;
+  const tradesDone=S.isem===sem?(S.tradeW||0):0;
+  if(tradesDone>=MAX_TRADES_WEEK){div.innerHTML=`<div class="istatus">${tx('inter_ya')} (${tradesDone}/${MAX_TRADES_WEEK})</div>`;document.getElementById('binter').disabled=true;
     document.getElementById('imis').innerHTML='';document.getElementById('isu').innerHTML='';return;}
   div.innerHTML='';
   const reps=S.rep.slice(0,10);
@@ -2233,8 +2320,11 @@ function renderI(){
 function doInter(){
   if(S.rep.length<10){toast('⚠️ Necesitás 10 repetidas');return;}
   const sem=getWeekStart();
-  if(S.isem===sem){toast(tx('inter_ya'));return;}
-  S.rep.splice(0,10);S.isem=sem;S.pendCount++;svS();updPaqUI();
+  const tradesDone=S.isem===sem?(S.tradeW||0):0;
+  if(tradesDone>=MAX_TRADES_WEEK){toast(tx('inter_ya'));return;}
+  S.rep.splice(0,10);
+  if(S.isem===sem){S.tradeW=(S.tradeW||0)+1;}else{S.isem=sem;S.tradeW=1;}
+  S.pendCount++;svS();updPaqUI();
   toast(tx('toast_canje'));
   renderI();renderAP();
 }
@@ -2263,7 +2353,7 @@ function renderEspPag(){
   document.getElementById('esp-prev-btn').disabled=_espPag===0;
   document.getElementById('esp-next-btn').disabled=_espPag===ESP_PAGES.length-1;
   const figs=ep.figs();
-  document.getElementById('esp-page').innerHTML=`<div class="espg" style="grid-template-columns:repeat(6,1fr);gap:.6rem">${figs.map(f=>rfig(f)).join('')}</div>`;
+  document.getElementById('esp-page').innerHTML=`<div class="espg" style="grid-template-columns:repeat(5,1fr);gap:.6rem">${figs.map(f=>rfig(f)).join('')}</div>`;
 }
 
 // ZOOM
@@ -2313,6 +2403,35 @@ let VPEG=new Set();
 async function cargarVista(){
   const cc=document.getElementById('vsel').value;
   if(!cc){toast('⚠️ Elegí un curso');return;}
+  if(cc==='__full__'){
+    VPEG=new Set(allFigs().map(f=>f.id));
+    const total=TOTAL;const pegCount=VPEG.size;
+    let html=`
+      <div style="background:linear-gradient(135deg,rgba(240,192,64,.15),rgba(0,71,108,.2));border:2px solid var(--dorado);border-radius:12px;padding:1rem;text-align:center;margin-bottom:1rem">
+        <div style="font-size:1.3rem;font-weight:900;color:var(--dorado)">📖 ÁLBUM COMPLETO</div>
+        <div style="font-size:.8rem;color:rgba(255,255,255,.65);margin:.25rem 0">Así se ve el álbum cuando está completo</div>
+        <div style="background:rgba(255,255,255,.1);border-radius:20px;height:10px;overflow:hidden;margin:.5rem 0">
+          <div style="width:100%;height:100%;background:linear-gradient(90deg,var(--dorado),var(--rojo));border-radius:20px"></div>
+        </div>
+        <div style="font-size:1.6rem;font-weight:900;color:var(--dorado)">🏆 100%</div>
+      </div>
+      <div id="vpaisdetalle"></div>
+      <div class="vpais-grid">`;
+    PAISES.forEach(p=>{
+      const fs=FPP[p.id];const t2=fs.length;
+      html+=`<div class="vpais" onclick="verVistaPais('${p.id}')" style="border-color:rgba(240,192,64,.4);background:rgba(240,192,64,.06)">
+        <div style="width:48px;height:32px;border-radius:4px;overflow:hidden;margin:0 auto .3rem">${flagImg(p,80)}</div>
+        <div style="font-size:.75rem;font-weight:900;margin:.15rem 0">${p.n}</div>
+        <div style="font-size:.58rem;color:var(--dorado)">${t2}/${t2} · 100%</div>
+        <div style="height:4px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;margin-top:.3rem">
+          <div style="width:100%;height:100%;background:var(--dorado);border-radius:4px"></div>
+        </div>
+      </div>`;
+    });
+    html+=`</div>`;
+    document.getElementById('vresult').innerHTML=html;
+    return;
+  }
   const[g,d]=cc.split('-');
   const lbl=`${g}° ${DN[d]||d}`;
   document.getElementById('vresult').innerHTML=`<p style="text-align:center;color:rgba(255,255,255,.5);padding:2rem">☁️ Cargando ${lbl}...</p>`;
@@ -2418,26 +2537,18 @@ async function loadAdminData(){
   for(let g=1;g<=6;g++) Object.keys(DN).forEach(d=>cursos.push(`${g}-${d}`));
   const cards=await Promise.all(cursos.map(async cc=>{
     const[g,d]=cc.split('-');const lbl=`${g}° ${DN[d]||d}`;
-    let pegCount=0,repCount=0,apCount=0,startDate=null;
+    let pegCount=0,repCount=0,apCount=0;
     if(fbDB){try{
       const snap=await fbDB.ref(`albums/${cc}`).get();
-      if(snap.exists()){const v=snap.val();pegCount=(v.peg||[]).length;repCount=(v.rep||[]).length;apCount=(v.ap||[]).length;startDate=v.startDate||null;}
+      if(snap.exists()){const v=snap.val();pegCount=(v.peg||[]).length;repCount=(v.rep||[]).length;apCount=(v.ap||[]).length;}
     }catch(e){}}
     const pct=Math.round(pegCount/TOTAL*100);
-    let estimStr='—';
-    if(pegCount>=TOTAL){estimStr='🏆 ¡Completo!';}
-    else if(startDate&&pegCount>0){
-      const daysElap=Math.max(1,(Date.now()-new Date(startDate).getTime())/86400000);
-      const rate=pegCount/daysElap;
-      if(rate>0){const d=Math.ceil((TOTAL-pegCount)/rate);estimStr=`~${d} día${d!==1?'s':''}`;}}
-    else if(pegCount>0){estimStr='calculando...';}
     return`<div class="acard ${pct===100?'comp':''}">
       <h4>${lbl}</h4>
       <div class="apct">${pct}%</div>
       <div class="abarra"><div class="afill" style="width:${pct}%"></div></div>
       <div class="aprog">${pegCount}/${TOTAL} pegadas</div>
       <div style="font-size:.6rem;color:rgba(255,255,255,.35);margin:.1rem 0">${apCount} por pegar · ${repCount} repetidas</div>
-      <div style="font-size:.65rem;color:rgba(255,215,0,.75);margin-bottom:.3rem">⏱ ${estimStr} para completar</div>
       <button class="areset" onclick="resetCurso('${cc}','${lbl}')">🗑️ Resetear</button>
     </div>`;
   }));
@@ -2465,7 +2576,7 @@ async function loadCodigosAdmin(){
     return`<div class="arow">
       <span style="font-weight:900;color:var(--dorado);min-width:80px">${code}</span>
       <span style="font-size:.68rem;color:rgba(255,255,255,.45);flex:1">${def.global?'🌐 Único global'+(def.usedAt?' · ✓ Ya usado':''):def.multi?'♾️ Ilimitado':'1️⃣ Un uso por curso'}${def.hasta?' · 📅'+def.hasta:''}</span>
-      ${isFirebase?`<button class="acbtn red" onclick="deleteCodigo('${code}')">✕</button>`:`<span style="font-size:.6rem;color:rgba(255,255,255,.25)">default</span>`}
+      <button class="acbtn red" onclick="deleteCodigo('${code}','${isFirebase}')">✕</button>
     </div>`;
   }).join('')}</div>`;
 }
@@ -2487,11 +2598,11 @@ async function saveNewCodigo(){
     loadCodigosAdmin();
   }catch(e){msg.style.cssText='display:block;color:var(--rojo)';msg.textContent='❌ Error al guardar';}
 }
-async function deleteCodigo(code){
+async function deleteCodigo(code,isFirebase){
   if(!confirm(`¿Eliminar el código "${code}"?`))return;
-  if(!fbDB)return;
-  try{await fbDB.ref(`admin/codes/${code}`).remove();delete PROMO_CODES[code];loadCodigosAdmin();}
-  catch(e){toast('❌ Error al eliminar');}
+  delete PROMO_CODES[code];
+  if(fbDB&&isFirebase!=='false'){try{await fbDB.ref(`admin/codes/${code}`).remove();}catch(e){}}
+  loadCodigosAdmin();
 }
 
 // ── TRIVIA ───────────────────────────────────────────────────────
@@ -2586,6 +2697,8 @@ async function toggleTriviaBase(g,lang,idx){
 function loadAjustes(){
   const lbl=document.getElementById('aj-maxlbl');if(lbl)lbl.textContent=MAX_PACKS_DIA;
   const inp=document.getElementById('aj-max');if(inp)inp.value=MAX_PACKS_DIA;
+  const tlbl=document.getElementById('aj-tradeslbl');if(tlbl)tlbl.textContent=MAX_TRADES_WEEK;
+  const tinp=document.getElementById('aj-trades');if(tinp)tinp.value=MAX_TRADES_WEEK;
 }
 async function saveAdminPass(){
   const np=(document.getElementById('aj-pass').value||'').trim();
@@ -2604,6 +2717,29 @@ async function saveMaxPacks(){
   if(fbDB){try{await fbDB.ref('admin/settings/maxPacks').set(v);}catch(e){}}
   const lbl=document.getElementById('aj-maxlbl');if(lbl)lbl.textContent=v;
   msg.style.cssText='display:block;color:var(--dorado)';msg.textContent=`✅ Límite cambiado a ${v}`;
+  setTimeout(()=>{msg.style.display='none';},2500);
+}
+
+async function saveWeeklyLimit(){
+  const v=Math.max(1,parseInt(document.getElementById('aj-trades').value)||1);
+  const msg=document.getElementById('aj-trades-msg');
+  MAX_TRADES_WEEK=v;
+  if(fbDB){try{await fbDB.ref('admin/settings/maxTrades').set(v);}catch(e){}}
+  const lbl=document.getElementById('aj-tradeslbl');if(lbl)lbl.textContent=v;
+  msg.style.cssText='display:block;color:var(--dorado)';msg.textContent=`✅ Límite cambiado a ${v} por semana`;
+  setTimeout(()=>{msg.style.display='none';},2500);
+}
+async function saveCursoPass(){
+  const curso=document.getElementById('aj-curso-sel').value;
+  const np=(document.getElementById('aj-curso-pass').value||'').trim().toLowerCase();
+  const msg=document.getElementById('aj-curso-msg');
+  if(!curso){msg.style.cssText='display:block;color:var(--rojo)';msg.textContent='❌ Seleccioná un curso';return;}
+  if(!np){msg.style.cssText='display:block;color:var(--rojo)';msg.textContent='❌ Ingresá la nueva contraseña';return;}
+  CURSO_PASS[curso]=np;
+  if(fbDB){try{await fbDB.ref(`admin/settings/cursoPass/${curso}`).set(np);}catch(e){}}
+  document.getElementById('aj-curso-pass').value='';
+  const[g,d]=curso.split('-');const lbl=`${g}° ${DN[d]||d}`;
+  msg.style.cssText='display:block;color:var(--dorado)';msg.textContent=`✅ Contraseña de ${lbl} actualizada`;
   setTimeout(()=>{msg.style.display='none';},2500);
 }
 
@@ -2640,16 +2776,18 @@ document.addEventListener('keydown',e=>{
 <!-- MODO VISTA -->
 <div id="sv" class="screen">
   <div class="vhdr">
-    <button class="bbtn" onclick="go('sp')" style="margin:0">← Inicio</button>
-    <div>
+    <button class="bbtn" onclick="history.length>1?history.back():go('sp')" style="margin:0">← Volver</button>
+    <div style="flex:1;text-align:center">
       <div style="font-size:1rem;font-weight:900;color:var(--dorado)">👁️ MODO VISTA</div>
       <div style="font-size:.65rem;color:rgba(255,255,255,.5)">Solo lectura · sin modificar</div>
     </div>
+    <button class="bbtn" onclick="go('sp')" style="margin:0">🏠</button>
   </div>
   <div style="padding:1rem;width:100%;max-width:620px;margin:0 auto">
     <div style="display:flex;gap:.6rem;margin-bottom:1rem">
       <select id="vsel" style="flex:1;padding:.8rem;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:#001f33;color:#fff;font-family:inherit;font-size:.9rem;outline:none;-webkit-appearance:none">
         <option value="">-- Elegí un curso --</option>
+        <option value="__full__">📖 Álbum Completo (ejemplo)</option>
         <optgroup label="1° Grado"><option value="1-arayan">1° Arrayán</option><option value="1-jacaranda">1° Jacarandá</option><option value="1-ceibo">1° Ceibo</option></optgroup>
         <optgroup label="2° Grado"><option value="2-arayan">2° Arrayán</option><option value="2-jacaranda">2° Jacarandá</option><option value="2-ceibo">2° Ceibo</option></optgroup>
         <optgroup label="3° Grado"><option value="3-arayan">3° Arrayán</option><option value="3-jacaranda">3° Jacarandá</option><option value="3-ceibo">3° Ceibo</option></optgroup>
@@ -2753,6 +2891,31 @@ document.addEventListener('keydown',e=>{
           <button class="acbtn gold" onclick="saveMaxPacks()" style="width:100%;padding:.65rem">GUARDAR LÍMITE</button>
           <div id="aj-max-msg" style="font-size:.75rem;margin-top:.4rem;text-align:center;display:none"></div>
         </div>
+        <div class="aform">
+          <div style="font-size:.82rem;font-weight:900;color:var(--dorado);margin-bottom:.7rem">🔄 Límite de canjes por semana</div>
+          <span class="alabel">Máximo actual: <span id="aj-tradeslbl">1</span> canje/semana</span>
+          <input class="ainp" id="aj-trades" type="number" min="1" max="10" value="1">
+          <button class="acbtn gold" onclick="saveWeeklyLimit()" style="width:100%;padding:.65rem">GUARDAR LÍMITE</button>
+          <div id="aj-trades-msg" style="font-size:.75rem;margin-top:.4rem;text-align:center;display:none"></div>
+        </div>
+        <div class="aform">
+          <div style="font-size:.82rem;font-weight:900;color:var(--dorado);margin-bottom:.7rem">🔐 Contraseña de curso individual</div>
+          <div style="font-size:.65rem;color:rgba(255,255,255,.4);margin-bottom:.5rem">Por defecto: {grado}{división}{grado} · ej: 5ceibo5</div>
+          <span class="alabel">Curso</span>
+          <select class="ainp" id="aj-curso-sel" style="margin-bottom:.5rem">
+            <option value="">-- Seleccioná el curso --</option>
+            <optgroup label="1° Grado"><option value="1-arayan">1° Arrayán</option><option value="1-jacaranda">1° Jacarandá</option><option value="1-ceibo">1° Ceibo</option></optgroup>
+            <optgroup label="2° Grado"><option value="2-arayan">2° Arrayán</option><option value="2-jacaranda">2° Jacarandá</option><option value="2-ceibo">2° Ceibo</option></optgroup>
+            <optgroup label="3° Grado"><option value="3-arayan">3° Arrayán</option><option value="3-jacaranda">3° Jacarandá</option><option value="3-ceibo">3° Ceibo</option></optgroup>
+            <optgroup label="4° Grado"><option value="4-arayan">4° Arrayán</option><option value="4-jacaranda">4° Jacarandá</option><option value="4-ceibo">4° Ceibo</option></optgroup>
+            <optgroup label="5° Grado"><option value="5-arayan">5° Arrayán</option><option value="5-jacaranda">5° Jacarandá</option><option value="5-ceibo">5° Ceibo</option></optgroup>
+            <optgroup label="6° Grado"><option value="6-arayan">6° Arrayán</option><option value="6-jacaranda">6° Jacarandá</option><option value="6-ceibo">6° Ceibo</option></optgroup>
+          </select>
+          <span class="alabel">Nueva contraseña</span>
+          <input class="ainp" id="aj-curso-pass" type="text" placeholder="Nueva contraseña del curso">
+          <button class="acbtn gold" onclick="saveCursoPass()" style="width:100%;padding:.65rem">CAMBIAR CONTRASEÑA DEL CURSO</button>
+          <div id="aj-curso-msg" style="font-size:.75rem;margin-top:.4rem;text-align:center;display:none"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -2771,6 +2934,20 @@ document.addEventListener('keydown',e=>{
     <div class="epic-title" id="epic-title"></div>
     <div class="epic-sub" id="epic-sub"></div>
     <div class="epic-tap">Tocá para cerrar</div>
+  </div>
+</div>
+<!-- ALBUM COMPLETO OVERLAY -->
+<div id="alb-complete-ovl" onclick="closeAlbComplete()">
+  <div class="albc-bg"></div>
+  <div class="albc-rays"></div>
+  <div class="albc-shimmer"></div>
+  <div class="albc-stars" id="albc-stars-el"></div>
+  <div class="albc-card">
+    <span class="albc-trophy">🏆</span>
+    <div class="albc-tit">¡ÁLBUM COMPLETO!</div>
+    <div class="albc-sub">¡LO LOGRASTE! 320/320 🎉</div>
+    <div class="albc-sub" style="font-size:.9rem;color:var(--dorado);letter-spacing:1px">SAN CARLOS · MUNDIAL 2026 ⚽</div>
+    <div class="albc-tap">Tocá para continuar</div>
   </div>
 </div>
 <!-- ZOOM OVERLAY -->

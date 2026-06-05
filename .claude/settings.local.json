@@ -22,7 +22,21 @@
       "Bash(Format-Table FullName)",
       "PowerShell(\\(Get-Content \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" | Measure-Object -Line\\).Lines)",
       "PowerShell(Get-ChildItem \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\" -Recurse | Where-Object {-not $_.PSIsContainer} | Select-Object Name, Length | Format-Table -AutoSize)",
-      "Bash(python3 -c ' *)"
+      "Bash(python3 -c ' *)",
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"PASSWORDS|password|contraseña\" | Select-Object -First 20 | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"repeticion|repeat|prob|rate|75|pickFig|elegir\" | Select-Object -First 30 | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"dias|dias_estimados|estimado|weekLimit|weeklyLimit|canjes_semana|limiteCanjes\" | Select-Object -First 20 | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"dias|estimado|dias_est|daysLeft|diasLeft|falta\" | Select-Object -First 20 | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"function login|CURSOS|PASSWORDS|curso_pass|cursoPass|pass_\" | Select-Object -First 20 | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"cargarVista|vresult|vpais\" | Select-Object -First 20 | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"ADMIN_PASS|weeklyLimit|MAX_TRADES|inter_ya\" | Select-Object -First 20 | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"function svS|svS\\\\\\(\\\\\\)\" | Select-Object -First 10 | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"function getWeekStart|getWeekStart\" | Select-Object -First 5 | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"renderEspPag|ESP_PAGES|espg|buildEsp\" | Select-Object -First 20 | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"let VPEG|var VPEG|VPEG=\" | Select-Object -First 10 | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"_repChance|peg.size/TOTAL\" | Select-Object -First 5 | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"showAlbumCompletoAnim|closeAlbComplete|alb-complete\" | Select-Object -First 10 | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"CURSO_PASS|MAX_TRADES|saveCursoPass|saveWeeklyLimit|aj-trades\" | Select-Object -First 15 | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })"
     ]
   }
 }
