@@ -2231,15 +2231,22 @@ function genSobre(){
   });
   // Especiales con menor frecuencia (~2x cada una)
   ECOLE.forEach(f=>{pool.push({...f,num:f.id,pais:'cole',pos:'Especial',hab:'🏫 San Carlos'});pool.push({...f,num:f.id,pais:'cole',pos:'Especial',hab:'🏫 San Carlos'});});
+  const haveIds=new Set([...S.peg,...S.ap.map(x=>x.id)]);
+  const missing=TOTAL-S.peg.size;
+  const newPool=pool.filter(f=>!haveIds.has(f.id));
+  const repPool=pool.filter(f=>haveIds.has(f.id));
   const figs=Array(5).fill(0).map(()=>pool[Math.floor(Math.random()*pool.length)]);
+  // Si faltan más de 10, garantizar al menos 1 figurita nueva por sobre
+  if(missing>10&&newPool.length>0){
+    const allRep=figs.every(f=>haveIds.has(f.id));
+    if(allRep){
+      figs[Math.floor(Math.random()*5)]=newPool[Math.floor(Math.random()*newPool.length)];
+    }
+  }
   // Por debajo de 75% forzar ~1 repetida por sobre (50%). Arriba de 75% casi nada (8%).
   const _repChance=S.peg.size/TOTAL>=0.75?0.08:0.5;
   if(Math.random()<_repChance){
-    const haveIds=new Set([...S.peg,...S.ap.map(x=>x.id)]);
-    if(haveIds.size>0){
-      const owned=pool.filter(f=>haveIds.has(f.id));
-      if(owned.length>0) figs[Math.floor(Math.random()*5)]=owned[Math.floor(Math.random()*owned.length)];
-    }
+    if(repPool.length>0) figs[Math.floor(Math.random()*5)]=repPool[Math.floor(Math.random()*repPool.length)];
   }
   return figs;
 }
