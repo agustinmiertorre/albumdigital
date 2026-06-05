@@ -44,7 +44,10 @@
       "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"go..sv..\" | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
       "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"5-S\\\\.shoy|MAX_PACKS_DIA-S\\\\.shoy\" | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
       "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"pdots|pdot\" | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
-      "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\album_view.html\" -Pattern \"__full__|Álbum Completo\" | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })"
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\album_view.html\" -Pattern \"__full__|Álbum Completo\" | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"shoy|MAX_PACKS|saveMaxPacks|aj-max|lbl_limite|lbl_quedan|lbl_sobres\" | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"MAX_PACKS|S\\\\.shoy|r<=0|saveMaxPacks|aj-max|lbl_limite|ptxt\" | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"expDefault|expPass|CURSO_PASS\" | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })"
     ]
   }
 }

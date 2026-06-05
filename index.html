@@ -491,9 +491,6 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
     <div class="sobre-hero">
       <div class="sobre-hero-tit" id="sobre-hero-tit">🎴 APERTURA DE SOBRES</div>
       <div class="sobre-hero-sub" id="sobre-hero-sub">Completá las actividades del día para ganar sobres</div>
-      <div class="sobre-dots-row">
-        <span style="font-size:.75rem;color:rgba(255,255,255,.5)" id="ptxt">Sobres disponibles hoy</span>
-      </div>
     </div>
     <div id="abrir-section"></div>
     <div style="padding:1rem 1rem 0;max-width:500px;margin:0 auto">
@@ -1536,7 +1533,7 @@ try{firebase.initializeApp(FB);fbDB=firebase.database();}catch(e){console.warn('
 (async()=>{if(!fbDB)return;try{
   const[cs,st,tr,th]=await Promise.all([fbDB.ref('admin/codes').once('value'),fbDB.ref('admin/settings').once('value'),fbDB.ref('admin/trivia').once('value'),fbDB.ref('admin/trivia-hidden').once('value')]);
   if(cs.exists())Object.assign(PROMO_CODES,cs.val()||{});
-  if(st.exists()){const s=st.val();if(s.pass)ADMIN_PASS=s.pass;if(s.maxPacks)MAX_PACKS_DIA=parseInt(s.maxPacks)||5;if(s.maxTrades)MAX_TRADES_WEEK=parseInt(s.maxTrades)||1;if(s.cursoPass)CURSO_PASS=s.cursoPass||{};}
+  if(st.exists()){const s=st.val();if(s.pass)ADMIN_PASS=s.pass;if(s.maxTrades)MAX_TRADES_WEEK=parseInt(s.maxTrades)||1;if(s.cursoPass)CURSO_PASS=s.cursoPass||{};}
   if(tr.exists()){const tv=tr.val();Object.keys(tv).forEach(key=>{const[g,lang]=key.split('-');if(GRADE_TRIVIAS[g]&&GRADE_TRIVIAS[g][lang])(tv[key]||[]).forEach(q=>GRADE_TRIVIAS[g][lang].push(q));});}
   if(th.exists()){const tv=th.val();Object.keys(tv).forEach(key=>{TRIVIA_HIDDEN[key]=tv[key]||[];});}
 }catch(e){}})();
@@ -1552,7 +1549,6 @@ function _parseS(d){
     peg:new Set(d.peg||[]),
     ap:d.ap||[],
     rep:d.rep||[],
-    shoy:parseInt(d.shoy||0),
     fhoy:d.fhoy||'',
     ihoy:d.ihoy||'',
     isem:d.isem||'',
@@ -1570,7 +1566,6 @@ function ldS(){
     peg:new Set(JSON.parse(localStorage.getItem(SK('peg'))||'[]')),
     ap:JSON.parse(localStorage.getItem(SK('ap'))||'[]'),
     rep:JSON.parse(localStorage.getItem(SK('rep'))||'[]'),
-    shoy:parseInt(localStorage.getItem(SK('sh'))||'0'),
     fhoy:localStorage.getItem(SK('fh'))||'',
     ihoy:localStorage.getItem(SK('ih'))||'',
     isem:localStorage.getItem(SK('is'))||'',
@@ -1587,7 +1582,6 @@ function _cacheS(){
   localStorage.setItem(SK('peg'),JSON.stringify([...S.peg]));
   localStorage.setItem(SK('ap'),JSON.stringify(S.ap));
   localStorage.setItem(SK('rep'),JSON.stringify(S.rep));
-  localStorage.setItem(SK('sh'),S.shoy);
   localStorage.setItem(SK('fh'),S.fhoy);
   localStorage.setItem(SK('ih'),S.ihoy||'');
   localStorage.setItem(SK('is'),S.isem||'');
@@ -1604,7 +1598,7 @@ function svS(){
   if(!fbDB)return;
   fbDB.ref(`albums/${CC}`).set({
     peg:[...S.peg],ap:S.ap,rep:S.rep,
-    shoy:S.shoy,fhoy:S.fhoy,ihoy:S.ihoy||'',isem:S.isem||'',tradeW:S.tradeW||0,
+    fhoy:S.fhoy,ihoy:S.ihoy||'',isem:S.isem||'',tradeW:S.tradeW||0,
     thoy:S.thoy||'',tAciertos:S.tAciertos||0,asHoy:S.asHoy||'',cvHoy:S.cvHoy||'',pendCount:S.pendCount||0,triviaIdx:S.triviaIdx||0
   });
   // Guardar startDate si hay actividad y no está registrado
@@ -1623,7 +1617,6 @@ function startSync(){
     const d=snap.val();
     S.peg=new Set(d.peg||[]);
     S.ap=d.ap||[];S.rep=d.rep||[];
-    S.shoy=parseInt(d.shoy||0);
     S.fhoy=d.fhoy||'';S.ihoy=d.ihoy||'';S.isem=d.isem||'';S.tradeW=parseInt(d.tradeW||0);
     S.thoy=d.thoy||'';S.tAciertos=parseInt(d.tAciertos||0);
     S.asHoy=d.asHoy||'';S.cvHoy=d.cvHoy||'';S.pendCount=parseInt(d.pendCount||0);
@@ -1647,7 +1640,7 @@ function go(id){document.querySelectorAll('.screen').forEach(e=>e.classList.remo
   CC=saved;
   if(fbDB){try{const snap=await fbDB.ref(`albums/${CC}`).get();S=snap.exists()?_parseS(snap.val()):ldS();}catch(e){S=ldS();}}else{S=ldS();}
   const hoy=new Date().toDateString();
-  if(S.fhoy!==hoy){S.shoy=0;S.fhoy=hoy;S.ihoy='';S.thoy='';S.tAciertos=0;S.asHoy='';S.cvHoy='';svS();}
+  if(S.fhoy!==hoy){S.fhoy=hoy;S.ihoy='';S.thoy='';S.tAciertos=0;S.asHoy='';S.cvHoy='';svS();}
   const[g,d]=CC.split('-');
   const lbl=`${g}° ${DN[d]||d}`;
   document.getElementById('cdisplay').textContent=lbl.toUpperCase();
@@ -1676,7 +1669,7 @@ async function login(){
     }catch(e){S=ldS();}
   }else{S=ldS();}
   const hoy=new Date().toDateString();
-  if(S.fhoy!==hoy){S.shoy=0;S.fhoy=hoy;S.ihoy='';S.thoy='';S.tAciertos=0;S.asHoy='';S.cvHoy='';svS();}
+  if(S.fhoy!==hoy){S.fhoy=hoy;S.ihoy='';S.thoy='';S.tAciertos=0;S.asHoy='';S.cvHoy='';svS();}
   const lbl=`${g}° ${DN[d]||d}`;
   document.getElementById('cdisplay').textContent=lbl.toUpperCase();
   document.getElementById('hcl').textContent=lbl.toUpperCase();
@@ -2015,15 +2008,12 @@ function getTriviaParaGrado(){
 }
 let _triviaHecha=false;let _triviaPregs=[];let _triviaIdx=0;let _triviaAciertos=0;
 function updPaqUI(){
-  const r=MAX_PACKS_DIA-S.shoy;
-  document.getElementById('ptxt').textContent=r>0?`${tx('lbl_quedan')} ${r} ${tx('lbl_sobres')}`:tx('lbl_limite');
   const hoy=new Date().toDateString();
   _triviaHecha=(S.fhoy===hoy&&(S.thoy||0)>0);
   renderSobresUI();
 }
 function renderSobresUI(){
   const hoy=new Date().toDateString();
-  const r=MAX_PACKS_DIA-S.shoy;
   const tDiv=document.getElementById('trivia-section');
   const asDiv=document.getElementById('asist-section');
   const cvDiv=document.getElementById('conv-section');
@@ -2043,14 +2033,14 @@ function renderSobresUI(){
     <div class="sobre-accion-card" style="border-color:${asUsed?'rgba(255,255,255,.2)':'var(--dorado)'}">
       <div class="sac-ico">✅</div>
       <div class="sac-info"><b>${tx('asist_label')}</b><span>${tx('asist_desc')}</span></div>
-      <button class="sac-btn" ${asUsed||r<=0?'disabled':''} onclick="darSobreAsist()">${asUsed?tx('asist_dado'):tx('asist_btn')}</button>
+      <button class="sac-btn" ${asUsed?'disabled':''} onclick="darSobreAsist()">${asUsed?tx('asist_dado'):tx('asist_btn')}</button>
     </div>`;
   // TRIVIA
   const tUsed=S.thoy===hoy;
   if(tUsed){
     tDiv.innerHTML=`<div class="sobre-accion-card" style="border-color:rgba(255,255,255,.2)"><div class="sac-ico">🎯</div><div class="sac-info"><b>${tx('trivia_label')}</b><span>${tx('trivia_hecha_sub')} ${S.tAciertos||0}/3 ${tx('trivia_correctas')}</span></div><button class="sac-btn" disabled>${tx('trivia_hecha')}</button></div>`;
   } else {
-    tDiv.innerHTML=`<div class="sobre-accion-card" style="border-color:var(--azul)"><div class="sac-ico">🧠</div><div class="sac-info"><b>${tx('trivia_label')}</b><span>${tx('trivia_desc')}</span></div><button class="sac-btn azul" ${r<=0?'disabled':''} onclick="iniciarTrivia()">${tx('trivia_btn')}</button></div>`;
+    tDiv.innerHTML=`<div class="sobre-accion-card" style="border-color:var(--azul)"><div class="sac-ico">🧠</div><div class="sac-info"><b>${tx('trivia_label')}</b><span>${tx('trivia_desc')}</span></div><button class="sac-btn azul" onclick="iniciarTrivia()">${tx('trivia_btn')}</button></div>`;
   }
   // CONVIVENCIA
   const cvUsed=S.cvHoy===hoy;
@@ -2058,23 +2048,20 @@ function renderSobresUI(){
     <div class="sobre-accion-card" style="border-color:${cvUsed?'rgba(255,255,255,.2)':'var(--rojo)'}">
       <div class="sac-ico">🤝</div>
       <div class="sac-info"><b>${tx('conv_label')}</b><span>${tx('conv_desc')}</span></div>
-      <button class="sac-btn rojo" ${cvUsed||r<=0?'disabled':''} onclick="darSobreConv()">${cvUsed?tx('conv_dado'):tx('conv_btn')}</button>
+      <button class="sac-btn rojo" ${cvUsed?'disabled':''} onclick="darSobreConv()">${cvUsed?tx('conv_dado'):tx('conv_btn')}</button>
     </div>`;
 }
 function darSobreAsist(){
-  if(S.shoy>=MAX_PACKS_DIA){toast(tx('lbl_limite'));return;}
   const hoy=new Date().toDateString();
-  S.asHoy=hoy;S.shoy+=1;S.pendCount++;svS();updPaqUI();
+  S.asHoy=hoy;S.pendCount++;svS();updPaqUI();
   toast(tx('toast_asist'));
 }
 function darSobreConv(){
-  if(S.shoy>=MAX_PACKS_DIA){toast(tx('lbl_limite'));return;}
   const hoy=new Date().toDateString();
-  S.cvHoy=hoy;S.shoy+=1;S.pendCount++;svS();updPaqUI();
+  S.cvHoy=hoy;S.pendCount++;svS();updPaqUI();
   toast(tx('toast_conv'));
 }
 function iniciarTrivia(){
-  if(S.shoy>=MAX_PACKS_DIA){toast('🚫 Límite diario alcanzado');return;}
   _triviaPregs=getTriviaParaGrado();_triviaIdx=0;_triviaAciertos=0;
   mostrarPreguntaTrivia();
 }
@@ -2109,13 +2096,12 @@ function finTrivia(){
   const hoy=new Date().toDateString();
   S.thoy=hoy;S.tAciertos=_triviaAciertos;S.triviaIdx=_nextTriviaIdx;
   const sobresGanados=_triviaAciertos;
-  const posible=Math.min(sobresGanados,MAX_PACKS_DIA-S.shoy);
   if(sobresGanados===0){
     svS();updPaqUI();
     toast(_lang==='en'?'😅 0/3 correct, no packs this time':'😅 0/3 correctas, sin sobres esta vez');
   } else {
-    S.shoy+=posible;S.pendCount+=posible;svS();updPaqUI();
-    const lbl=_lang==='en'?`🎯 ${_triviaAciertos}/3 correct → ${posible} pack${posible>1?'s':''} earned!`:`🎯 ${_triviaAciertos}/3 correctas → ${posible} sobre${posible>1?'s':''} ganado${posible>1?'s':''}!`;
+    S.pendCount+=sobresGanados;svS();updPaqUI();
+    const lbl=_lang==='en'?`🎯 ${sobresGanados}/3 correct → ${sobresGanados} pack${sobresGanados>1?'s':''} earned!`:`🎯 ${sobresGanados}/3 correctas → ${sobresGanados} sobre${sobresGanados>1?'s':''} ganado${sobresGanados>1?'s':''}!`;
     toast(lbl);
   }
 }
@@ -2188,7 +2174,6 @@ let PROMO_CODES={
   // Agregá más acá o gestioná desde el panel Admin
 };
 let TRIVIA_HIDDEN={};
-let MAX_PACKS_DIA=5;
 let MAX_TRADES_WEEK=1;
 let CURSO_PASS={};
 function getUsedCodes(){try{return new Set(JSON.parse(localStorage.getItem(SK('uc'))||'[]'));}catch(e){return new Set();}}
@@ -2689,8 +2674,6 @@ async function toggleTriviaBase(g,lang,idx){
 
 // ── AJUSTES ──────────────────────────────────────────────────────
 function loadAjustes(){
-  const lbl=document.getElementById('aj-maxlbl');if(lbl)lbl.textContent=MAX_PACKS_DIA;
-  const inp=document.getElementById('aj-max');if(inp)inp.value=MAX_PACKS_DIA;
   const tlbl=document.getElementById('aj-tradeslbl');if(tlbl)tlbl.textContent=MAX_TRADES_WEEK;
   const tinp=document.getElementById('aj-trades');if(tinp)tinp.value=MAX_TRADES_WEEK;
 }
@@ -2704,15 +2687,7 @@ async function saveAdminPass(){
   msg.style.cssText='display:block;color:var(--dorado)';msg.textContent='✅ Contraseña actualizada';
   setTimeout(()=>{msg.style.display='none';},2500);
 }
-async function saveMaxPacks(){
-  const v=Math.max(1,parseInt(document.getElementById('aj-max').value)||5);
-  const msg=document.getElementById('aj-max-msg');
-  MAX_PACKS_DIA=v;
-  if(fbDB){try{await fbDB.ref('admin/settings/maxPacks').set(v);}catch(e){}}
-  const lbl=document.getElementById('aj-maxlbl');if(lbl)lbl.textContent=v;
-  msg.style.cssText='display:block;color:var(--dorado)';msg.textContent=`✅ Límite cambiado a ${v}`;
-  setTimeout(()=>{msg.style.display='none';},2500);
-}
+
 
 async function saveWeeklyLimit(){
   const v=Math.max(1,parseInt(document.getElementById('aj-trades').value)||1);
@@ -2877,13 +2852,6 @@ document.addEventListener('keydown',e=>{
           <input class="ainp" id="aj-pass" type="password" placeholder="Nueva contraseña">
           <button class="acbtn gold" onclick="saveAdminPass()" style="width:100%;padding:.65rem">CAMBIAR CONTRASEÑA</button>
           <div id="aj-pass-msg" style="font-size:.75rem;margin-top:.4rem;text-align:center;display:none"></div>
-        </div>
-        <div class="aform">
-          <div style="font-size:.82rem;font-weight:900;color:var(--dorado);margin-bottom:.7rem">📦 Límite de sobres por día</div>
-          <span class="alabel">Máximo actual: <span id="aj-maxlbl">5</span></span>
-          <input class="ainp" id="aj-max" type="number" min="1" max="50" value="5">
-          <button class="acbtn gold" onclick="saveMaxPacks()" style="width:100%;padding:.65rem">GUARDAR LÍMITE</button>
-          <div id="aj-max-msg" style="font-size:.75rem;margin-top:.4rem;text-align:center;display:none"></div>
         </div>
         <div class="aform">
           <div style="font-size:.82rem;font-weight:900;color:var(--dorado);margin-bottom:.7rem">🔄 Límite de canjes por semana</div>
