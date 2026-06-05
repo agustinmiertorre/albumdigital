@@ -1649,7 +1649,8 @@ async function login(){
   const pass=document.getElementById('lpass').value.trim().toLowerCase();
   if(!curso){toast('⚠️ Seleccioná tu curso');return;}
   const[g,d]=curso.split('-');
-  const expDefault=`${g}${d}${g}`;
+  const _pd={arayan:'arrayan',jacaranda:'jacaranda',ceibo:'ceibo'};
+  const expDefault=`${g}${_pd[d]||d}${g}`;
   const expPass=CURSO_PASS[curso]||expDefault;
   if(pass!==expPass&&pass!=='demo'){document.getElementById('lerr').style.display='block';return;}
   document.getElementById('lerr').style.display='none';
@@ -1669,7 +1670,16 @@ async function login(){
   document.getElementById('hcl').textContent=lbl.toUpperCase();
   localStorage.setItem('sc_lastCourse', CC);
   startSync();
-  if(fbDB)fbDB.ref(`albums/${CC}/startDate`).once('value').then(s=>{if(!s.exists())fbDB.ref(`albums/${CC}/startDate`).set(new Date().toISOString().slice(0,10));}).catch(()=>{});
+  if(fbDB){
+    const _hoyISO=new Date().toISOString().slice(0,10);
+    fbDB.ref(`albums/${CC}/startDate`).once('value').then(s=>{if(!s.exists())fbDB.ref(`albums/${CC}/startDate`).set(_hoyISO);}).catch(()=>{});
+    fbDB.ref(`albums/${CC}/lastLoginDate`).once('value').then(s=>{
+      if(s.val()!==_hoyISO){
+        fbDB.ref(`albums/${CC}/lastLoginDate`).set(_hoyISO);
+        fbDB.ref(`albums/${CC}/loginDays`).transaction(n=>(n||0)+1);
+      }
+    }).catch(()=>{});
+  }
   initApp(); go('sa'); snd('click');
 }
 function salir(){toggleHam();go('sp');document.getElementById('lpass').value='';document.getElementById('bnav').classList.remove('vis');localStorage.removeItem('sc_lastCourse');}
@@ -2277,58 +2287,80 @@ function renderI(){
   const canTrade=repCount>=10&&tradesDone<MAX_TRADES_WEEK;
   const missing=TOTAL-S.peg.size;
   const figUnlocked=missing<=50&&S.peg.size>0;
-  // STATUS
-  const colRep=repCount>=10?'var(--dorado)':'rgba(255,255,255,.45)';
-  const colSem=tradesDone<MAX_TRADES_WEEK?'var(--dorado)':'rgba(255,255,255,.45)';
+  const enoughReps=repCount>=10;
+  const hasCanjes=tradesDone<MAX_TRADES_WEEK;
+
+  /* ── STATUS ── */
   document.getElementById('inter-status').innerHTML=`
-    <div style="display:flex;gap:.5rem;margin-bottom:.7rem">
-      <div style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:.65rem;text-align:center">
-        <div style="font-size:1.6rem;font-weight:900;color:${colRep}">${repCount}</div>
-        <div style="font-size:.58rem;color:rgba(255,255,255,.4);letter-spacing:1px">REPETIDAS</div>
-        <div style="font-size:.55rem;margin-top:.1rem;color:${colRep}">${repCount>=10?'✓ Suficientes':'Faltan '+(10-repCount)+' más'}</div>
+    <div style="display:flex;gap:.5rem;margin-bottom:.9rem">
+      <div style="flex:1;background:rgba(255,255,255,.05);border:1px solid ${enoughReps?'rgba(240,192,64,.4)':'rgba(255,255,255,.1)'};border-radius:12px;padding:.7rem;text-align:center">
+        <div style="font-size:1.7rem;font-weight:900;color:${enoughReps?'var(--dorado)':'rgba(255,255,255,.4)'}">${repCount}</div>
+        <div style="font-size:.6rem;color:rgba(255,255,255,.4);letter-spacing:1px;margin:.1rem 0">REPETIDAS</div>
+        <div style="font-size:.6rem;color:${enoughReps?'var(--dorado)':'var(--rojo)'};">${enoughReps?'✓ Listo para canjear':'Necesitás '+(10-repCount)+' más'}</div>
       </div>
-      <div style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:.65rem;text-align:center">
-        <div style="font-size:1.6rem;font-weight:900;color:${colSem}">${MAX_TRADES_WEEK-tradesDone}</div>
-        <div style="font-size:.58rem;color:rgba(255,255,255,.4);letter-spacing:1px">CANJES RESTANTES</div>
-        <div style="font-size:.55rem;margin-top:.1rem;color:rgba(255,255,255,.35)">${tradesDone}/${MAX_TRADES_WEEK} esta semana</div>
+      <div style="flex:1;background:rgba(255,255,255,.05);border:1px solid ${hasCanjes?'rgba(240,192,64,.4)':'rgba(255,255,255,.1)'};border-radius:12px;padding:.7rem;text-align:center">
+        <div style="font-size:1.7rem;font-weight:900;color:${hasCanjes?'var(--dorado)':'rgba(255,255,255,.4)'}">${MAX_TRADES_WEEK-tradesDone}</div>
+        <div style="font-size:.6rem;color:rgba(255,255,255,.4);letter-spacing:1px;margin:.1rem 0">CANJES DISPONIBLES</div>
+        <div style="font-size:.6rem;color:rgba(255,255,255,.35);">${tradesDone} de ${MAX_TRADES_WEEK} usados esta semana</div>
       </div>
     </div>
-    ${!canTrade?`<div class="istatus" style="margin-bottom:.7rem">${repCount<10?`📦 Necesitás 10 repetidas (tenés ${repCount}).`:`✅ Ya usaste todos tus canjes esta semana.`}</div>`:''}`;
-  // OPCIONES DE CANJE
-  const selectorDiv=document.getElementById('inter-selector');
-  const btnStyle=`width:100%;padding:.55rem;border-radius:8px;font-size:.78rem;font-weight:900;cursor:pointer;font-family:inherit;border:none;transition:.15s;`;
-  const btnOn=`background:linear-gradient(135deg,var(--dorado),#c8922a);color:#000;`;
-  const btnOff=`background:rgba(255,255,255,.08);color:rgba(255,255,255,.3);cursor:not-allowed;`;
-  selectorDiv.innerHTML=`
-    <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:.5rem">
-      <!-- OPCIÓN A: sobre aleatorio -->
-      <div style="background:rgba(255,255,255,.04);border:1px solid ${canTrade?'rgba(240,192,64,.35)':'rgba(255,255,255,.1)'};border-radius:12px;padding:.75rem">
-        <div style="display:flex;align-items:center;gap:.7rem;margin-bottom:.5rem">
-          <div style="font-size:1.8rem;flex-shrink:0">🎴</div>
-          <div style="flex:1">
-            <div style="font-size:.85rem;font-weight:900;color:#fff">1 Sobre aleatorio</div>
-            <div style="font-size:.65rem;color:rgba(255,255,255,.45)">5 figuritas al azar · siempre disponible</div>
+    ${!hasCanjes?`<div class="istatus" style="margin-bottom:.8rem;font-size:.82rem">✅ Ya usaste todos tus canjes esta semana. ¡Volvé el lunes!</div>`:''}
+    ${!enoughReps&&hasCanjes?`<div class="istatus" style="margin-bottom:.8rem;font-size:.82rem">📦 Necesitás 10 repetidas para canjear. Tenés ${repCount}.</div>`:''}`;
+
+  /* ── SECCIÓN 1: SOBRE ALEATORIO ── */
+  const s1ok=canTrade;
+  /* ── SECCIÓN 2: FIGURITA QUE FALTA ── */
+  const s2ok=canTrade&&figUnlocked;
+
+  document.getElementById('inter-selector').innerHTML=`
+    <div style="border-radius:14px;overflow:hidden;margin-bottom:.6rem;border:2px solid ${s1ok?'rgba(240,192,64,.5)':'rgba(255,255,255,.1)'}">
+      <div style="background:${s1ok?'linear-gradient(135deg,rgba(240,192,64,.18),rgba(0,71,108,.25))':'rgba(255,255,255,.03)'};padding:.85rem 1rem">
+        <div style="display:flex;align-items:center;gap:.7rem;margin-bottom:.65rem">
+          <div style="font-size:2.2rem;line-height:1">🎴</div>
+          <div>
+            <div style="font-size:.95rem;font-weight:900;color:#fff;letter-spacing:.5px">CANJE POR SOBRE</div>
+            <div style="font-size:.7rem;color:rgba(255,255,255,.5);margin-top:.15rem">10 repetidas → 1 sobre con 5 figuritas al azar</div>
           </div>
         </div>
-        <button style="${btnStyle}${canTrade?btnOn:btnOff}" ${canTrade?'':'disabled'} onclick="doInter('sobre')">🎴 CANJEAR POR UN SOBRE</button>
+        <button onclick="doInter('sobre')" ${s1ok?'':'disabled'}
+          style="width:100%;padding:.65rem;border-radius:9px;border:none;font-size:.85rem;font-weight:900;font-family:inherit;cursor:${s1ok?'pointer':'not-allowed'};
+          background:${s1ok?'linear-gradient(135deg,var(--dorado),#c8922a)':'rgba(255,255,255,.06)'};
+          color:${s1ok?'#000':'rgba(255,255,255,.3)'}">
+          🎴 CANJEAR POR UN SOBRE
+        </button>
       </div>
-      <!-- OPCIÓN B: figurita al azar de las que faltan -->
-      <div style="background:rgba(255,255,255,.04);border:1px solid ${canTrade&&figUnlocked?'rgba(0,200,100,.4)':'rgba(255,255,255,.1)'};border-radius:12px;padding:.75rem;${canTrade&&figUnlocked?'':'opacity:.65'}">
+    </div>
+
+    <div style="border-radius:14px;overflow:hidden;margin-bottom:.6rem;border:2px solid ${s2ok?'rgba(0,210,100,.5)':figUnlocked&&!hasCanjes?'rgba(255,255,255,.15)':'rgba(255,255,255,.1)'}">
+      <div style="background:${s2ok?'linear-gradient(135deg,rgba(0,180,80,.18),rgba(0,40,20,.3))':'rgba(255,255,255,.03)'};padding:.85rem 1rem">
         <div style="display:flex;align-items:center;gap:.7rem;margin-bottom:.5rem">
-          <div style="font-size:1.8rem;flex-shrink:0">🎯</div>
+          <div style="font-size:2.2rem;line-height:1">${figUnlocked?'🎯':'🔒'}</div>
           <div style="flex:1">
-            <div style="font-size:.85rem;font-weight:900;color:#fff">1 Figurita que te falta</div>
-            <div style="font-size:.65rem;color:rgba(255,255,255,.45)">Al azar entre las que no tenés · solo al final</div>
+            <div style="font-size:.95rem;font-weight:900;color:${figUnlocked?'#fff':'rgba(255,255,255,.45)'};letter-spacing:.5px">CANJE POR FIGURITA</div>
+            <div style="font-size:.7rem;color:rgba(255,255,255,.5);margin-top:.15rem">10 repetidas → 1 figurita al azar de las que te faltan</div>
           </div>
         </div>
-        ${!figUnlocked?`<div style="font-size:.62rem;color:rgba(255,200,0,.6);background:rgba(255,200,0,.07);border-radius:6px;padding:.35rem .5rem;margin-bottom:.4rem;text-align:center">🔒 Se habilita cuando falten ≤50 figuritas (faltan ${missing} ahora)</div>`:''}
-        <button style="${btnStyle}${canTrade&&figUnlocked?'background:linear-gradient(135deg,#00c864,#007a3a);color:#fff;':''+btnOff}" ${canTrade&&figUnlocked?'':'disabled'} onclick="doInter('fig')">🎯 CANJEAR POR UNA FIGURITA</button>
+        ${!figUnlocked?`
+          <div style="background:rgba(255,160,0,.1);border:1px solid rgba(255,160,0,.3);border-radius:8px;padding:.5rem .7rem;margin-bottom:.6rem;text-align:center">
+            <div style="font-size:.75rem;color:rgba(255,180,0,.9);font-weight:900">🔒 BLOQUEADO</div>
+            <div style="font-size:.65rem;color:rgba(255,255,255,.5);margin-top:.15rem">Se habilita cuando falten ≤ 50 figuritas</div>
+            <div style="font-size:.65rem;color:rgba(255,200,0,.7);margin-top:.1rem">Ahora faltan <b>${missing}</b> · te quedan <b>${missing-50}</b> para desbloquearlo</div>
+          </div>`:''}
+        <button onclick="doInter('fig')" ${s2ok?'':'disabled'}
+          style="width:100%;padding:.65rem;border-radius:9px;border:none;font-size:.85rem;font-weight:900;font-family:inherit;cursor:${s2ok?'pointer':'not-allowed'};
+          background:${s2ok?'linear-gradient(135deg,#00c864,#007a3a)':'rgba(255,255,255,.06)'};
+          color:${s2ok?'#fff':'rgba(255,255,255,.3)'}">
+          🎯 CANJEAR POR UNA FIGURITA
+        </button>
       </div>
     </div>`;
-  // REPETIDAS VISUAL
+
+  /* ── REPETIDAS VISUAL ── */
   const rv=document.getElementById('rep-visual');
   if(rv){
-    rv.innerHTML=S.rep.length>0?`<div style="margin-top:.6rem"><div style="font-size:.6rem;color:rgba(255,255,255,.32);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:.4rem">📋 Tus repetidas (${S.rep.length})</div><div class="rep-grid">${S.rep.map(f=>`<div class="rep-card">${f.img?`<img src="${f.img}" loading="lazy">`:`<div style="font-size:1.4rem;padding:.4rem">${f.em||f.e||'🎴'}</div>`}<div class="rep-lbl">${f.nm||f.nombre||'?'}</div></div>`).join('')}</div></div>`:'';
+    rv.innerHTML=S.rep.length>0
+      ?`<div style="margin-top:.5rem"><div style="font-size:.6rem;color:rgba(255,255,255,.3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:.4rem">📋 Tus repetidas (${S.rep.length})</div><div class="rep-grid">${S.rep.map(f=>`<div class="rep-card">${f.img?`<img src="${f.img}" loading="lazy">`:`<div style="font-size:1.4rem;padding:.4rem">${f.em||f.e||'🎴'}</div>`}<div class="rep-lbl">${f.nm||f.nombre||'?'}</div></div>`).join('')}</div></div>`
+      :'';
   }
 }
 function doInter(type){
@@ -2565,19 +2597,17 @@ async function loadAdminData(){
   for(let g=1;g<=6;g++) Object.keys(DN).forEach(d=>cursos.push(`${g}-${d}`));
   const cards=await Promise.all(cursos.map(async cc=>{
     const[g,d]=cc.split('-');const lbl=`${g}° ${DN[d]||d}`;
-    let pegCount=0,repCount=0,apCount=0,startDate=null,completedAt=null;
+    let pegCount=0,repCount=0,apCount=0,loginDays=0,completedAt=null;
     if(fbDB){try{
       const snap=await fbDB.ref(`albums/${cc}`).get();
-      if(snap.exists()){const v=snap.val();pegCount=(v.peg||[]).length;repCount=(v.rep||[]).length;apCount=(v.ap||[]).length;startDate=v.startDate||null;completedAt=v.completedAt||null;}
+      if(snap.exists()){const v=snap.val();pegCount=(v.peg||[]).length;repCount=(v.rep||[]).length;apCount=(v.ap||[]).length;loginDays=v.loginDays||0;completedAt=v.completedAt||null;}
     }catch(e){}}
     const pct=Math.round(pegCount/TOTAL*100);
-    let daysStr='—';
-    if(startDate){const days=Math.max(0,Math.floor((Date.now()-new Date(startDate).getTime())/86400000));daysStr=`${days} día${days!==1?'s':''}`;}
     let compStr='';
     if(completedAt){
       const d=new Date(completedAt);
       const dd=`${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
-      compStr=`<div style="font-size:.55rem;color:var(--dorado);font-weight:900;margin:.15rem 0">🏆 Completado ${dd}</div>`;
+      compStr=`<div style="font-size:.56rem;color:var(--dorado);font-weight:900;margin:.2rem 0;background:rgba(240,192,64,.1);border-radius:4px;padding:2px 4px">🏆 Completado ${dd}</div>`;
     }
     return`<div class="acard ${pct===100?'comp':''}">
       <h4>${lbl}</h4>
@@ -2585,7 +2615,7 @@ async function loadAdminData(){
       <div class="abarra"><div class="afill" style="width:${pct}%"></div></div>
       <div class="aprog">${pegCount}/${TOTAL} pegadas</div>
       <div style="font-size:.58rem;color:rgba(255,255,255,.32);margin:.1rem 0">${apCount} por pegar · ${repCount} rep.</div>
-      <div style="font-size:.58rem;color:rgba(255,255,255,.32);margin:.1rem 0">📅 ${daysStr} activo</div>
+      <div style="font-size:.58rem;color:rgba(255,255,255,.4);margin:.1rem 0">📅 ${loginDays} día${loginDays!==1?'s':''} de acceso</div>
       ${compStr}
       <button class="areset" onclick="resetCurso('${cc}','${lbl}')">🗑️ Resetear</button>
     </div>`;
