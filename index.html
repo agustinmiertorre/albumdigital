@@ -526,7 +526,7 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
   <div id="tab-intercambio" class="tc">
     <div class="ibox">
       <div class="abar" style="border-radius:10px;margin-bottom:.6rem">🔄 CANJE DE FIGURITAS</div>
-      <p style="color:rgba(255,255,255,.45);font-size:.78rem;margin-bottom:.8rem;text-align:center">Entregás 10 repetidas y elegís exactamente la figurita que te falta</p>
+      <p id="inter-sub" style="color:rgba(255,255,255,.45);font-size:.78rem;margin-bottom:.8rem;text-align:center">Entregás 10 repetidas por 1 sobre o 1 figurita que te falta</p>
       <div id="inter-status"></div>
       <div id="inter-selector"></div>
       <div id="rep-visual"></div>
@@ -1392,9 +1392,6 @@ function applyLang(){
     const el=document.getElementById(id);if(!el)return;
     const sp=el.querySelectorAll('span')[1];if(sp)sp.textContent=tx(k);
   });
-  // Intercambio tab labels
-  const irt=document.getElementById('inter-titulo');if(irt)irt.textContent='🔄 '+(_lang==='es'?'CANJE DE FIGURITAS':'STICKER TRADE');
-  const ird=document.getElementById('inter-desc');if(ird)ird.textContent=_lang==='es'?'Canjeás 10 repetidas por 1 sobre nuevo. 1 canje por semana, sin límite diario.':'Trade 10 duplicates for 1 new pack. 1 trade per week, no daily limit.';
   // Pegar tab
   const pb=document.querySelector('#tab-pegar .abar');if(pb)pb.textContent=tx('pegar_tit');
   // Sobre hero
@@ -1413,6 +1410,9 @@ function applyLang(){
   const ah=document.getElementById('album-hint');if(ah)ah.textContent=tx('album_hint');
   const hp=document.getElementById('hprog-lbl');if(hp)hp.textContent=tx('hprog_lbl');
   const hs=document.getElementById('hbsalir-btn');if(hs)hs.textContent=tx('salir_btn');
+  // Intercambio subtitle
+  const isub=document.getElementById('inter-sub');
+  if(isub)isub.textContent=_lang==='en'?'Trade 10 duplicates for 1 pack or 1 missing sticker':'Entregás 10 repetidas por 1 sobre o 1 figurita que te falta';
   // Re-render dynamic views
   if(CT==='sobres')updPaqUI();
   if(CT==='intercambio')renderI();
@@ -2281,6 +2281,7 @@ function irAF(id){const f=S.ap.find(x=>x.id===id);if(!f)return;FSel=id;nav('albu
 // INTERCAMBIO
 function buildIS(){}
 function renderI(){
+  const en=_lang==='en';
   const sem=getWeekStart();
   const tradesDone=S.isem===sem?(S.tradeW||0):0;
   const repCount=S.rep.length;
@@ -2295,17 +2296,17 @@ function renderI(){
     <div style="display:flex;gap:.5rem;margin-bottom:.9rem">
       <div style="flex:1;background:rgba(255,255,255,.05);border:1px solid ${enoughReps?'rgba(240,192,64,.4)':'rgba(255,255,255,.1)'};border-radius:12px;padding:.7rem;text-align:center">
         <div style="font-size:1.7rem;font-weight:900;color:${enoughReps?'var(--dorado)':'rgba(255,255,255,.4)'}">${repCount}</div>
-        <div style="font-size:.6rem;color:rgba(255,255,255,.4);letter-spacing:1px;margin:.1rem 0">REPETIDAS</div>
-        <div style="font-size:.6rem;color:${enoughReps?'var(--dorado)':'var(--rojo)'};">${enoughReps?'✓ Listo para canjear':'Necesitás '+(10-repCount)+' más'}</div>
+        <div style="font-size:.6rem;color:rgba(255,255,255,.4);letter-spacing:1px;margin:.1rem 0">${en?'DUPLICATES':'REPETIDAS'}</div>
+        <div style="font-size:.6rem;color:${enoughReps?'var(--dorado)':'var(--rojo)'};">${enoughReps?(en?'✓ Ready to trade':'✓ Listo para canjear'):(en?'Need '+(10-repCount)+' more':'Necesitás '+(10-repCount)+' más')}</div>
       </div>
       <div style="flex:1;background:rgba(255,255,255,.05);border:1px solid ${hasCanjes?'rgba(240,192,64,.4)':'rgba(255,255,255,.1)'};border-radius:12px;padding:.7rem;text-align:center">
         <div style="font-size:1.7rem;font-weight:900;color:${hasCanjes?'var(--dorado)':'rgba(255,255,255,.4)'}">${MAX_TRADES_WEEK-tradesDone}</div>
-        <div style="font-size:.6rem;color:rgba(255,255,255,.4);letter-spacing:1px;margin:.1rem 0">CANJES DISPONIBLES</div>
-        <div style="font-size:.6rem;color:rgba(255,255,255,.35);">${tradesDone} de ${MAX_TRADES_WEEK} usados esta semana</div>
+        <div style="font-size:.6rem;color:rgba(255,255,255,.4);letter-spacing:1px;margin:.1rem 0">${en?'TRADES LEFT':'CANJES DISPONIBLES'}</div>
+        <div style="font-size:.6rem;color:rgba(255,255,255,.35);">${tradesDone} ${en?'of':'de'} ${MAX_TRADES_WEEK} ${en?'used this week':'usados esta semana'}</div>
       </div>
     </div>
-    ${!hasCanjes?`<div class="istatus" style="margin-bottom:.8rem;font-size:.82rem">✅ Ya usaste todos tus canjes esta semana. ¡Volvé el lunes!</div>`:''}
-    ${!enoughReps&&hasCanjes?`<div class="istatus" style="margin-bottom:.8rem;font-size:.82rem">📦 Necesitás 10 repetidas para canjear. Tenés ${repCount}.</div>`:''}`;
+    ${!hasCanjes?`<div class="istatus" style="margin-bottom:.8rem;font-size:.82rem">${en?'✅ All trades used this week. Come back Monday!':'✅ Ya usaste todos tus canjes esta semana. ¡Volvé el lunes!'}</div>`:''}
+    ${!enoughReps&&hasCanjes?`<div class="istatus" style="margin-bottom:.8rem;font-size:.82rem">${en?`📦 You need 10 duplicates to trade. You have ${repCount}.`:`📦 Necesitás 10 repetidas para canjear. Tenés ${repCount}.`}</div>`:''}`;
 
   /* ── SECCIÓN 1: SOBRE ALEATORIO ── */
   const s1ok=canTrade;
@@ -2318,15 +2319,15 @@ function renderI(){
         <div style="display:flex;align-items:center;gap:.7rem;margin-bottom:.65rem">
           <div style="font-size:2.2rem;line-height:1">🎴</div>
           <div>
-            <div style="font-size:.95rem;font-weight:900;color:#fff;letter-spacing:.5px">CANJE POR SOBRE</div>
-            <div style="font-size:.7rem;color:rgba(255,255,255,.5);margin-top:.15rem">10 repetidas → 1 sobre con 5 figuritas al azar</div>
+            <div style="font-size:.95rem;font-weight:900;color:#fff;letter-spacing:.5px">${en?'TRADE FOR A PACK':'CANJE POR SOBRE'}</div>
+            <div style="font-size:.7rem;color:rgba(255,255,255,.5);margin-top:.15rem">${en?'10 duplicates → 1 pack with 5 random stickers':'10 repetidas → 1 sobre con 5 figuritas al azar'}</div>
           </div>
         </div>
         <button onclick="doInter('sobre')" ${s1ok?'':'disabled'}
           style="width:100%;padding:.65rem;border-radius:9px;border:none;font-size:.85rem;font-weight:900;font-family:inherit;cursor:${s1ok?'pointer':'not-allowed'};
           background:${s1ok?'linear-gradient(135deg,var(--dorado),#c8922a)':'rgba(255,255,255,.06)'};
           color:${s1ok?'#000':'rgba(255,255,255,.3)'}">
-          🎴 CANJEAR POR UN SOBRE
+          🎴 ${en?'TRADE FOR A PACK':'CANJEAR POR UN SOBRE'}
         </button>
       </div>
     </div>
@@ -2336,21 +2337,21 @@ function renderI(){
         <div style="display:flex;align-items:center;gap:.7rem;margin-bottom:.5rem">
           <div style="font-size:2.2rem;line-height:1">${figUnlocked?'🎯':'🔒'}</div>
           <div style="flex:1">
-            <div style="font-size:.95rem;font-weight:900;color:${figUnlocked?'#fff':'rgba(255,255,255,.45)'};letter-spacing:.5px">CANJE POR FIGURITA</div>
-            <div style="font-size:.7rem;color:rgba(255,255,255,.5);margin-top:.15rem">10 repetidas → 1 figurita al azar de las que te faltan</div>
+            <div style="font-size:.95rem;font-weight:900;color:${figUnlocked?'#fff':'rgba(255,255,255,.45)'};letter-spacing:.5px">${en?'TRADE FOR A STICKER':'CANJE POR FIGURITA'}</div>
+            <div style="font-size:.7rem;color:rgba(255,255,255,.5);margin-top:.15rem">${en?'10 duplicates → 1 random sticker you\'re missing':'10 repetidas → 1 figurita al azar de las que te faltan'}</div>
           </div>
         </div>
         ${!figUnlocked?`
           <div style="background:rgba(255,160,0,.1);border:1px solid rgba(255,160,0,.3);border-radius:8px;padding:.5rem .7rem;margin-bottom:.6rem;text-align:center">
-            <div style="font-size:.75rem;color:rgba(255,180,0,.9);font-weight:900">🔒 BLOQUEADO</div>
-            <div style="font-size:.65rem;color:rgba(255,255,255,.5);margin-top:.15rem">Se habilita cuando falten ≤ 50 figuritas</div>
-            <div style="font-size:.65rem;color:rgba(255,200,0,.7);margin-top:.1rem">Ahora faltan <b>${missing}</b> · te quedan <b>${missing-50}</b> para desbloquearlo</div>
+            <div style="font-size:.75rem;color:rgba(255,180,0,.9);font-weight:900">🔒 ${en?'LOCKED':'BLOQUEADO'}</div>
+            <div style="font-size:.65rem;color:rgba(255,255,255,.5);margin-top:.15rem">${en?'Available when you\'re missing ≤ 50 stickers':'Se habilita cuando falten ≤ 50 figuritas'}</div>
+            <div style="font-size:.65rem;color:rgba(255,200,0,.7);margin-top:.1rem">${en?`Missing <b>${missing}</b> now · need <b>${missing-50}</b> more to unlock`:`Faltan <b>${missing}</b> · te quedan <b>${missing-50}</b> para desbloquearlo`}</div>
           </div>`:''}
         <button onclick="doInter('fig')" ${s2ok?'':'disabled'}
           style="width:100%;padding:.65rem;border-radius:9px;border:none;font-size:.85rem;font-weight:900;font-family:inherit;cursor:${s2ok?'pointer':'not-allowed'};
           background:${s2ok?'linear-gradient(135deg,#00c864,#007a3a)':'rgba(255,255,255,.06)'};
           color:${s2ok?'#fff':'rgba(255,255,255,.3)'}">
-          🎯 CANJEAR POR UNA FIGURITA
+          🎯 ${en?'TRADE FOR A STICKER':'CANJEAR POR UNA FIGURITA'}
         </button>
       </div>
     </div>`;
@@ -2359,27 +2360,28 @@ function renderI(){
   const rv=document.getElementById('rep-visual');
   if(rv){
     rv.innerHTML=S.rep.length>0
-      ?`<div style="margin-top:.5rem"><div style="font-size:.6rem;color:rgba(255,255,255,.3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:.4rem">📋 Tus repetidas (${S.rep.length})</div><div class="rep-grid">${S.rep.map(f=>`<div class="rep-card">${f.img?`<img src="${f.img}" loading="lazy">`:`<div style="font-size:1.4rem;padding:.4rem">${f.em||f.e||'🎴'}</div>`}<div class="rep-lbl">${f.nm||f.nombre||'?'}</div></div>`).join('')}</div></div>`
+      ?`<div style="margin-top:.5rem"><div style="font-size:.6rem;color:rgba(255,255,255,.3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:.4rem">📋 ${en?'Your duplicates':'Tus repetidas'} (${S.rep.length})</div><div class="rep-grid">${S.rep.map(f=>`<div class="rep-card">${f.img?`<img src="${f.img}" loading="lazy">`:`<div style="font-size:1.4rem;padding:.4rem">${f.em||f.e||'🎴'}</div>`}<div class="rep-lbl">${f.nm||f.nombre||'?'}</div></div>`).join('')}</div></div>`
       :'';
   }
 }
 function doInter(type){
-  if(S.rep.length<10){toast('⚠️ Necesitás 10 repetidas');return;}
+  const en=_lang==='en';
+  if(S.rep.length<10){toast(en?'⚠️ You need 10 duplicates':'⚠️ Necesitás 10 repetidas');return;}
   const sem=getWeekStart();
   const tradesDone=S.isem===sem?(S.tradeW||0):0;
   if(tradesDone>=MAX_TRADES_WEEK){toast(tx('inter_ya'));return;}
   if(type==='fig'){
     const missing=TOTAL-S.peg.size;
-    if(missing>50){toast('🔒 Esta opción se habilita cuando falten ≤50 figuritas');return;}
+    if(missing>50){toast(en?'🔒 Unlocks when ≤50 stickers are missing':'🔒 Se habilita cuando falten ≤50 figuritas');return;}
     const pool=allFigs().filter(f=>!S.peg.has(f.id)&&!S.ap.some(x=>x.id===f.id));
-    if(!pool.length){toast('🎉 ¡Ya tenés todas!');return;}
+    if(!pool.length){toast(en?'🎉 You have them all!':'🎉 ¡Ya tenés todas!');return;}
     const fig=pool[Math.floor(Math.random()*pool.length)];
     S.rep.splice(0,10);
     if(S.isem===sem){S.tradeW=(S.tradeW||0)+1;}else{S.isem=sem;S.tradeW=1;}
     S.ap.push(fig);
     svS();updProg();buildCG();renderAP();renderI();
-    toast(`🎯 ¡${fig.nm||fig.nombre} va a tu colección!`);
-    setTimeout(()=>showEpicAnim(fig,'🎯 ¡FIGURITA CONSEGUIDA!','#aaff88'),250);
+    toast(en?`🎯 ${fig.nm||fig.nombre} added to your collection!`:`🎯 ¡${fig.nm||fig.nombre} va a tu colección!`);
+    setTimeout(()=>showEpicAnim(fig,en?'🎯 STICKER OBTAINED!':'🎯 ¡FIGURITA CONSEGUIDA!','#aaff88'),250);
   }else{
     S.rep.splice(0,10);
     if(S.isem===sem){S.tradeW=(S.tradeW||0)+1;}else{S.isem=sem;S.tradeW=1;}

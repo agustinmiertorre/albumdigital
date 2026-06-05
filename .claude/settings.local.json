@@ -52,7 +52,8 @@
       "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"renderInterFigs|selInterFig|filterInterFigs|showFiguRecibida|inter-status|inter-selector|inter-fig\" | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
       "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"function renderI|function buildIS|function doInter|function renderInterFigs|function filterInterFigs|function selInterFig|let _interSel|function showFiguRecibida\" | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
       "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"_interSel|selInterFig|filterInterFigs|renderInterFigs|inter-fig-grid|showFiguRecibida\" | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
-      "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"arrayan|_pd\\\\[d\\\\]|loginDays|lastLoginDate|doInter..fig|doInter..sobre\" | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })"
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"arrayan|_pd\\\\[d\\\\]|loginDays|lastLoginDate|doInter..fig|doInter..sobre\" | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\Aula Tech\\\\Desktop\\\\Proyecto\\\\Album de figuritas\\\\index.html\" -Pattern \"function tx|const TX|_lang|toggleLang\" | Select-Object -First 10 | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })"
     ]
   }
 }
