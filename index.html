@@ -2810,20 +2810,6 @@ async function saveCursoPass(){
   setTimeout(()=>{msg.style.display='none';},2500);
 }
 
-// CURSOR COPA DEL MUNDO
-(function initCopaCursor(){
-  const img=new Image();
-  img.onload=function(){
-    const c=document.createElement('canvas');
-    c.width=c.height=48;
-    c.getContext('2d').drawImage(img,0,0,48,48);
-    const url=c.toDataURL('image/png');
-    const s=document.createElement('style');
-    s.textContent=`*,*:hover,*:active{cursor:url("${url}") 24 0,auto!important;}`;
-    document.head.appendChild(s);
-  };
-  img.src='Copa del Mundo.png';
-})();
 
 // NAVEGACIÓN POR TECLADO
 document.addEventListener('keydown',e=>{
