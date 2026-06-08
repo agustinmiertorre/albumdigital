@@ -8,6 +8,7 @@
 @import url('data:text/css,');
 :root{--rojo:#e4051f;--azul:#00476c;--dorado:#f0c040;--negro:#111;--blanco:#fff;}
 *{margin:0;padding:0;box-sizing:border-box;}
+html{font-size:17px;}
 body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;min-height:100vh;overflow-x:hidden;}
 .bb{font-family:Impact,'Arial Black',Arial,sans-serif;letter-spacing:2px;}
 .screen{display:none;min-height:100vh;flex-direction:column;}
@@ -1307,7 +1308,7 @@ const SABIAS_EN=[
 function getCurrentSabias(){return _lang==='en'?SABIAS_EN:SABIAS_ES;}
 
 // ── IDIOMA ───────────────────────────────────────────────────────
-let _lang='es';
+let _lang=(function(){try{return localStorage.getItem('_lang_pref')||'es';}catch(e){return 'es';}})();
 const TR={
   nav_album:{es:'Álbum',en:'Album'},
   nav_sobres:{es:'Sobres',en:'Packs'},
@@ -1382,8 +1383,8 @@ function getWeekStart(){
 }
 function toggleLang(){
   _lang=_lang==='es'?'en':'es';
-  const lb=document.getElementById('lang-btn');if(lb)lb.classList.toggle('is-en',_lang==='en');
-  applyLang();
+  try{localStorage.setItem('_lang_pref',_lang);}catch(e){}
+  location.reload();
 }
 function applyLang(){
   // Nav inferior
@@ -1685,7 +1686,7 @@ async function login(){
 function salir(){toggleHam();go('sp');document.getElementById('lpass').value='';document.getElementById('bnav').classList.remove('vis');localStorage.removeItem('sc_lastCourse');}
 
 // INIT
-function initApp(){buildCG();buildIS();buildEsp();updProg();updPaqUI();renderAP();nav('album',true);document.getElementById('bnav').classList.add('vis');startSabias();}
+function initApp(){buildCG();buildIS();buildEsp();updProg();updPaqUI();renderAP();nav('album',true);document.getElementById('bnav').classList.add('vis');startSabias();const lb=document.getElementById('lang-btn');if(lb)lb.classList.toggle('is-en',_lang==='en');if(_lang==='en')applyLang();}
 
 // SABÍAS QUE
 let _sabIdx=0;
