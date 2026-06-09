@@ -116,7 +116,9 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
 .flag-box{width:80px;height:55px;border-radius:4px;margin:0 auto .4rem;display:flex;align-items:center;justify-content:center;font-size:1.5rem;overflow:hidden;}
 .cname{font-size:1rem;font-weight:900;}
 .cprog{font-size:.62rem;color:rgba(255,255,255,.4);margin-top:.15rem;}
-.hbadge{position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:var(--dorado);animation:hp 2s infinite;}
+.hbadge{position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;border:1.5px solid rgba(255,255,255,.25);background:transparent;}
+.hbadge.pendiente{background:var(--dorado);border-color:var(--dorado);animation:hp 2s infinite;}
+.hbadge.completo{background:#2ecc71;border-color:#2ecc71;animation:none;}
 @keyframes hp{0%,100%{opacity:.6}50%{opacity:1}}
 
 /* PAGE */
@@ -1809,8 +1811,11 @@ function buildCG(){
   </div>`;
   document.getElementById('cgrid').innerHTML=PAISES.map(p=>{
     const fs=FPP[p.id];const pg=fs.filter(f=>S.peg.has(f.id)).length;
-    return`<div class="ccard ${pg===fs.length?'completo':''}" onclick="showPage('${p.id}')">
-      <div class="hbadge"></div>
+    const done=pg===fs.length;
+    const hasPending=S.ap.some(f=>f.pais===p.id);
+    const badgeCls=done?'completo':hasPending?'pendiente':'';
+    return`<div class="ccard ${done?'completo':''}" onclick="showPage('${p.id}')">
+      <div class="hbadge ${badgeCls}"></div>
       <div class="flag-box" style="overflow:hidden;background:#111">${flagImg(p,80)}</div>
       <div class="cname">${(_lang==='en'&&p.n_en)?p.n_en:p.n}</div>
       <div class="cprog">${pg}/${fs.length}</div>
