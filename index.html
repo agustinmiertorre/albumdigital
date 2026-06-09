@@ -243,6 +243,19 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
 .movl.active{display:flex;}
 .modal{background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid rgba(255,255,255,.15);border-radius:20px;max-width:340px;width:100%;padding:1.5rem;position:relative;max-height:90vh;overflow-y:auto;}
 .mcl{position:absolute;top:.7rem;right:.7rem;background:rgba(255,255,255,.1);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:1rem;}
+/* REGLAS */
+#reglas-ovl{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:280;align-items:flex-start;justify-content:center;padding:1rem;overflow-y:auto;}
+#reglas-ovl.open{display:flex;}
+.reglas-card{background:linear-gradient(135deg,#0d1b2a,#0a0a1a);border:1px solid rgba(255,255,255,.12);border-radius:20px;max-width:380px;width:100%;padding:1.4rem 1.2rem 1.6rem;position:relative;margin:auto;}
+.reglas-close{position:absolute;top:.75rem;right:.75rem;background:rgba(255,255,255,.1);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;}
+.reglas-tit{font-size:1.15rem;font-weight:900;color:var(--dorado);text-align:center;letter-spacing:2px;margin-bottom:1.2rem;font-family:Impact,'Arial Black',Arial,sans-serif;}
+.reglas-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:.9rem 1rem;margin-bottom:.7rem;}
+.reglas-item-hdr{display:flex;align-items:center;gap:.6rem;margin-bottom:.45rem;}
+.reglas-item-ico{font-size:1.6rem;line-height:1;flex-shrink:0;}
+.reglas-item-lbl{font-size:.82rem;font-weight:900;color:var(--dorado);letter-spacing:1px;text-transform:uppercase;}
+.reglas-item p{font-size:.75rem;color:rgba(255,255,255,.7);line-height:1.55;margin-bottom:.25rem;}
+.reglas-item p:last-child{margin-bottom:0;}
+.reglas-item b{color:#fff;}
 .mfc{background:linear-gradient(135deg,var(--azul),#001f33);border:3px solid var(--dorado);border-radius:15px;padding:1rem;text-align:center;margin-bottom:1rem;}
 .mav{width:80px;height:80px;border-radius:10px;background:linear-gradient(135deg,#2a4a7a,#1a2a4a);margin:0 auto .6rem;display:flex;align-items:center;justify-content:center;font-size:2.5rem;}
 .mstats{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;}
@@ -588,7 +601,7 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
     <div class="hni" id="hn-sobres" data-tr="nav_sobres" onclick="nav('sobres')"><span class="ico">📦</span><span class="hni-txt">Sobres</span></div>
     <div class="hni" id="hn-pegar" data-tr="nav_pegar_full" onclick="nav('pegar')"><span class="ico">🖼️</span><span class="hni-txt">Pegar Figuritas</span></div>
     <div class="hni" id="hn-intercambio" data-tr="nav_intercambio" onclick="nav('intercambio')"><span class="ico">🔄</span><span class="hni-txt">Intercambio</span></div>
-    <div class="hni" id="hn-especiales" data-tr="nav_especiales" onclick="nav('especiales')"><span class="ico">⭐</span><span class="hni-txt">Especiales</span></div>
+    <div class="hni" id="hn-reglas" onclick="openReglas()"><span class="ico">📋</span><span class="hni-txt">Reglas</span></div>
     <div class="hdiv"></div>
     <div class="hprog">
       <p style="font-size:.72rem;color:rgba(255,255,255,.4)" id="hprog-lbl">MI PROGRESO</p>
@@ -611,13 +624,60 @@ body{font-family:'Arial Black',Arial,sans-serif;background:#0c1f32;color:#fff;mi
 
 <div class="toast" id="toast"></div>
 
+<!-- REGLAS OVERLAY -->
+<div id="reglas-ovl" onclick="if(event.target===this)closeReglas()">
+  <div class="reglas-card">
+    <button class="reglas-close" onclick="closeReglas()">✕</button>
+    <div class="reglas-tit">📋 CÓMO JUGAR</div>
+
+    <div class="reglas-item">
+      <div class="reglas-item-hdr">
+        <span class="reglas-item-ico">📦</span>
+        <span class="reglas-item-lbl">Ganar sobres</span>
+      </div>
+      <p><b>Asistencia</b> — venir al cole te da <b>1 sobre</b> por día.</p>
+      <p><b>Trivia</b> — respondé 3 preguntas y ganás hasta <b>3 sobres</b> según los aciertos.</p>
+      <p><b>Convivencia</b> — cuando el profe lo otorga, ganás <b>1 sobre</b> extra.</p>
+    </div>
+
+    <div class="reglas-item">
+      <div class="reglas-item-hdr">
+        <span class="reglas-item-ico">🎴</span>
+        <span class="reglas-item-lbl">Abrir sobres</span>
+      </div>
+      <p>Andá a la pestaña <b>📦 Sobres</b> y tocá el botón <b>Abrir</b>.</p>
+      <p>Cada sobre trae <b>5 figuritas</b>. Tocá el sobre para revelarlas.</p>
+    </div>
+
+    <div class="reglas-item">
+      <div class="reglas-item-hdr">
+        <span class="reglas-item-ico">🖼️</span>
+        <span class="reglas-item-lbl">Pegar figuritas</span>
+      </div>
+      <p>Las figuritas nuevas aparecen en <b>🖼️ Pegar Figuritas</b>.</p>
+      <p>Tocá una figurita, luego andá al <b>🌍 Álbum</b> y pegala en su lugar vacío.</p>
+      <p>También podés hacer <b>doble tap</b> en la figurita para ir directo.</p>
+    </div>
+
+    <div class="reglas-item">
+      <div class="reglas-item-hdr">
+        <span class="reglas-item-ico">🔄</span>
+        <span class="reglas-item-lbl">Canjear repetidas</span>
+      </div>
+      <p>Con <b>10 figuritas repetidas</b> podés canjear por <b>1 sobre nuevo</b>.</p>
+      <p>Cuando te falten pocas figuritas, podés pedir <b>1 figurita específica</b> que te falta.</p>
+      <p>El canje se puede hacer <b>una vez por semana</b>.</p>
+    </div>
+  </div>
+</div>
+
 <!-- NAV INFERIOR -->
 <nav class="bnav" id="bnav">
   <button class="bnb active" id="bn-album" onclick="nav('album')"><span class="bi">🌍</span><span>Álbum</span></button>
   <button class="bnb" id="bn-sobres" onclick="nav('sobres')"><span class="bi">📦</span><span>Sobres</span></button>
   <button class="bnb" id="bn-pegar" onclick="nav('pegar')"><span class="bi">🖼️</span><span>Pegar</span></button>
   <button class="bnb" id="bn-intercambio" onclick="nav('intercambio')"><span class="bi">🔄</span><span>Cambio</span></button>
-  <button class="bnb" id="bn-especiales" onclick="nav('especiales')"><span class="bi">⭐</span><span>Especiales</span></button>
+  <button class="bnb" id="bn-reglas" onclick="openReglas()"><span class="bi">📋</span><span>Reglas</span></button>
 </nav>
 
 <script>
@@ -2462,6 +2522,8 @@ function openMod(id){
   document.getElementById('movl').classList.add('active');
 }
 function closeMod(){document.getElementById('movl').classList.remove('active');}
+function openReglas(){toggleHam(true);document.getElementById('reglas-ovl').classList.add('open');}
+function closeReglas(){document.getElementById('reglas-ovl').classList.remove('open');}
 
 // TOAST
 function toast(msg){
