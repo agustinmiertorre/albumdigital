@@ -1402,8 +1402,8 @@ const TR={
   trivia_correctas:{es:'correctas',en:'correct'},
   conv_label:{es:'CONVIVENCIA',en:'COMMUNITY'},
   conv_desc:{es:'A criterio del docente',en:'At teacher\'s discretion'},
-  conv_btn:{es:'OTORGAR',en:'GIVE'},
-  conv_dado:{es:'✓ DADO',en:'✓ GIVEN'},
+  conv_dado_si:{es:'✓ DADO',en:'✓ GIVEN'},
+  conv_dado_no:{es:'✗ NO DADO',en:'✗ NOT GIVEN'},
   inter_ya:{es:'✅ Ya canjeaste esta semana. ¡Volvé la próxima!',en:'✅ Already traded this week. Come back next week!'},
   inter_pocas:{es:'Necesitás al menos 10 repetidas (tenés',en:'You need at least 10 duplicates (you have'},
   inter_tus_rep:{es:'📦 TUS REPETIDAS (necesitás 10)',en:'📦 YOUR DUPLICATES (need 10)'},
@@ -1424,7 +1424,7 @@ const TR={
   sobre_hero_sub:{es:'Completá las actividades del día para ganar sobres',en:'Complete daily activities to earn sticker packs'},
   lbl_hoy:{es:'HOY:',en:'TODAY:'},
   nav_pegar_full:{es:'Pegar Figuritas',en:'Stick Stickers'},
-  abrir_sobres:{es:'ABRIR',en:'OPEN'},
+  abrir_sobres_lbl:{es:'ABRIR SOBRES',en:'OPEN PACKS'},
   abrir_sobres_0:{es:'Sin sobres pendientes',en:'No pending packs'},
   sov_sobre:{es:'Sobre',en:'Pack'},
   sov_de:{es:'de',en:'of'},
@@ -1435,6 +1435,7 @@ const TR={
   pempty_txt:{es:'¡No hay figuritas para pegar!<br>Abrí sobres primero.',en:'No stickers to stick!<br>Open some packs first.'},
   hprog_lbl:{es:'MI PROGRESO',en:'MY PROGRESS'},
   salir_btn:{es:'🚪 Cerrar sesión',en:'🚪 Log out'},
+  nav_reglas:{es:'Reglas',en:'Rules'},
   esp_pag:{es:'Página',en:'Page'},
   esp_de:{es:'de',en:'of'},
 };
@@ -1452,7 +1453,7 @@ function toggleLang(){
 function applyLang(){
   // Nav inferior
   [['bn-album','nav_album'],['bn-sobres','nav_sobres'],['bn-pegar','nav_pegar'],
-   ['bn-intercambio','nav_intercambio'],['bn-especiales','nav_especiales']].forEach(([id,k])=>{
+   ['bn-intercambio','nav_intercambio'],['bn-especiales','nav_especiales'],['bn-reglas','nav_reglas']].forEach(([id,k])=>{
     const el=document.getElementById(id);if(!el)return;
     const sp=el.querySelectorAll('span')[1];if(sp)sp.textContent=tx(k);
   });
@@ -1464,7 +1465,7 @@ function applyLang(){
   const lblhoy=document.getElementById('lbl-hoy');if(lblhoy)lblhoy.textContent=tx('lbl_hoy');
   // Hamburger menu items (por ID directo)
   [['hn-album','nav_album'],['hn-sobres','nav_sobres'],['hn-pegar','nav_pegar_full'],
-   ['hn-intercambio','nav_intercambio'],['hn-especiales','nav_especiales']].forEach(([id,k])=>{
+   ['hn-intercambio','nav_intercambio'],['hn-especiales','nav_especiales'],['hn-reglas','nav_reglas']].forEach(([id,k])=>{
     const el=document.getElementById(id);if(!el)return;
     const sp=el.querySelector('.hni-txt');if(sp)sp.textContent=tx(k);
   });
@@ -1615,6 +1616,7 @@ function _parseS(d){
     tAciertos:parseInt(d.tAciertos||0),
     asHoy:d.asHoy||'',
     cvHoy:d.cvHoy||'',
+    cvGave:d.cvGave===false?false:!!(d.cvGave),
     pendCount:parseInt(d.pendCount||0),
     triviaIdx:parseInt(d.triviaIdx||0)
   };
@@ -1632,6 +1634,7 @@ function ldS(){
     tAciertos:parseInt(localStorage.getItem(SK('ta'))||'0'),
     asHoy:localStorage.getItem(SK('as'))||'',
     cvHoy:localStorage.getItem(SK('cv'))||'',
+    cvGave:localStorage.getItem(SK('cvg'))==='false'?false:!!(localStorage.getItem(SK('cvg'))),
     pendCount:parseInt(localStorage.getItem(SK('pc'))||'0'),
     triviaIdx:parseInt(localStorage.getItem(SK('ti'))||'0')
   };
@@ -1648,6 +1651,7 @@ function _cacheS(){
   localStorage.setItem(SK('ta'),S.tAciertos||0);
   localStorage.setItem(SK('as'),S.asHoy||'');
   localStorage.setItem(SK('cv'),S.cvHoy||'');
+  localStorage.setItem(SK('cvg'),S.cvGave===false?'false':'');
   localStorage.setItem(SK('pc'),S.pendCount||0);
   localStorage.setItem(SK('ti'),S.triviaIdx||0);
 }
@@ -1657,7 +1661,7 @@ function svS(){
   fbDB.ref(`albums/${CC}`).set({
     peg:[...S.peg],ap:S.ap,rep:S.rep,
     fhoy:S.fhoy,ihoy:S.ihoy||'',isem:S.isem||'',tradeW:S.tradeW||0,
-    thoy:S.thoy||'',tAciertos:S.tAciertos||0,asHoy:S.asHoy||'',cvHoy:S.cvHoy||'',pendCount:S.pendCount||0,triviaIdx:S.triviaIdx||0
+    thoy:S.thoy||'',tAciertos:S.tAciertos||0,asHoy:S.asHoy||'',cvHoy:S.cvHoy||'',cvGave:S.cvGave,pendCount:S.pendCount||0,triviaIdx:S.triviaIdx||0
   });
   // Guardar startDate si hay actividad y no está registrado
   if(S.peg.size>0){
@@ -2078,12 +2082,9 @@ function getTriviaParaGrado(){
   const hKey=`${g}-${_lang==='en'?'en':'es'}`;
   const hidSet=new Set(TRIVIA_HIDDEN[hKey]||[]);
   const qs=rawQs.filter(q=>!hidSet.has(q.q));
-  const total=Math.max(qs.length,1);
-  const idx=S.triviaIdx||0;
-  const result=[];
-  for(let i=0;i<3;i++) result.push(qs[(idx+i)%total]);
-  _nextTriviaIdx=(idx+3)%total;
-  return result;
+  const shuffled=[...qs].sort(()=>Math.random()-.5);
+  _nextTriviaIdx=S.triviaIdx||0;
+  return shuffled.slice(0,3);
 }
 let _triviaHecha=false;let _triviaPregs=[];let _triviaIdx=0;let _triviaAciertos=0;
 function updPaqUI(){
@@ -2101,7 +2102,7 @@ function renderSobresUI(){
   const abrirDiv=document.getElementById('abrir-section');
   if(abrirDiv){
     if(S.pendCount>0){
-      abrirDiv.innerHTML=`<button class="pbtn" style="width:100%;margin:.3rem 0 1rem;font-size:1.1rem;background:linear-gradient(135deg,var(--dorado),#c8922a);box-shadow:0 4px 20px rgba(240,192,64,.5);animation:pulse-btn .8s ease-in-out infinite alternate" onclick="abrirSobres()">🎴 ${tx('abrir_sobres')} SOBRES (${S.pendCount})</button>`;
+      abrirDiv.innerHTML=`<button class="pbtn" style="width:100%;margin:.3rem 0 1rem;font-size:1.1rem;background:linear-gradient(135deg,var(--dorado),#c8922a);box-shadow:0 4px 20px rgba(240,192,64,.5);animation:pulse-btn .8s ease-in-out infinite alternate" onclick="abrirSobres()">🎴 ${tx('abrir_sobres_lbl')} (${S.pendCount})</button>`;
     } else {
       abrirDiv.innerHTML='';
     }
@@ -2123,22 +2124,41 @@ function renderSobresUI(){
   }
   // CONVIVENCIA
   const cvUsed=S.cvHoy===hoy;
-  cvDiv.innerHTML=`
-    <div class="sobre-accion-card" style="border-color:${cvUsed?'rgba(255,255,255,.2)':'var(--rojo)'}">
-      <div class="sac-ico">🤝</div>
-      <div class="sac-info"><b>${tx('conv_label')}</b><span>${tx('conv_desc')}</span></div>
-      <button class="sac-btn rojo" ${cvUsed?'disabled':''} onclick="darSobreConv()">${cvUsed?tx('conv_dado'):tx('conv_btn')}</button>
-    </div>`;
+  if(cvUsed){
+    const lbl=S.cvGave?tx('conv_dado_si'):tx('conv_dado_no');
+    const bcolor=S.cvGave?'#22aa22':'rgba(255,255,255,.2)';
+    cvDiv.innerHTML=`
+      <div class="sobre-accion-card" style="border-color:${bcolor}">
+        <div class="sac-ico">🤝</div>
+        <div class="sac-info"><b>${tx('conv_label')}</b><span>${tx('conv_desc')}</span></div>
+        <button class="sac-btn" disabled style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.5)">${lbl}</button>
+      </div>`;
+  } else {
+    cvDiv.innerHTML=`
+      <div class="sobre-accion-card" style="border-color:rgba(255,200,0,.4)">
+        <div class="sac-ico">🤝</div>
+        <div class="sac-info"><b>${tx('conv_label')}</b><span>${tx('conv_desc')}</span></div>
+        <div style="display:flex;gap:.5rem;flex-shrink:0">
+          <button class="sac-btn" style="background:linear-gradient(135deg,#1a9a1a,#0d6b0d);color:#fff;font-size:1.3rem;padding:.4rem .75rem" onclick="darSobreConvSi()" title="${_lang==='en'?'Give pack':'Dar sobre'}">👍</button>
+          <button class="sac-btn" style="background:linear-gradient(135deg,#cc2222,#8b0000);color:#fff;font-size:1.3rem;padding:.4rem .75rem" onclick="darSobreConvNo()" title="${_lang==='en'?'Not today':'No por hoy'}">👎</button>
+        </div>
+      </div>`;
+  }
 }
 function darSobreAsist(){
   const hoy=new Date().toDateString();
   S.asHoy=hoy;S.pendCount++;svS();updPaqUI();
   toast(tx('toast_asist'));
 }
-function darSobreConv(){
+function darSobreConvSi(){
   const hoy=new Date().toDateString();
-  S.cvHoy=hoy;S.pendCount++;svS();updPaqUI();
+  S.cvHoy=hoy;S.cvGave=true;S.pendCount++;svS();updPaqUI();
   toast(tx('toast_conv'));
+}
+function darSobreConvNo(){
+  const hoy=new Date().toDateString();
+  S.cvHoy=hoy;S.cvGave=false;svS();updPaqUI();
+  toast(_lang==='en'?'👎 No pack today · Try again tomorrow':'👎 Sin sobre por hoy · Intentá mañana');
 }
 function iniciarTrivia(){
   _triviaPregs=getTriviaParaGrado();_triviaIdx=0;_triviaAciertos=0;
@@ -2527,7 +2547,63 @@ function openMod(id){
   document.getElementById('movl').classList.add('active');
 }
 function closeMod(){document.getElementById('movl').classList.remove('active');}
-function openReglas(){toggleHam(true);document.getElementById('reglas-ovl').classList.add('open');}
+function renderReglas(){
+  const en=_lang==='en';
+  const card=document.querySelector('#reglas-ovl .reglas-card');
+  if(!card)return;
+  const tit=card.querySelector('.reglas-tit');
+  if(tit)tit.textContent=en?'📋 HOW TO PLAY':'📋 CÓMO JUGAR';
+  const items=card.querySelectorAll('.reglas-item');
+  const data=en?[
+    {lbl:'Earn packs',ps:[
+      '<b>Attendance</b> — coming to school gives you <b>1 pack</b> per day.',
+      '<b>Trivia</b> — answer 3 questions and earn up to <b>3 packs</b> based on correct answers.',
+      '<b>Community</b> — when the teacher grants it, you earn <b>1 extra pack</b>.'
+    ]},
+    {lbl:'Open packs',ps:[
+      'Go to the <b>📦 Packs</b> tab and tap the <b>Open</b> button.',
+      'Each pack contains <b>5 stickers</b>. Tap the pack to reveal them.'
+    ]},
+    {lbl:'Stick stickers',ps:[
+      'New stickers appear in <b>🖼️ Stick Stickers</b>.',
+      'Tap a sticker, then go to the <b>🌍 Album</b> and stick it in its empty spot.',
+      'You can also <b>double tap</b> the sticker to go directly.'
+    ]},
+    {lbl:'Trade duplicates',ps:[
+      'With <b>10 duplicate stickers</b> you can trade for <b>1 new pack</b>.',
+      'When you\'re missing just a few stickers, you can request <b>1 specific sticker</b> you need.',
+      'Trading can be done <b>once per week</b>.'
+    ]}
+  ]:[
+    {lbl:'Ganar sobres',ps:[
+      '<b>Asistencia</b> — venir al cole te da <b>1 sobre</b> por día.',
+      '<b>Trivia</b> — respondé 3 preguntas y ganás hasta <b>3 sobres</b> según los aciertos.',
+      '<b>Convivencia</b> — cuando el profe lo otorga, ganás <b>1 sobre</b> extra.'
+    ]},
+    {lbl:'Abrir sobres',ps:[
+      'Andá a la pestaña <b>📦 Sobres</b> y tocá el botón <b>Abrir</b>.',
+      'Cada sobre trae <b>5 figuritas</b>. Tocá el sobre para revelarlas.'
+    ]},
+    {lbl:'Pegar figuritas',ps:[
+      'Las figuritas nuevas aparecen en <b>🖼️ Pegar Figuritas</b>.',
+      'Tocá una figurita, luego andá al <b>🌍 Álbum</b> y pegala en su lugar vacío.',
+      'También podés hacer <b>doble tap</b> en la figurita para ir directo.'
+    ]},
+    {lbl:'Canjear repetidas',ps:[
+      'Con <b>10 figuritas repetidas</b> podés canjear por <b>1 sobre nuevo</b>.',
+      'Cuando te falten pocas figuritas, podés pedir <b>1 figurita específica</b> que te falta.',
+      'El canje se puede hacer <b>una vez por semana</b>.'
+    ]}
+  ];
+  items.forEach((item,i)=>{
+    if(!data[i])return;
+    const lbl=item.querySelector('.reglas-item-lbl');
+    if(lbl)lbl.textContent=data[i].lbl;
+    const ps=item.querySelectorAll('p');
+    ps.forEach((p,j)=>{if(data[i].ps[j]!==undefined)p.innerHTML=data[i].ps[j];});
+  });
+}
+function openReglas(){renderReglas();toggleHam(true);document.getElementById('reglas-ovl').classList.add('open');}
 function closeReglas(){document.getElementById('reglas-ovl').classList.remove('open');}
 
 // TOAST
